@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ATS Friendly Resume Builder</title>
+
+  <!-- Local Bootstrap CSS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="container py-4">
+
+  <header class="app-header mb-4">
+    <h1 class="h3 mb-1">ATS Friendly Resume Builder</h1>
+    <p class="mb-0">A clean, validated, dynamic, and exportable resume builder — optimized for ATS parsing.</p>
+  </header>
+
+  <form id="resumeForm" novalidate>
+    <!-- Personal Information -->
+    <div class="card p-3 mb-4">
+      <h4 class="mb-3">Personal information</h4>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label required">Name</label>
+          <input type="text" id="name" class="form-control" placeholder="John Doe" required tabindex="1" title="Enter your full name as it appears on official documents" />
+          <div class="error" id="error-name"></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label required">Email</label>
+          <div class="input-group">
+            <span class="input-group-text" title="Email prefix symbol">@</span>
+            <input type="email" id="email" class="form-control" placeholder="john@example.com" required tabindex="2" title="Enter a valid email address for contact" />
+          </div>
+          <div class="error" id="error-email"></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label required">Phone number</label>
+          <input type="tel" id="phone" class="form-control" placeholder="98765 43210" required tabindex="3" title="Enter your 10-digit contact phone number" />
+          <div class="error" id="error-phone"></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label required">Date of birth</label>
+          <input type="date" id="dob" class="form-control" required tabindex="4" title="Select your date of birth from the calendar" />
+          <div class="error" id="error-dob"></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label required">Location</label>
+          <input type="text" id="location" class="form-control" placeholder="Bengaluru, KA" required tabindex="5" title="Enter your current city and state (e.g., Bengaluru, Karnataka)" />
+          <div class="error" id="error-location"></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Photo</label>
+          <input type="file" id="photo" class="form-control" accept="image/*" tabindex="6" title="Upload a professional photo (optional, for preview only - ATS systems ignore images)" />
+          <div class="small-muted">Optional. Used in preview only (ATS ignores images).</div>
+          <div class="error" id="error-photo"></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">LinkedIn URL</label>
+          <input type="url" id="linkedin" class="form-control" placeholder="https://www.linkedin.com/in/username" tabindex="7" title="Enter your LinkedIn profile URL (optional but recommended)" />
+          <div class="error" id="error-linkedin"></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">GitHub / YouTube URL</label>
+          <input type="url" id="github" class="form-control" placeholder="https://github.com/username" tabindex="8" title="Enter your GitHub or YouTube profile URL (optional)" />
+          <div class="error" id="error-github"></div>
+        </div>
+        <div class="col-12">
+          <label class="form-label required">Objective</label>
+          <textarea id="objective" class="form-control" rows="3" placeholder="Your career objective..." required tabindex="9" title="Describe your career goals and what you aim to achieve in your professional journey"></textarea>
+          <div class="error" id="error-objective"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Work Experience -->
+    <div class="card p-3 mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4 class="mb-0">Work experience</h4>
+        <div class="d-flex gap-2 align-items-center">
+          <button type="button" class="btn-toggle" onclick="toggleSection('experienceContainer', this)" title="Toggle this section ON/OFF to include or exclude from resume">
+            <div class="toggle-switch">
+              <input type="checkbox" checked readonly>
+              <span class="toggle-slider"></span>
+            </div>
+          </button>
+          <button type="button" class="btn btn-sm btn-primary" onclick="addExperience()" title="Click to add another work experience entry">➕ Add experience</button>
+        </div>
+      </div>
+      <div id="experienceContainer"></div>
+      <div class="small-muted">Optional section. Add each role separately. Experience auto-calculates from dates.</div>
+      <div class="error" id="error-experienceContainer"></div>
+    </div>
+
+    <!-- Education -->
+    <div class="card p-3 mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4 class="mb-0">Education</h4>
+        <div class="d-flex gap-2 align-items-center">
+          <button type="button" class="btn-toggle" onclick="toggleSection('educationContainer', this)" title="Toggle this section ON/OFF to include or exclude from resume">
+            <div class="toggle-switch">
+              <input type="checkbox" checked readonly>
+              <span class="toggle-slider"></span>
+            </div>
+          </button>
+          <button type="button" class="btn btn-sm btn-primary" onclick="addEducation()" title="Click to add another education entry (degree, PU, SSLC, etc.)">➕ Add education</button>
+        </div>
+      </div>
+      <div id="educationContainer"></div>
+      <div class="small-muted">Optional section. Use + to add PU and SSLC entries as needed.</div>
+      <div class="error" id="error-educationContainer"></div>
+    </div>
+
+    <!-- Projects -->
+    <div class="card p-3 mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4 class="mb-0">Projects</h4>
+        <div class="d-flex gap-2 align-items-center">
+          <button type="button" class="btn-toggle" onclick="toggleSection('projectsContainer', this)" title="Toggle this section ON/OFF to include or exclude from resume">
+            <div class="toggle-switch">
+              <input type="checkbox" checked readonly>
+              <span class="toggle-slider"></span>
+            </div>
+          </button>
+          <button type="button" class="btn btn-sm btn-primary" onclick="addProject()" title="Click to add another project with details and description">➕ Add project</button>
+        </div>
+      </div>
+      <div id="projectsContainer"></div>
+      <div class="small-muted">Optional section. Add your key projects.</div>
+      <div class="error" id="error-projectsContainer"></div>
+    </div>
+
+    <!-- Skills -->
+    <div class="card p-3 mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4 class="mb-0">Skills</h4>
+        <button type="button" class="btn-toggle" onclick="toggleSection('skillsMainContainer', this)" title="Toggle this section ON/OFF to include or exclude from resume">
+          <div class="toggle-switch">
+            <input type="checkbox" checked readonly>
+            <span class="toggle-slider"></span>
+          </div>
+        </button>
+      </div>
+      <div id="skillsMainContainer">
+        <div class="small-muted mb-3">Optional section. Click "+ Add" button to add each skill. Click "×" to remove a skill.</div>
+        
+        <div class="row g-3">
+          <!-- PERSONAL SKILLS -->
+          <div class="col-md-4">
+            <label class="form-label" title="Soft skills and personal qualities">Personal skills</label>
+            <div id="personalSkills" class="skill-list-container"></div>
+            <button type="button" class="btn btn-sm btn-primary mt-2 w-100" onclick="addSkill('personalSkills')" title="Add a personal skill like leadership, communication, teamwork, etc.">
+              ➕ Add Personal Skill
+            </button>
+            <div class="error" id="error-skillsPersonal"></div>
+          </div>
+
+          <!-- PROFESSIONAL SKILLS -->
+          <div class="col-md-4">
+            <label class="form-label" title="Work-related and job-specific skills">Professional skills</label>
+            <div id="professionalSkills" class="skill-list-container"></div>
+            <button type="button" class="btn btn-sm btn-primary mt-2 w-100" onclick="addSkill('professionalSkills')" title="Add a professional skill like project management, data analysis, etc.">
+              ➕ Add Professional Skill
+            </button>
+            <div class="error" id="error-skillsProfessional"></div>
+          </div>
+
+          <!-- TECHNICAL SKILLS -->
+          <div class="col-md-4">
+            <label class="form-label" title="Programming languages, tools, and technologies">Technical skills</label>
+            <div id="technicalSkills" class="skill-list-container"></div>
+            <button type="button" class="btn btn-sm btn-primary mt-2 w-100" onclick="addSkill('technicalSkills')" title="Add a technical skill like Python, Java, React, AWS, etc.">
+              ➕ Add Technical Skill
+            </button>
+            <div class="error" id="error-skillsTechnical"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interests / Hobbies -->
+    <div class="card p-3 mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4 class="mb-0">Interests / hobbies</h4>
+        <div class="d-flex gap-2 align-items-center">
+          <button type="button" class="btn-toggle" onclick="toggleSection('hobbiesContainer', this)" title="Toggle this section ON/OFF to include or exclude from resume">
+            <div class="toggle-switch">
+              <input type="checkbox" checked readonly>
+              <span class="toggle-slider"></span>
+            </div>
+          </button>
+          <button type="button" class="btn btn-sm btn-primary" onclick="addHobby()" title="Click to add another hobby or interest">➕ Add interest</button>
+        </div>
+      </div>
+      <div id="hobbiesContainer"></div>
+      <div class="small-muted">Optional section. Add your interests and hobbies.</div>
+      <div class="error" id="error-hobbiesContainer"></div>
+    </div>
+
+    <!-- Certifications -->
+    <div class="card p-3 mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4 class="mb-0">Certifications</h4>
+        <div class="d-flex gap-2 align-items-center">
+          <button type="button" class="btn-toggle" onclick="toggleSection('certificationsContainer', this)" title="Toggle this section ON/OFF to include or exclude from resume">
+            <div class="toggle-switch">
+              <input type="checkbox" checked readonly>
+              <span class="toggle-slider"></span>
+            </div>
+          </button>
+          <button type="button" class="btn btn-sm btn-primary" onclick="addCertification()" title="Click to add another professional certification">➕ Add certification</button>
+        </div>
+      </div>
+      <div id="certificationsContainer"></div>
+      <div class="small-muted">Optional section. Add your professional certifications.</div>
+      <div class="error" id="error-certificationsContainer"></div>
+    </div>
+
+    <!-- Declaration -->
+    <div class="card p-3 mb-4">
+      <h4 class="mb-3">Declaration</h4>
+      <textarea id="declaration" class="form-control" rows="3" tabindex="100" title="Edit the declaration statement if needed - this will appear at the end of your resume">I hereby declare that the above information is true to the best of my knowledge.</textarea>
+      <div class="form-check mt-3">
+        <input class="form-check-input" type="checkbox" value="" id="declarationCheck" tabindex="101" title="You must check this box to agree to the declaration before previewing">
+        <label class="form-check-label" for="declarationCheck" title="Click to agree to the declaration statement">
+          I agree to the above declaration
+        </label>
+      </div>
+      <div class="small-muted mt-2">Your name will be appended automatically from Personal information.</div>
+      <div class="error" id="error-declaration"></div>
+    </div>
+
+    <!-- Profile Picture in PDF Option -->
+    <div class="card p-3 mb-5">
+      <h4 class="mb-3">PDF Export Options</h4>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="includePhotoInPDF" tabindex="102" title="Check this to include your profile picture in the downloaded PDF (not recommended for ATS)">
+        <label class="form-check-label" for="includePhotoInPDF" title="Including photos may reduce ATS compatibility">
+          Include profile picture in downloaded PDF
+        </label>
+      </div>
+      <div class="small-muted mt-2">Note: Most ATS systems ignore images. Uncheck this for better ATS compatibility.</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="footer-actions d-flex justify-content-center gap-2 mb-3">
+      <button type="button" class="btn btn-gradient px-4" onclick="handlePreview()" tabindex="103" title="Click to preview your resume before downloading - this validates all fields">Preview resume</button>
+      <button type="button" class="btn btn-outline-primary px-4" onclick="downloadPDF()" tabindex="104" title="Click to download your resume as a PDF file">Download PDF</button>
+    </div>
+  </form>
+
+  <!-- Preview -->
+  <div class="card preview-card p-4 mb-5" id="resumePreview">
+    <div class="text-muted">Fill the form and click Preview to see your ATS-friendly resume.</div>
+  </div>
+
+  <!-- Local Bootstrap JS -->
+  <script src="js/bootstrap.bundle.min.js"></script>
+
+  <!-- Local jsPDF -->
+  <script src="js/jspdf.umd.min.js"></script>
+
+  <!-- Local html2canvas -->
+  <script src="js/html2canvas.min.js"></script>
+
+  <!-- Custom JS -->
+  <script src="custom.js"></script>
+</body>
+</html>

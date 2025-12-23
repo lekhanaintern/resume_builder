@@ -1,0 +1,896 @@
+:root {
+  --primary: #0d6efd;
+  --accent: #7c3aed;
+  --bg: #f8fafc;
+  --text: #0f172a;
+  --muted: #64748b;
+  --card: #ffffff;
+  --resume-text: #000000;
+  --resume-heading: #1a1a1a;
+}
+
+body {
+  background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
+  color: var(--text);
+  font-family: 'Arial', 'Helvetica', sans-serif;
+}
+
+.app-header {
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  color: #fff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(13, 110, 253, 0.25);
+}
+
+.card {
+  border: none;
+  border-radius: 14px;
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.08);
+  background: var(--card);
+}
+
+.card h4 {
+  font-weight: 700;
+}
+
+.entry {
+  border: 1px dashed #cbd5e1;
+  background: #fbfdff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.required::after {
+  content: " *";
+  color: #dc3545;
+  font-weight: 700;
+}
+
+.error {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+
+.footer-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(6px);
+  padding: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-gradient {
+  background: linear-gradient(90deg, #0ea5e9, #22d3ee);
+  color: #083344;
+  font-weight: 700;
+  border: none;
+}
+
+.btn-gradient:hover {
+  filter: brightness(0.95);
+}
+
+.small-muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.input-group-text {
+  min-width: 42px;
+  justify-content: center;
+}
+
+.section-title {
+  color: #0d6efd;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* ============================================
+   PROFESSIONAL ATS-FRIENDLY RESUME PREVIEW STYLES
+   ============================================ */
+
+#resumePreview {
+  background: #ffffff;
+  padding: 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border-radius: 0;
+  font-family: 'Calibri', 'Arial', sans-serif;
+}
+
+.resume-document {
+  padding: 50px 60px;
+  background: #ffffff;
+  color: var(--resume-text);
+  line-height: 1.6;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ===== HEADER SECTION ===== */
+.resume-header {
+  display: flex;
+  gap: 25px;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  align-items: center;
+}
+
+.resume-photo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 3px solid #2c3e50;
+  flex-shrink: 0;
+}
+
+.resume-header-content {
+  flex: 1;
+}
+
+.resume-name {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--resume-heading);
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.resume-contact-info {
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 8px;
+  line-height: 1.8;
+}
+
+.contact-item {
+  display: inline-block;
+}
+
+.separator {
+  margin: 0 10px;
+  color: #666;
+}
+
+.resume-links {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.resume-link {
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.resume-link:hover {
+  text-decoration: underline;
+}
+
+.resume-dob {
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
+}
+
+/* ===== SECTION STYLING ===== */
+.resume-section {
+  margin-bottom: 25px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c3e50;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0 0 8px 0;
+}
+
+.section-divider {
+  height: 2px;
+  background: linear-gradient(to right, #2c3e50, #bdc3c7);
+  margin-bottom: 15px;
+}
+
+/* ===== OBJECTIVE/SUMMARY ===== */
+.objective-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #333;
+  margin: 0;
+  text-align: justify;
+}
+
+/* ===== WORK EXPERIENCE ===== */
+.experience-item {
+  margin-bottom: 20px;
+}
+
+.experience-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.experience-left {
+  flex: 1;
+}
+
+.experience-right {
+  text-align: right;
+  min-width: 200px;
+}
+
+.job-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--resume-heading);
+  margin: 0 0 5px 0;
+}
+
+.company-name {
+  font-size: 15px;
+  color: #555;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.date-range {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.duration {
+  font-size: 13px;
+  color: #888;
+  margin-top: 3px;
+}
+
+/* ===== EDUCATION ===== */
+.education-item {
+  margin-bottom: 18px;
+}
+
+.education-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.education-left {
+  flex: 1;
+}
+
+.education-right {
+  text-align: right;
+  min-width: 150px;
+}
+
+.degree-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--resume-heading);
+  margin: 0 0 5px 0;
+}
+
+.institution-name {
+  font-size: 15px;
+  color: #555;
+  font-style: italic;
+}
+
+.edu-year {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.cgpa-info {
+  font-size: 14px;
+  color: #666;
+  margin-top: 3px;
+}
+
+/* ===== PROJECTS ===== */
+.project-item {
+  margin-bottom: 20px;
+}
+
+.project-header {
+  margin-bottom: 8px;
+}
+
+.project-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--resume-heading);
+  margin: 0 0 5px 0;
+}
+
+.project-company {
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 5px;
+}
+
+.project-link {
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.project-link a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.project-link a:hover {
+  text-decoration: underline;
+}
+
+.project-description {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+  text-align: justify;
+}
+
+/* ===== SKILLS ===== */
+.skills-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skill-category {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.skill-category-name {
+  font-weight: 700;
+  color: var(--resume-heading);
+  margin-right: 8px;
+}
+
+.skill-list {
+  color: #333;
+}
+
+/* ===== HOBBIES ===== */
+.hobbies-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+}
+
+/* ===== CERTIFICATIONS ===== */
+.certification-list {
+  list-style-type: disc;
+  padding-left: 25px;
+  margin: 0;
+}
+
+.certification-list li {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+/* ===== DECLARATION ===== */
+.declaration-section {
+  margin-top: 30px;
+}
+
+.declaration-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #333;
+  margin: 0 0 25px 0;
+  text-align: justify;
+}
+
+.signature-block {
+  margin-top: 40px;
+  text-align: left;
+}
+
+.signature-line {
+  width: 250px;
+  border-bottom: 2px solid #000;
+  margin-bottom: 8px;
+}
+
+.signature-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--resume-heading);
+}
+
+/* ===== PREVIEW CARD CONTAINER ===== */
+.preview-card {
+  margin-top: 40px;
+  padding: 0 !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.preview-card .text-muted {
+  padding: 40px;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* ============================================
+   TOOLTIP STYLES - INSTANT APPEARANCE
+   ============================================ */
+
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+/* Tooltip on hover - appears above element INSTANTLY (no delay) */
+[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  transition: none;
+  animation: tooltipFadeIn 0.1s ease-out;
+}
+
+/* Tooltip arrow - INSTANT */
+[data-tooltip]:hover::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #333;
+  z-index: 1000;
+  pointer-events: none;
+  transition: none;
+  animation: tooltipFadeIn 0.1s ease-out;
+}
+
+/* Fast fade-in animation */
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Special positioning for input fields and textareas */
+input[data-tooltip]:hover::after,
+textarea[data-tooltip]:hover::after,
+select[data-tooltip]:hover::after {
+  bottom: calc(100% + 5px);
+}
+
+/* For long tooltips on input fields, allow wrapping */
+input[data-tooltip]:hover::after,
+textarea[data-tooltip]:hover::after,
+select[data-tooltip]:hover::after {
+  white-space: normal;
+  max-width: 300px;
+  text-align: center;
+}
+
+/* Tooltip for buttons - appears above */
+button[data-tooltip]:hover::after {
+  white-space: normal;
+  max-width: 200px;
+}
+
+/* ============================================
+   SECTION TOGGLE BUTTON STYLES - ON/OFF SWITCH
+   ============================================ */
+
+.btn-toggle {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-toggle:hover {
+  transform: scale(1.05);
+}
+
+/* Toggle switch container */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+/* Hidden checkbox */
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider (background) */
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #28a745;
+  transition: 0.3s;
+  border-radius: 24px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* The circular knob */
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* ON text */
+.toggle-slider:after {
+  content: 'ON';
+  position: absolute;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* When toggle is OFF (section hidden) */
+.section-hidden .toggle-slider {
+  background-color: #dc3545;
+}
+
+.section-hidden .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+/* OFF text */
+.section-hidden .toggle-slider:after {
+  content: 'OFF';
+  left: auto;
+  right: 6px;
+}
+
+/* Hover effects */
+.toggle-slider:hover {
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
+
+.btn-toggle:focus {
+  outline: 2px solid #0d6efd;
+  outline-offset: 2px;
+  border-radius: 24px;
+}
+
+/* ============================================
+   IMPROVED PROJECT SECTION LAYOUT
+   ============================================ */
+
+.project-header-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.project-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.project-field label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.project-desc-wrapper {
+  width: 100%;
+}
+
+.project-desc-wrapper textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 80px;
+  max-height: 200px;
+}
+
+/* ============================================
+   IMPROVED SKILLS SECTION - USER FRIENDLY
+   ============================================ */
+
+.skill-list-container {
+  min-height: 120px;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 10px;
+  background: #f8f9fa;
+  margin-bottom: 8px;
+}
+
+.skill-list-container:empty::before {
+  content: "No skills added yet. Click '+ Add' button below.";
+  color: #6c757d;
+  font-style: italic;
+  display: block;
+  text-align: center;
+  padding: 30px 10px;
+  font-size: 0.9rem;
+}
+
+.skill-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.skill-item:hover {
+  border-color: #0d6efd;
+  box-shadow: 0 3px 8px rgba(13, 110, 253, 0.15);
+}
+
+.skill-item input {
+  flex: 1;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.skill-item input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+.skill-item .btn-remove {
+  background: white;
+  color: #dc3545;
+  border: 2px solid #dc3545;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.skill-item .btn-remove:hover {
+  background: #dc3545;
+  color: white;
+  transform: scale(1.1);
+}
+
+.skill-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.skill-list-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.skill-list-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.skill-list-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.skills-box {
+  height: 120px;
+  overflow-y: auto;
+  resize: vertical;
+}
+
+.photo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #0d6efd;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* ============================================
+   TAB FOCUS IMPROVEMENTS
+   ============================================ */
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
+  outline: 2px solid #0d6efd;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.5);
+}
+
+/* ============================================
+   ANIMATION IMPROVEMENTS
+   ============================================ */
+
+.entry {
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   FORM CHECK IMPROVEMENTS
+   ============================================ */
+
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.form-check-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-check-label {
+  cursor: pointer;
+  user-select: none;
+}
+
+.project-desc-full {
+  width: 100%;
+  resize: none;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+  .resume-document {
+    padding: 30px 25px;
+  }
+  
+  .resume-name {
+    font-size: 26px;
+  }
+  
+  .resume-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .resume-photo {
+    margin: 0 auto;
+  }
+  
+  .experience-header,
+  .education-header {
+    flex-direction: column;
+  }
+  
+  .experience-right,
+  .education-right {
+    text-align: left;
+    margin-top: 5px;
+  }
+  
+  .project-header-row {
+    flex-direction: column;
+  }
+  
+  .project-field {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  [data-tooltip]:hover::after {
+    white-space: normal;
+    max-width: 200px;
+  }
+}
+
+/* ============================================
+   PRINT STYLES FOR PDF
+   ============================================ */
+
+@media print {
+  body {
+    background: white;
+  }
+  
+  .resume-document {
+    padding: 40px;
+  }
+  
+  .page-break {
+    page-break-before: always;
+  }
+}
