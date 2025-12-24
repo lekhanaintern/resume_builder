@@ -378,41 +378,41 @@ body {
   font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
-/* ===== SKILLS ===== */
-.skills-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+/* ===== SKILLS - FIXED: 3 COLUMNS WITH BULLETS ===== */
+.skills-columns-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
   margin-top: 15px;
 }
 
-.skill-category {
-  font-size: 18px;
-  line-height: 1.8;
-  font-family: 'Arial', 'Helvetica', sans-serif;
+.skill-column {
+  display: flex;
+  flex-direction: column;
 }
 
-.skill-category-name {
+.skill-column-title {
+  font-size: 20px;
   font-weight: 700;
   color: var(--resume-heading);
-  margin-right: 10px;
-  display: block;
-  margin-bottom: 8px;
-  font-size: 20px;
+  margin: 0 0 12px 0;
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-.skill-list {
-  color: #333;
-  display: block;
+.skill-column-list {
   list-style-type: disc;
   padding-left: 25px;
   margin: 0;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
-.skill-list li {
-  margin-bottom: 6px;
+.skill-column-list li {
   font-size: 18px;
   line-height: 1.8;
+  color: #333;
+  margin-bottom: 8px;
 }
 
 /* ===== HOBBIES ===== */
@@ -940,6 +940,12 @@ button:focus {
     white-space: normal;
     max-width: 200px;
   }
+  
+  /* Skills columns stack on mobile */
+  .skills-columns-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
 }
 
 /* ============================================
@@ -957,5 +963,13 @@ button:focus {
   
   .page-break {
     page-break-before: always;
+  }
+  
+  /* Ensure skills columns print properly */
+  .skills-columns-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    page-break-inside: avoid;
   }
 }

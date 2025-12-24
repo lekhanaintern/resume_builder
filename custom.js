@@ -25,17 +25,19 @@ window.addEventListener('DOMContentLoaded', function() {
 /* ========= Section Toggle Function ========= */
 function toggleSection(containerId, button) {
   const container = document.getElementById(containerId);
-  const eyeIcon = button.querySelector('.eye-icon');
+  const checkbox = button.querySelector('input[type="checkbox"]');
   
   if (sectionStates[containerId]) {
     // Hide section
     container.style.display = 'none';
     button.classList.add('section-hidden');
+    checkbox.checked = false;
     sectionStates[containerId] = false;
   } else {
     // Show section
     container.style.display = 'block';
     button.classList.remove('section-hidden');
+    checkbox.checked = true;
     sectionStates[containerId] = true;
   }
 }
@@ -280,7 +282,7 @@ function validateHobbies() {
   showError("error-hobbiesContainer", "");
   entries.forEach(div => {
     const errId = div.querySelector(".err");
-    errId.textContent = "";
+    if (errId) errId.textContent = "";
   });
   
   return true;
@@ -301,7 +303,7 @@ function validateCertifications() {
   showError("error-certificationsContainer", "");
   entries.forEach(div => {
     const errId = div.querySelector(".err");
-    errId.textContent = "";
+    if (errId) errId.textContent = "";
   });
   
   return true;
@@ -435,56 +437,29 @@ function addProject() {
   wrap.className = "entry project-entry";
   wrap.innerHTML = `
   <div class="row g-2 project-entry-box">
-
-    <!-- PROJECT HEADER ROW -->
     <div class="col-12">
-  <div class="row g-3">
-
-    <div class="col-md-4">
-      <label class="form-label">Project title</label>
-      <input
-        type="text"
-        class="form-control projectTitle"
-        placeholder="Portfolio Website"
-        title="Please enter the project name">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Project title</label>
+          <input type="text" class="form-control projectTitle" placeholder="Portfolio Website" title="Please enter the project name">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Project link</label>
+          <input type="url" class="form-control projectLink" placeholder="https://example.com" title="enter the link of the project">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Company name</label>
+          <input type="text" class="form-control projectCompany" placeholder="Company / Academic" title="specify whether it is a company project or academic project">
+        </div>
+      </div>
     </div>
-
-    <div class="col-md-4">
-      <label class="form-label">Project link</label>
-      <input
-        type="url"
-        class="form-control projectLink"
-        placeholder="https://example.com"
-        title="enter the link of the project">
-    </div>
-
-    <div class="col-md-4">
-      <label class="form-label">Company name</label>
-      <input
-        type="text"
-        class="form-control projectCompany"
-        placeholder="Company / Academic"
-        title="specify whether it is a company project or academic project">
-    </div>
-
-  </div>
-</div>
-
-    <!-- DESCRIPTION (FULL WIDTH) -->
     <div class="col-12">
       <label class="form-label">Description</label>
-      <textarea
-        class="form-control projectDesc"
-        rows="4"
-        placeholder="Describe your project briefly..."
-        title="give the description of the project">
-      </textarea>
+      <textarea class="form-control projectDesc" rows="4" placeholder="Describe your project briefly..." title="give the description of the project"></textarea>
     </div>
-
     <div class="col-12">
       <div class="err error"></div>
     </div>
-
   </div>
 `;
   
@@ -533,6 +508,8 @@ function addSkill(containerId, value = "") {
 
 function getSkills(containerId) {
   const container = document.getElementById(containerId);
+  if (!container) return [];
+  
   const inputs = container.querySelectorAll(".skill-input");
   
   return Array.from(inputs)
@@ -549,7 +526,7 @@ function addHobby() {
   input.type = "text";
   input.className = "form-control hobbyItem";
   input.placeholder = "e.g., Reading, Hiking";
-  input.title="enter your other hobbies and interest"
+  input.title = "enter your other hobbies and interest";
   const err = document.createElement("div");
   err.className = "err error ms-2";
   wrap.appendChild(input);
@@ -565,7 +542,7 @@ function addCertification() {
   input.type = "text";
   input.className = "form-control certItem";
   input.placeholder = "e.g., AWS Certified Cloud Practitioner";
-  input.title = "enter the name of the certification"
+  input.title = "enter the name of the certification";
   const err = document.createElement("div");
   err.className = "err error ms-2";
   wrap.appendChild(input);
@@ -577,7 +554,7 @@ function addCertification() {
 /* ========= Preview ========= */
 function collectList(selector, mapper) {
   return Array.from(document.querySelectorAll(selector))
-    .map(mapper).filter(x => x && x.trim().length > 0);
+    .map(mapper).filter(x => x && (typeof x === 'string' ? x.trim().length > 0 : true));
 }
 
 function formatDate(dateString) {
@@ -585,6 +562,12 @@ function formatDate(dateString) {
   const date = new Date(dateString);
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return `${months[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 function handlePreview() {
@@ -617,14 +600,14 @@ function handlePreview() {
   }
 
   // Personal
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const phone = document.getElementById("phone").value.trim();
+  const name = escapeHtml(document.getElementById("name").value.trim());
+  const email = escapeHtml(document.getElementById("email").value.trim());
+  const phone = escapeHtml(document.getElementById("phone").value.trim());
   const dob = document.getElementById("dob").value;
-  const location = document.getElementById("location").value.trim();
+  const location = escapeHtml(document.getElementById("location").value.trim());
   const linkedin = document.getElementById("linkedin").value.trim();
   const github = document.getElementById("github").value.trim();
-  const objective = document.getElementById("objective").value.trim();
+  const objective = escapeHtml(document.getElementById("objective").value.trim());
 
   // Photo
   const photoInput = document.getElementById("photo");
@@ -650,9 +633,9 @@ function handlePreview() {
           </div>
           ${linkedin || github ? `
             <div class="resume-links">
-              ${linkedin ? `<a href="${linkedin}" target="_blank" class="resume-link">LinkedIn</a>` : ""}
+              ${linkedin ? `<a href="${escapeHtml(linkedin)}" target="_blank" class="resume-link">${escapeHtml(linkedin)}</a>` : ""}
               ${linkedin && github ? `<span class="separator">|</span>` : ""}
-              ${github ? `<a href="${github}" target="_blank" class="resume-link">GitHub</a>` : ""}
+              ${github ? `<a href="${escapeHtml(github)}" target="_blank" class="resume-link">${escapeHtml(github)}</a>` : ""}
             </div>
           ` : ""}
           <div class="resume-dob">Date of Birth: ${new Date(dob).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
@@ -680,12 +663,12 @@ function handlePreview() {
         <div class="experience-item">
           <div class="experience-header">
             <div class="experience-left">
-              <h3 class="job-title">${role}</h3>
-              <div class="company-name">${company}</div>
+              <h3 class="job-title">${escapeHtml(role)}</h3>
+              <div class="company-name">${escapeHtml(company)}</div>
             </div>
             <div class="experience-right">
               <div class="date-range">${formatDate(start)} - ${formatDate(end)}</div>
-              <div class="duration">${expOut}</div>
+              <div class="duration">${escapeHtml(expOut)}</div>
             </div>
           </div>
         </div>
@@ -717,12 +700,12 @@ function handlePreview() {
         <div class="education-item">
           <div class="education-header">
             <div class="education-left">
-              <h3 class="degree-title">${course}</h3>
-              <div class="institution-name">${college}, ${university}</div>
+              <h3 class="degree-title">${escapeHtml(course)}</h3>
+              <div class="institution-name">${escapeHtml(college)}, ${escapeHtml(university)}</div>
             </div>
             <div class="education-right">
-              <div class="edu-year">${year}</div>
-              ${cgpa ? `<div class="cgpa-info">CGPA: ${cgpa}</div>` : ""}
+              <div class="edu-year">${escapeHtml(year)}</div>
+              ${cgpa ? `<div class="cgpa-info">CGPA: ${escapeHtml(cgpa)}</div>` : ""}
             </div>
           </div>
         </div>
@@ -752,11 +735,11 @@ function handlePreview() {
       return `
         <div class="project-item">
           <div class="project-header">
-            <h3 class="project-title">${title}</h3>
-            <div class="project-company">${company}</div>
+            <h3 class="project-title">${escapeHtml(title)}</h3>
+            <div class="project-company">${escapeHtml(company)}</div>
           </div>
-          ${link ? `<div class="project-link"><a href="${link}" target="_blank">${link}</a></div>` : ""}
-          <p class="project-description">${desc}</p>
+          ${link ? `<div class="project-link"><a href="${escapeHtml(link)}" target="_blank">${escapeHtml(link)}</a></div>` : ""}
+          <p class="project-description">${escapeHtml(desc)}</p>
         </div>
       `;
     });
@@ -781,15 +764,15 @@ function handlePreview() {
       previewHTML += `
         <div class="resume-section">
           <h2 class="section-title">SKILLS</h2>
-          <div class="skills-grid">
+          <div class="skills-columns-container">
       `;
       
       if (skillsPersonal.length > 0) {
         previewHTML += `
-          <div class="skill-category">
-            <span class="skill-category-name">Personal Skills</span>
-            <ul class="skill-list">
-              ${skillsPersonal.map(skill => `<li>${skill}</li>`).join("")}
+          <div class="skill-column">
+            <h3 class="skill-column-title">Personal Skills</h3>
+            <ul class="skill-column-list">
+              ${skillsPersonal.map(skill => `<li>${escapeHtml(skill)}</li>`).join("")}
             </ul>
           </div>
         `;
@@ -797,10 +780,10 @@ function handlePreview() {
       
       if (skillsProfessional.length > 0) {
         previewHTML += `
-          <div class="skill-category">
-            <span class="skill-category-name">Professional Skills</span>
-            <ul class="skill-list">
-              ${skillsProfessional.map(skill => `<li>${skill}</li>`).join("")}
+          <div class="skill-column">
+            <h3 class="skill-column-title">Professional Skills</h3>
+            <ul class="skill-column-list">
+              ${skillsProfessional.map(skill => `<li>${escapeHtml(skill)}</li>`).join("")}
             </ul>
           </div>
         `;
@@ -808,10 +791,10 @@ function handlePreview() {
       
       if (skillsTechnical.length > 0) {
         previewHTML += `
-          <div class="skill-category">
-            <span class="skill-category-name">Technical Skills</span>
-            <ul class="skill-list">
-              ${skillsTechnical.map(skill => `<li>${skill}</li>`).join("")}
+          <div class="skill-column">
+            <h3 class="skill-column-title">Technical Skills</h3>
+            <ul class="skill-column-list">
+              ${skillsTechnical.map(skill => `<li>${escapeHtml(skill)}</li>`).join("")}
             </ul>
           </div>
         `;
@@ -826,14 +809,17 @@ function handlePreview() {
 
   // Hobbies (only if section is visible and has entries)
   if (sectionStates.hobbiesContainer) {
-    const hobbies = collectList("#hobbiesContainer .hobby-entry", (div) => div.querySelector(".hobbyItem").value.trim());
+    const hobbies = collectList("#hobbiesContainer .hobby-entry", (div) => {
+      const hobbyInput = div.querySelector(".hobbyItem");
+      return hobbyInput ? hobbyInput.value.trim() : null;
+    });
     
     if (hobbies.length > 0) {
       previewHTML += `
         <div class="resume-section">
           <h2 class="section-title">INTERESTS & HOBBIES</h2>
           <ul class="hobbies-list">
-            ${hobbies.map(h => `<li>${h}</li>`).join("")}
+            ${hobbies.map(h => `<li>${escapeHtml(h)}</li>`).join("")}
           </ul>
         </div>
       `;
@@ -842,14 +828,17 @@ function handlePreview() {
 
   // Certifications (only if section is visible and has entries)
   if (sectionStates.certificationsContainer) {
-    const certs = collectList("#certificationsContainer .cert-entry", (div) => div.querySelector(".certItem").value.trim());
+    const certs = collectList("#certificationsContainer .cert-entry", (div) => {
+      const certInput = div.querySelector(".certItem");
+      return certInput ? certInput.value.trim() : null;
+    });
     
     if (certs.length > 0) {
       previewHTML += `
         <div class="resume-section">
           <h2 class="section-title">CERTIFICATIONS</h2>
           <ul class="certification-list">
-            ${certs.map(c => `<li>${c}</li>`).join("")}
+            ${certs.map(c => `<li>${escapeHtml(c)}</li>`).join("")}
           </ul>
         </div>
       `;
@@ -857,7 +846,7 @@ function handlePreview() {
   }
 
   // Declaration with name appended
-  const declarationBase = document.getElementById("declaration").value.trim();
+  const declarationBase = escapeHtml(document.getElementById("declaration").value.trim());
 
   previewHTML += `
     <div class="resume-section declaration-section">
@@ -954,6 +943,7 @@ async function downloadPDF() {
   }
 }
 
+// Auto-resize textareas
 document.addEventListener("input", function (e) {
   if (e.target.classList.contains("projectDesc")) {
     e.target.style.height = "auto";
