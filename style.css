@@ -104,12 +104,15 @@ body {
 }
 
 .resume-document {
-  padding: 50px 60px;
+  padding: 40px 50px;
   background: #ffffff;
   color: var(--resume-text);
-  line-height: 1.6;
-  max-width: 900px;
-  margin: 0 auto;
+  line-height: 1.8;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  font-size: 18px;
+  box-sizing: border-box;
 }
 
 /* ===== HEADER SECTION ===== */
@@ -135,19 +138,21 @@ body {
 }
 
 .resume-name {
-  font-size: 32px;
+  font-size: 42px;
   font-weight: 700;
   color: var(--resume-heading);
-  margin: 0 0 10px 0;
+  margin: 0 0 15px 0;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .resume-contact-info {
-  font-size: 15px;
+  font-size: 18px;
   color: #333;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   line-height: 1.8;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .contact-item {
@@ -160,8 +165,9 @@ body {
 }
 
 .resume-links {
-  font-size: 14px;
-  margin-bottom: 8px;
+  font-size: 17px;
+  margin-bottom: 12px;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .resume-link {
@@ -175,50 +181,62 @@ body {
 }
 
 .resume-dob {
-  font-size: 14px;
+  font-size: 17px;
   color: #555;
-  margin-top: 5px;
+  margin-top: 8px;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 /* ===== SECTION STYLING ===== */
 .resume-section {
-  margin-bottom: 25px;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #000;
+}
+
+.resume-section:last-of-type {
+  border-bottom: none;
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 700;
-  color: #2c3e50;
+  color: #1a1a1a;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin: 0 0 8px 0;
+  letter-spacing: 2px;
+  margin: 0 0 15px 0;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 2px;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
+/* REMOVED - No longer using divider lines */
 .section-divider {
-  height: 2px;
-  background: linear-gradient(to right, #2c3e50, #bdc3c7);
-  margin-bottom: 15px;
+  display: none;
 }
 
 /* ===== OBJECTIVE/SUMMARY ===== */
 .objective-text {
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 18px;
+  line-height: 1.8;
   color: #333;
-  margin: 0;
+  margin: 15px 0 0 0;
   text-align: justify;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 /* ===== WORK EXPERIENCE ===== */
 .experience-item {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  margin-top: 15px;
 }
 
 .experience-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .experience-left {
@@ -231,34 +249,39 @@ body {
 }
 
 .job-title {
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--resume-heading);
-  margin: 0 0 5px 0;
+  margin: 0 0 8px 0;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .company-name {
-  font-size: 15px;
+  font-size: 18px;
   color: #555;
   font-style: italic;
   font-weight: 500;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .date-range {
-  font-size: 14px;
+  font-size: 17px;
   color: #666;
   font-weight: 500;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .duration {
-  font-size: 13px;
+  font-size: 16px;
   color: #888;
-  margin-top: 3px;
+  margin-top: 5px;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 /* ===== EDUCATION ===== */
 .education-item {
-  margin-bottom: 18px;
+  margin-bottom: 22px;
+  margin-top: 15px;
 }
 
 .education-header {
@@ -277,56 +300,64 @@ body {
 }
 
 .degree-title {
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--resume-heading);
-  margin: 0 0 5px 0;
+  margin: 0 0 8px 0;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .institution-name {
-  font-size: 15px;
+  font-size: 18px;
   color: #555;
   font-style: italic;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .edu-year {
-  font-size: 14px;
+  font-size: 17px;
   color: #666;
   font-weight: 500;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .cgpa-info {
-  font-size: 14px;
+  font-size: 17px;
   color: #666;
-  margin-top: 3px;
+  margin-top: 5px;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 /* ===== PROJECTS ===== */
 .project-item {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  margin-top: 15px;
 }
 
 .project-header {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .project-title {
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--resume-heading);
-  margin: 0 0 5px 0;
+  margin: 0 0 8px 0;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .project-company {
-  font-size: 14px;
+  font-size: 17px;
   color: #666;
   font-style: italic;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .project-link {
-  font-size: 13px;
-  margin-bottom: 8px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .project-link a {
@@ -339,85 +370,119 @@ body {
 }
 
 .project-description {
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 18px;
+  line-height: 1.8;
   color: #333;
   margin: 0;
   text-align: justify;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 /* ===== SKILLS ===== */
 .skills-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  margin-top: 15px;
 }
 
 .skill-category {
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 18px;
+  line-height: 1.8;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .skill-category-name {
   font-weight: 700;
   color: var(--resume-heading);
-  margin-right: 8px;
+  margin-right: 10px;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 20px;
 }
 
 .skill-list {
   color: #333;
+  display: block;
+  list-style-type: disc;
+  padding-left: 25px;
+  margin: 0;
+}
+
+.skill-list li {
+  margin-bottom: 6px;
+  font-size: 18px;
+  line-height: 1.8;
 }
 
 /* ===== HOBBIES ===== */
 .hobbies-text {
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 18px;
+  line-height: 1.8;
   color: #333;
-  margin: 0;
+  margin: 15px 0 0 0;
+  font-family: 'Arial', 'Helvetica', sans-serif;
+}
+
+.hobbies-list {
+  margin: 15px 0 0 0;
+  padding-left: 25px;
+  font-family: 'Arial', 'Helvetica', sans-serif;
+}
+
+.hobbies-list li {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 8px;
 }
 
 /* ===== CERTIFICATIONS ===== */
 .certification-list {
   list-style-type: disc;
   padding-left: 25px;
-  margin: 0;
+  margin: 15px 0 0 0;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .certification-list li {
-  font-size: 15px;
+  font-size: 18px;
   line-height: 1.8;
   color: #333;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 /* ===== DECLARATION ===== */
 .declaration-section {
-  margin-top: 30px;
+  margin-top: 35px;
+  border-bottom: none !important;
 }
 
 .declaration-text {
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 18px;
+  line-height: 1.8;
   color: #333;
-  margin: 0 0 25px 0;
+  margin: 15px 0 30px 0;
   text-align: justify;
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 .signature-block {
-  margin-top: 40px;
+  margin-top: 50px;
   text-align: left;
 }
 
 .signature-line {
   width: 250px;
   border-bottom: 2px solid #000;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .signature-name {
-  font-size: 16px;
+  font-size: 19px;
   font-weight: 600;
   color: var(--resume-heading);
+  font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 /* ===== PREVIEW CARD CONTAINER ===== */
@@ -839,7 +904,7 @@ button:focus {
   }
   
   .resume-name {
-    font-size: 26px;
+    font-size: 28px;
   }
   
   .resume-header {

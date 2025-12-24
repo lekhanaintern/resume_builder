@@ -398,7 +398,7 @@ function addEducation() {
     <div class="row g-2 align-items-end">
       <div class="col-md-3">
         <label class="form-label">College</label>
-        <input type="text" class="form-control college" placeholder="ABC College" title="enter your colleg name">
+        <input type="text" class="form-control college" placeholder="ABC College" title="enter your college name">
       </div>
       <div class="col-md-3">
         <label class="form-label">University</label>
@@ -413,8 +413,8 @@ function addEducation() {
         <input type="text" class="form-control year" placeholder="2023" title="enter the year of completion">
       </div>
       <div class="col-md-2">
-        <label class="form-label">CGPA</label>
-        <input type="text" class="form-control cgpa" placeholder="8.5" title="enter your secured cgpa">
+        <label class="form-label">CGPA/percentage</label>
+        <input type="text" class="form-control cgpa" placeholder="8.5" title="enter your secured cgpa/percentage">
       </div>
       <div class="col-12">
         <div class="err error"></div>
@@ -445,7 +445,8 @@ function addProject() {
       <input
         type="text"
         class="form-control projectTitle"
-        placeholder="Portfolio Website">
+        placeholder="Portfolio Website"
+        title="Please enter the project name">
     </div>
 
     <div class="col-md-4">
@@ -453,7 +454,8 @@ function addProject() {
       <input
         type="url"
         class="form-control projectLink"
-        placeholder="https://example.com">
+        placeholder="https://example.com"
+        title="enter the link of the project">
     </div>
 
     <div class="col-md-4">
@@ -461,7 +463,8 @@ function addProject() {
       <input
         type="text"
         class="form-control projectCompany"
-        placeholder="Company / Academic">
+        placeholder="Company / Academic"
+        title="specify whether it is a company project or academic project">
     </div>
 
   </div>
@@ -473,7 +476,8 @@ function addProject() {
       <textarea
         class="form-control projectDesc"
         rows="4"
-        placeholder="Describe your project briefly...">
+        placeholder="Describe your project briefly..."
+        title="give the description of the project">
       </textarea>
     </div>
 
@@ -545,6 +549,7 @@ function addHobby() {
   input.type = "text";
   input.className = "form-control hobbyItem";
   input.placeholder = "e.g., Reading, Hiking";
+  input.title="enter your other hobbies and interest"
   const err = document.createElement("div");
   err.className = "err error ms-2";
   wrap.appendChild(input);
@@ -560,6 +565,7 @@ function addCertification() {
   input.type = "text";
   input.className = "form-control certItem";
   input.placeholder = "e.g., AWS Certified Cloud Practitioner";
+  input.title = "enter the name of the certification"
   const err = document.createElement("div");
   err.className = "err error ms-2";
   wrap.appendChild(input);
@@ -655,7 +661,6 @@ function handlePreview() {
       
       <div class="resume-section">
         <h2 class="section-title">PROFESSIONAL SUMMARY</h2>
-        <div class="section-divider"></div>
         <p class="objective-text">${objective}</p>
       </div>
   `;
@@ -691,7 +696,6 @@ function handlePreview() {
       previewHTML += `
         <div class="resume-section">
           <h2 class="section-title">WORK EXPERIENCE</h2>
-          <div class="section-divider"></div>
           ${experiences.join("")}
         </div>
       `;
@@ -729,7 +733,6 @@ function handlePreview() {
       previewHTML += `
         <div class="resume-section">
           <h2 class="section-title">EDUCATION</h2>
-          <div class="section-divider"></div>
           ${educations.join("")}
         </div>
       `;
@@ -762,7 +765,6 @@ function handlePreview() {
       previewHTML += `
         <div class="resume-section">
           <h2 class="section-title">PROJECTS</h2>
-          <div class="section-divider"></div>
           ${projects.join("")}
         </div>
       `;
@@ -779,15 +781,16 @@ function handlePreview() {
       previewHTML += `
         <div class="resume-section">
           <h2 class="section-title">SKILLS</h2>
-          <div class="section-divider"></div>
           <div class="skills-grid">
       `;
       
       if (skillsPersonal.length > 0) {
         previewHTML += `
           <div class="skill-category">
-            <span class="skill-category-name">Personal:</span>
-            <span class="skill-list">${skillsPersonal.join(", ")}</span>
+            <span class="skill-category-name">Personal Skills</span>
+            <ul class="skill-list">
+              ${skillsPersonal.map(skill => `<li>${skill}</li>`).join("")}
+            </ul>
           </div>
         `;
       }
@@ -795,8 +798,10 @@ function handlePreview() {
       if (skillsProfessional.length > 0) {
         previewHTML += `
           <div class="skill-category">
-            <span class="skill-category-name">Professional:</span>
-            <span class="skill-list">${skillsProfessional.join(", ")}</span>
+            <span class="skill-category-name">Professional Skills</span>
+            <ul class="skill-list">
+              ${skillsProfessional.map(skill => `<li>${skill}</li>`).join("")}
+            </ul>
           </div>
         `;
       }
@@ -804,8 +809,10 @@ function handlePreview() {
       if (skillsTechnical.length > 0) {
         previewHTML += `
           <div class="skill-category">
-            <span class="skill-category-name">Technical:</span>
-            <span class="skill-list">${skillsTechnical.join(", ")}</span>
+            <span class="skill-category-name">Technical Skills</span>
+            <ul class="skill-list">
+              ${skillsTechnical.map(skill => `<li>${skill}</li>`).join("")}
+            </ul>
           </div>
         `;
       }
@@ -825,7 +832,6 @@ function handlePreview() {
       previewHTML += `
         <div class="resume-section">
           <h2 class="section-title">INTERESTS & HOBBIES</h2>
-          <div class="section-divider"></div>
           <ul class="hobbies-list">
             ${hobbies.map(h => `<li>${h}</li>`).join("")}
           </ul>
@@ -842,7 +848,6 @@ function handlePreview() {
       previewHTML += `
         <div class="resume-section">
           <h2 class="section-title">CERTIFICATIONS</h2>
-          <div class="section-divider"></div>
           <ul class="certification-list">
             ${certs.map(c => `<li>${c}</li>`).join("")}
           </ul>
@@ -857,7 +862,6 @@ function handlePreview() {
   previewHTML += `
     <div class="resume-section declaration-section">
       <h2 class="section-title">DECLARATION</h2>
-      <div class="section-divider"></div>
       <p class="declaration-text">${declarationBase}</p>
       <div class="signature-block">
         <div class="signature-line"></div>
