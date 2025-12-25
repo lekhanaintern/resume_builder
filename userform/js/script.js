@@ -359,7 +359,8 @@ function handleOutsideClick(e) {
 // ============================================
 // Form Validation
 // ============================================
-function validateForm(form) {
+function validateForm
+(form) {
     let isValid = true;
     const formGroups = form.querySelectorAll('.form-group');
     
@@ -415,6 +416,8 @@ function handleSubmit(e) {
     if (!validateForm(form)) {
         console.warn('⚠️ Form validation failed');
         
+
+
         // Scroll to first error
         const firstError = form.querySelector('.form-group.error');
         if (firstError) {
@@ -425,24 +428,39 @@ function handleSubmit(e) {
     
     // Collect form data
     const formData = {
-        fullName: document.getElementById('fullName').value,
-        contactNumber: document.getElementById('contactNumber').value,
-        addressLine1: document.getElementById('addressLine1').value,
-        addressLine2: document.getElementById('addressLine2').value,
-        city: document.getElementById('city').value,
-        state: document.getElementById('state').value,
-        postalCode: document.getElementById('postalCode').value,
-        dateOfBirth: document.getElementById('dateOfBirth').value,
-        gender: document.querySelector('input[name="gender"]:checked').value,
-        preferredCities: selectedPreferredCities,
-        preferredPincodes: selectedPreferredPincodes,
-        languagesKnown: selectedLanguages,
-        status: document.getElementById('status').value,
-        onboardingDate: document.getElementById('onboardingDate').value,
-        userType: document.getElementById('userType').value
+        id: generateUniqueId(),
+        timestamp: new Date().toISOString(),
+        personalInformation: {
+            fullName: document.getElementById('fullName').value,
+            contactNumber: document.getElementById('contactNumber').value,
+            dateOfBirth: document.getElementById('dateOfBirth').value,
+            gender: document.querySelector('input[name="gender"]:checked').value
+        },
+        address: {
+            addressLine1: document.getElementById('addressLine1').value,
+            addressLine2: document.getElementById('addressLine2').value,
+            city: document.getElementById('city').value,
+            state: document.getElementById('state').value,
+            postalCode: document.getElementById('postalCode').value
+        },
+        preferences: {
+            preferredCities: selectedPreferredCities,
+            preferredPincodes: selectedPreferredPincodes,
+            languagesKnown: selectedLanguages
+        },
+        accountDetails: {
+            status: document.getElementById('status').value,
+            onboardingDate: document.getElementById('onboardingDate').value,
+            userType: document.getElementById('userType').value
+        }
     };
     
     console.log('📋 Form Data:', formData);
+    
+    // Automatically download JSON immediately
+    const filename = `registration_${formData.id}.json`;
+    downloadJSON(formData, filename);
+    console.log('📥 JSON file downloaded automatically');
     
     // Show success modal
     showModal();
@@ -453,6 +471,26 @@ function handleSubmit(e) {
     setTimeout(() => {
         resetForm(form);
     }, 1000);
+}
+
+// ============================================
+// Helper Functions
+// ============================================
+function generateUniqueId() {
+    return 'REG-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+}
+
+function downloadJSON(data, filename) {
+    const jsonStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 }
 
 // ============================================

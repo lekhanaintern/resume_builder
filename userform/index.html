@@ -24,7 +24,7 @@
         </header>
 
         <!-- Registration Form -->
-        <form id="registrationForm" class="registration-form" novalidate autocomplete="off">
+        <form id="registrationForm" class="registration-form" novalidate>
             
             <!-- Personal Information -->
             <section class="form-section">
@@ -59,7 +59,7 @@
                             placeholder="10-digit mobile number"
                             pattern="[0-9]{10}"
                             required 
-                            tabindex="2" autocomplete="off">
+                            tabindex="2">
                         <span class="error-message">Please provide a valid 10-digit number</span>
                     </div>
                 </div>
@@ -353,8 +353,10 @@
                 </svg>
             </div>
             <h2>Registration Successful!</h2>
-            <p>Your registration has been completed successfully.</p>
-            <button class="btn btn-primary" onclick="closeModal()">Close</button>
+            <p>Your registration has been saved and downloaded successfully.</p>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="closeModal()">Close</button>
+            </div>
         </div>
     </div>
 
