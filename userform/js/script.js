@@ -1,418 +1,519 @@
-// ========================================
-// Form Validation & Interaction Handler
-// ========================================
+// ============================================
+// Global State
+// ============================================
+let citiesData = [];
+let statesData = [];
+let pincodesData = [];
+let languagesData = [];
 
-(function() {
-    'use strict';
+let selectedPreferredCities = [];
+let selectedPreferredPincodes = [];
+let selectedLanguages = [];
 
-    // Get form and elements
-    const form = document.getElementById('userRegistrationForm');
-    const tooltipContainer = document.getElementById('tooltipContainer');
+// ============================================
+// Initialize on Page Load
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ Page loaded successfully');
     
-    // ========================================
-    // Validation Rules
-    // ========================================
+    // Load JSON data
+    loadJSONData();
     
-    const validationRules = {
-        fullName: {
-            required: true,
-            pattern: /^[a-zA-Z\s]{2,50}$/,
-            message: 'Please enter a valid name (2-50 characters, letters only)'
-        },
-        addressLine1: {
-            required: true,
-            minLength: 5,
-            message: 'Address must be at least 5 characters long'
-        },
-        cityCapital: {
-            required: true,
-            message: 'Please select a capital city'
-        },
-        state: {
-            required: true,
-            message: 'Please select a state'
-        },
-        postalCode: {
-            required: true,
-            pattern: /^[0-9]{6}$/,
-            message: 'Please enter a valid 6-digit PIN code'
-        },
-        dateOfBirth: {
-            required: true,
-            validate: validateAge,
-            message: 'You must be at least 18 years old'
-        },
-        gender: {
-            required: true,
-            message: 'Please select a gender'
-        },
-        cityMulti: {
-            required: true,
-            message: 'Please select at least one preferred city'
-        },
-        languages: {
-            required: true,
-            message: 'Please select at least one language'
-        },
-        status: {
-            required: true,
-            message: 'Please select a status'
-        },
-        onboardingDate: {
-            required: true,
-            message: 'Please select an onboarding date'
-        },
-        type: {
-            required: true,
-            message: 'Please select a user type'
-        }
-    };
+    // Initialize custom selects
+    initializeCustomSelects();
+    
+    // Initialize multi-selects
+    initializeMultiSelect('preferredCities', 'preferredCitiesTags', 'preferredCitiesOptions');
+    initializeMultiSelect('preferredPincodes', 'preferredPincodesTags', 'preferredPincodesOptions');
+    initializeMultiSelect('languagesKnown', 'languagesKnownTags', 'languagesKnownOptions');
+    
+    // Set max date for date of birth (18 years ago)
+    const today = new Date();
+    const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    document.getElementById('dateOfBirth').max = maxDate.toISOString().split('T')[0];
+    
+    // Set default onboarding date to today
+    document.getElementById('onboardingDate').valueAsDate = new Date();
+    
+    // Form submission
+    const form = document.getElementById('registrationForm');
+    form.addEventListener('submit', handleSubmit);
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', handleOutsideClick);
+});
 
-    // ========================================
-    // Validation Functions
-    // ========================================
-
-    function validateAge(value) {
-        if (!value) return false;
-        const today = new Date();
-        const birthDate = new Date(value);
-        const age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
+// ============================================
+// Load JSON Data
+// ============================================
+async function loadJSONData() {
+    console.log('🔄 Starting to load JSON files...');
+    
+    try {
+        // Load Cities
+        console.log('📂 Loading cities.json...');
+        const citiesResponse = await fetch('data/cities.json');
+        if (!citiesResponse.ok) throw new Error('cities.json not found');
+        citiesData = await citiesResponse.json();
+        console.log('✅ cities.json loaded:', citiesData.length, 'cities');
+        populateCustomSelect('city', citiesData, 'capital');
         
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            return age - 1 >= 18;
-        }
-        return age >= 18;
+        // Load States
+        console.log('📂 Loading states.json...');
+        const statesResponse = await fetch('data/states.json');
+        if (!statesResponse.ok) throw new Error('states.json not found');
+        statesData = await statesResponse.json();
+        console.log('✅ states.json loaded:', statesData.length, 'states');
+        populateCustomSelect('state', statesData, 'name');
+        
+        // Load PIN codes
+        console.log('📂 Loading pincodes.json...');
+        const pincodesResponse = await fetch('data/pincodes.json');
+        if (!pincodesResponse.ok) throw new Error('pincodes.json not found');
+        pincodesData = await pincodesResponse.json();
+        console.log('✅ pincodes.json loaded:', pincodesData.length, 'pincodes');
+        
+        // Load Languages
+        console.log('📂 Loading languages.json...');
+        const languagesResponse = await fetch('data/languages.json');
+        if (!languagesResponse.ok) throw new Error('languages.json not found');
+        languagesData = await languagesResponse.json();
+        console.log('✅ languages.json loaded:', languagesData.length, 'languages');
+        
+        console.log('🎉 All JSON files loaded successfully!');
+        
+    } catch (error) {
+        console.error('❌ ERROR:', error.message);
+        alert('Error loading form data. Please ensure you are running this through a web server and all JSON files are in the data folder.');
     }
+}
 
-    function validateField(field) {
-        const fieldName = field.name || field.id;
-        const rule = validationRules[fieldName];
+// ============================================
+// Custom Select Functionality
+// ============================================
+function initializeCustomSelects() {
+    const customSelects = document.querySelectorAll('.custom-select');
+    
+    customSelects.forEach(select => {
+        const trigger = select.querySelector('.select-trigger');
+        const searchInput = select.querySelector('.search-input');
+        const hiddenInput = select.nextElementSibling;
+        const valueDisplay = select.querySelector('.select-value');
         
-        if (!rule) return true;
-
-        const formGroup = field.closest('.form-group');
-        const errorMessage = formGroup.querySelector('.error-message');
-        
-        let isValid = true;
-        let message = '';
-
-        // Check if it's a radio button group
-        if (field.type === 'radio') {
-            const radioGroup = document.querySelectorAll(`input[name="${fieldName}"]`);
-            const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+        // Toggle dropdown
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeAllSelects();
+            select.classList.toggle('active');
             
-            if (rule.required && !isChecked) {
-                isValid = false;
-                message = rule.message;
-            }
-        }
-        // Check if it's a multi-select
-        else if (field.multiple) {
-            const selectedOptions = Array.from(field.selectedOptions);
-            
-            if (rule.required && selectedOptions.length === 0) {
-                isValid = false;
-                message = rule.message;
-            }
-        }
-        // Regular field validation
-        else {
-            const value = field.value.trim();
-
-            if (rule.required && !value) {
-                isValid = false;
-                message = rule.message;
-            } else if (rule.pattern && value && !rule.pattern.test(value)) {
-                isValid = false;
-                message = rule.message;
-            } else if (rule.minLength && value.length < rule.minLength) {
-                isValid = false;
-                message = rule.message;
-            } else if (rule.validate && !rule.validate(value)) {
-                isValid = false;
-                message = rule.message;
-            }
-        }
-
-        // Update UI
-        if (!isValid) {
-            formGroup.classList.add('error');
-            formGroup.classList.remove('success');
-            if (errorMessage) {
-                errorMessage.textContent = message;
-            }
-        } else {
-            formGroup.classList.remove('error');
-            formGroup.classList.add('success');
-            if (errorMessage) {
-                errorMessage.textContent = '';
-            }
-        }
-
-        return isValid;
-    }
-
-    // ========================================
-    // Tooltip Functionality
-    // ========================================
-
-    function showTooltip(e) {
-        const tooltipIcon = e.target;
-        const tooltipText = tooltipIcon.getAttribute('data-tooltip');
-        
-        if (!tooltipText) return;
-
-        tooltipContainer.textContent = tooltipText;
-        tooltipContainer.classList.add('show');
-
-        const iconRect = tooltipIcon.getBoundingClientRect();
-        const tooltipRect = tooltipContainer.getBoundingClientRect();
-
-        let left = iconRect.left + (iconRect.width / 2) - (tooltipRect.width / 2);
-        let top = iconRect.top - tooltipRect.height - 10;
-
-        // Keep tooltip within viewport
-        if (left < 10) left = 10;
-        if (left + tooltipRect.width > window.innerWidth - 10) {
-            left = window.innerWidth - tooltipRect.width - 10;
-        }
-        if (top < 10) {
-            top = iconRect.bottom + 10;
-        }
-
-        tooltipContainer.style.left = left + 'px';
-        tooltipContainer.style.top = top + 'px';
-    }
-
-    function hideTooltip() {
-        tooltipContainer.classList.remove('show');
-    }
-
-    // ========================================
-    // Real-time Validation
-    // ========================================
-
-    function setupRealtimeValidation() {
-        // Text inputs
-        const textInputs = form.querySelectorAll('input[type="text"], input[type="date"]');
-        textInputs.forEach(input => {
-            input.addEventListener('blur', () => validateField(input));
-            input.addEventListener('input', () => {
-                if (input.closest('.form-group').classList.contains('error')) {
-                    validateField(input);
-                }
-            });
-        });
-
-        // Selects
-        const selects = form.querySelectorAll('select');
-        selects.forEach(select => {
-            select.addEventListener('change', () => validateField(select));
-        });
-
-        // Radio buttons
-        const radioGroups = {};
-        const radios = form.querySelectorAll('input[type="radio"]');
-        radios.forEach(radio => {
-            if (!radioGroups[radio.name]) {
-                radioGroups[radio.name] = [];
-            }
-            radioGroups[radio.name].push(radio);
-            
-            radio.addEventListener('change', () => {
-                validateField(radio);
-            });
-        });
-    }
-
-    // ========================================
-    // Postal Code Formatting
-    // ========================================
-
-    function setupPostalCodeFormatting() {
-        const postalCode = document.getElementById('postalCode');
-        
-        postalCode.addEventListener('input', (e) => {
-            // Remove non-numeric characters
-            e.target.value = e.target.value.replace(/\D/g, '');
-        });
-    }
-
-    // ========================================
-    // Form Submission
-    // ========================================
-
-    function handleSubmit(e) {
-        e.preventDefault();
-        
-        let isFormValid = true;
-        const formData = {};
-
-        // Validate all fields
-        Object.keys(validationRules).forEach(fieldName => {
-            const field = form.elements[fieldName];
-            
-            if (field) {
-                if (!validateField(field)) {
-                    isFormValid = false;
-                }
+            if (select.classList.contains('active') && searchInput) {
+                setTimeout(() => searchInput.focus(), 100);
             }
         });
-
-        if (!isFormValid) {
-            // Scroll to first error
-            const firstError = form.querySelector('.form-group.error');
-            if (firstError) {
-                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                const input = firstError.querySelector('.form-control, input[type="radio"]');
-                if (input) {
-                    setTimeout(() => input.focus(), 500);
-                }
-            }
-            return;
-        }
-
-        // Collect form data
-        const formElements = new FormData(form);
         
-        // Handle multi-select fields
-        const cityMulti = Array.from(form.elements.cityMulti.selectedOptions).map(opt => opt.value);
-        const pincodeMulti = Array.from(form.elements.pincodeMulti.selectedOptions).map(opt => opt.value);
-        const languages = Array.from(form.elements.languages.selectedOptions).map(opt => opt.value);
-
-        // Build data object
-        for (let [key, value] of formElements.entries()) {
-            formData[key] = value;
-        }
-
-        formData.cityMulti = cityMulti;
-        formData.pincodeMulti = pincodeMulti;
-        formData.languages = languages;
-
-        // Show loading state
-        const submitBtn = form.querySelector('.btn-primary');
-        submitBtn.classList.add('loading');
-        submitBtn.disabled = true;
-
-        // Simulate API call
-        setTimeout(() => {
-            console.log('Form Data:', formData);
-            
-            // Show success message
-            alert('Registration submitted successfully!\n\nCheck the console for form data.');
-            
-            // Reset form
-            form.reset();
-            
-            // Remove all validation classes
-            const formGroups = form.querySelectorAll('.form-group');
-            formGroups.forEach(group => {
-                group.classList.remove('error', 'success');
-            });
-
-            // Remove loading state
-            submitBtn.classList.remove('loading');
-            submitBtn.disabled = false;
-
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 1500);
-    }
-
-    // ========================================
-    // Date Restrictions
-    // ========================================
-
-    function setupDateRestrictions() {
-        const today = new Date();
-        const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-        const dateOfBirth = document.getElementById('dateOfBirth');
-        
-        // Set max date for DOB (18 years ago)
-        dateOfBirth.max = maxDate.toISOString().split('T')[0];
-
-        // Set onboarding date restrictions
-        const onboardingDate = document.getElementById('onboardingDate');
-        const minOnboardingDate = new Date(2000, 0, 1);
-        
-        onboardingDate.min = minOnboardingDate.toISOString().split('T')[0];
-        onboardingDate.max = today.toISOString().split('T')[0];
-    }
-
-    // ========================================
-    // Keyboard Navigation Enhancement
-    // ========================================
-
-    function setupKeyboardNavigation() {
-        form.addEventListener('keydown', (e) => {
-            // Submit on Ctrl/Cmd + Enter
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                e.preventDefault();
-                form.dispatchEvent(new Event('submit'));
-            }
-        });
-    }
-
-    // ========================================
-    // Multi-select Helper
-    // ========================================
-
-    function setupMultiSelectHelper() {
-        const multiSelects = form.querySelectorAll('select[multiple]');
-        
-        multiSelects.forEach(select => {
-            select.addEventListener('focus', function() {
-                this.style.outline = '2px solid var(--primary-color)';
+        // Search functionality
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const options = select.querySelectorAll('.select-option');
+                
+                options.forEach(option => {
+                    const text = option.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        option.classList.remove('hidden');
+                    } else {
+                        option.classList.add('hidden');
+                    }
+                });
             });
             
-            select.addEventListener('blur', function() {
-                this.style.outline = '';
+            searchInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+        
+        // Initialize static options (for Status and Type dropdowns)
+        const staticOptions = select.querySelectorAll('.select-option');
+        staticOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                selectOption(select, option, hiddenInput, valueDisplay);
             });
         });
-    }
+    });
+}
 
-    // ========================================
-    // Initialize
-    // ========================================
-
-    function init() {
-        // Setup all functionality
-        setupRealtimeValidation();
-        setupPostalCodeFormatting();
-        setupDateRestrictions();
-        setupKeyboardNavigation();
-        setupMultiSelectHelper();
-
-        // Event listeners
-        form.addEventListener('submit', handleSubmit);
-
-        // Tooltip event listeners
-        const tooltipIcons = document.querySelectorAll('.tooltip-icon');
-        tooltipIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', showTooltip);
-            icon.addEventListener('mouseleave', hideTooltip);
-            icon.addEventListener('focus', showTooltip);
-            icon.addEventListener('blur', hideTooltip);
+function populateCustomSelect(selectId, data, valueKey) {
+    const customSelect = document.querySelector(`[data-select="${selectId}"]`);
+    if (!customSelect) return;
+    
+    const optionsContainer = customSelect.querySelector('.select-options');
+    const valueDisplay = customSelect.querySelector('.select-value');
+    const hiddenInput = document.getElementById(selectId);
+    
+    // Populate options
+    data.forEach(item => {
+        const option = document.createElement('div');
+        option.className = 'select-option';
+        option.textContent = item[valueKey];
+        option.dataset.value = item[valueKey];
+        
+        option.addEventListener('click', () => {
+            selectOption(customSelect, option, hiddenInput, valueDisplay);
         });
+        
+        optionsContainer.appendChild(option);
+    });
+}
 
-        // Prevent form submission on Enter key in text fields
-        form.querySelectorAll('input[type="text"]').forEach(input => {
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                }
-            });
-        });
-
-        console.log('User Registration Form initialized successfully!');
+function selectOption(customSelect, option, hiddenInput, valueDisplay) {
+    // Update hidden input
+    hiddenInput.value = option.dataset.value;
+    
+    // Update display
+    valueDisplay.textContent = option.textContent;
+    valueDisplay.classList.remove('placeholder');
+    
+    // Update selected state
+    const allOptions = customSelect.querySelectorAll('.select-option');
+    allOptions.forEach(opt => opt.classList.remove('selected'));
+    option.classList.add('selected');
+    
+    // Close dropdown
+    customSelect.classList.remove('active');
+    
+    // Clear error if present
+    const formGroup = customSelect.closest('.form-group');
+    if (formGroup) {
+        formGroup.classList.remove('error');
     }
+}
 
-    // Run initialization when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+function closeAllSelects() {
+    document.querySelectorAll('.custom-select').forEach(select => {
+        select.classList.remove('active');
+    });
+    document.querySelectorAll('.multi-select').forEach(select => {
+        select.classList.remove('active');
+    });
+}
+
+// ============================================
+// Multi-Select Functionality
+// ============================================
+function initializeMultiSelect(fieldName, tagsId, optionsId) {
+    const multiSelect = document.querySelector(`[data-field="${fieldName}"]`);
+    if (!multiSelect) return;
+    
+    const input = multiSelect.querySelector('.multi-input');
+    const tagsContainer = document.getElementById(tagsId);
+    const optionsContainer = document.getElementById(optionsId);
+    
+    // Show dropdown on input focus
+    input.addEventListener('focus', () => {
+        multiSelect.classList.add('active');
+        updateMultiSelectOptions(fieldName, optionsContainer, input.value);
+    });
+    
+    // Search functionality
+    input.addEventListener('input', (e) => {
+        updateMultiSelectOptions(fieldName, optionsContainer, e.target.value);
+    });
+    
+    // Prevent closing when clicking inside
+    multiSelect.querySelector('.multi-select-input').addEventListener('click', (e) => {
+        e.stopPropagation();
+        input.focus();
+    });
+    
+    multiSelect.querySelector('.multi-select-dropdown').addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+}
+
+function updateMultiSelectOptions(fieldName, optionsContainer, searchTerm) {
+    let data = [];
+    let valueKey = '';
+    let selectedArray = [];
+    
+    // Determine which dataset to use
+    if (fieldName === 'preferredCities') {
+        data = citiesData;
+        valueKey = 'capital';
+        selectedArray = selectedPreferredCities;
+    } else if (fieldName === 'preferredPincodes') {
+        data = pincodesData;
+        valueKey = 'pincode';
+        selectedArray = selectedPreferredPincodes;
+    } else if (fieldName === 'languagesKnown') {
+        data = languagesData;
+        valueKey = 'name';
+        selectedArray = selectedLanguages;
+    }
+    
+    // Filter data based on search
+    const filteredData = data.filter(item => 
+        item[valueKey].toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    
+    // Clear and populate options
+    optionsContainer.innerHTML = '';
+    
+    if (filteredData.length === 0) {
+        optionsContainer.innerHTML = '<div class="multi-option" style="cursor: default; color: var(--gray-400);">No results found</div>';
+        return;
+    }
+    
+    filteredData.slice(0, 100).forEach(item => {
+        const option = document.createElement('div');
+        option.className = 'multi-option';
+        option.textContent = item[valueKey];
+        option.dataset.value = item[valueKey];
+        
+        // Check if already selected
+        if (selectedArray.includes(item[valueKey])) {
+            option.classList.add('selected');
+        }
+        
+        // Add click handler
+        option.addEventListener('click', () => {
+            toggleMultiSelectOption(fieldName, item[valueKey]);
+        });
+        
+        optionsContainer.appendChild(option);
+    });
+}
+
+function toggleMultiSelectOption(fieldName, value) {
+    let selectedArray = [];
+    let tagsId = '';
+    
+    if (fieldName === 'preferredCities') {
+        selectedArray = selectedPreferredCities;
+        tagsId = 'preferredCitiesTags';
+    } else if (fieldName === 'preferredPincodes') {
+        selectedArray = selectedPreferredPincodes;
+        tagsId = 'preferredPincodesTags';
+    } else if (fieldName === 'languagesKnown') {
+        selectedArray = selectedLanguages;
+        tagsId = 'languagesKnownTags';
+    }
+    
+    const index = selectedArray.indexOf(value);
+    
+    if (index > -1) {
+        // Remove from selection
+        selectedArray.splice(index, 1);
     } else {
-        init();
+        // Add to selection
+        selectedArray.push(value);
     }
+    
+    // Update global arrays
+    if (fieldName === 'preferredCities') selectedPreferredCities = selectedArray;
+    else if (fieldName === 'preferredPincodes') selectedPreferredPincodes = selectedArray;
+    else if (fieldName === 'languagesKnown') selectedLanguages = selectedArray;
+    
+    // Update UI
+    renderSelectedTags(tagsId, selectedArray, fieldName);
+    
+    // Update option state
+    const multiSelect = document.querySelector(`[data-field="${fieldName}"]`);
+    const optionsContainer = multiSelect.querySelector('.multi-options');
+    updateMultiSelectOptions(fieldName, optionsContainer, '');
+}
 
-})();
+function renderSelectedTags(tagsId, selectedArray, fieldName) {
+    const container = document.getElementById(tagsId);
+    container.innerHTML = '';
+    
+    selectedArray.forEach(value => {
+        const tag = document.createElement('div');
+        tag.className = 'tag';
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = value;
+        
+        const removeBtn = document.createElement('span');
+        removeBtn.className = 'tag-remove';
+        removeBtn.textContent = '×';
+        removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMultiSelectOption(fieldName, value);
+        });
+        
+        tag.appendChild(textSpan);
+        tag.appendChild(removeBtn);
+        container.appendChild(tag);
+    });
+}
+
+// ============================================
+// Outside Click Handler
+// ============================================
+function handleOutsideClick(e) {
+    if (!e.target.closest('.custom-select') && !e.target.closest('.multi-select')) {
+        closeAllSelects();
+    }
+}
+
+// ============================================
+// Form Validation
+// ============================================
+function validateForm(form) {
+    let isValid = true;
+    const formGroups = form.querySelectorAll('.form-group');
+    
+    formGroups.forEach(group => {
+        const input = group.querySelector('input[required], select[required], input[type="hidden"][required]');
+        
+        if (input) {
+            // Check if it's a hidden input (for custom selects)
+            if (input.type === 'hidden') {
+                if (!input.value) {
+                    group.classList.add('error');
+                    isValid = false;
+                } else {
+                    group.classList.remove('error');
+                }
+            }
+            // Regular input validation
+            else if (!input.value || (input.type === 'tel' && !input.checkValidity()) || 
+                     (input.type === 'text' && input.pattern && !input.checkValidity())) {
+                group.classList.add('error');
+                isValid = false;
+            } else {
+                group.classList.remove('error');
+            }
+        }
+        
+        // Radio button validation
+        const radioInputs = group.querySelectorAll('input[type="radio"][required]');
+        if (radioInputs.length > 0) {
+            const checked = Array.from(radioInputs).some(radio => radio.checked);
+            if (!checked) {
+                group.classList.add('error');
+                isValid = false;
+            } else {
+                group.classList.remove('error');
+            }
+        }
+    });
+    
+    return isValid;
+}
+
+// ============================================
+// Form Submission
+// ============================================
+function handleSubmit(e) {
+    e.preventDefault();
+    console.log('📝 Form submitted');
+    
+    const form = e.target;
+    
+    // Validate form
+    if (!validateForm(form)) {
+        console.warn('⚠️ Form validation failed');
+        
+        // Scroll to first error
+        const firstError = form.querySelector('.form-group.error');
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+    }
+    
+    // Collect form data
+    const formData = {
+        fullName: document.getElementById('fullName').value,
+        contactNumber: document.getElementById('contactNumber').value,
+        addressLine1: document.getElementById('addressLine1').value,
+        addressLine2: document.getElementById('addressLine2').value,
+        city: document.getElementById('city').value,
+        state: document.getElementById('state').value,
+        postalCode: document.getElementById('postalCode').value,
+        dateOfBirth: document.getElementById('dateOfBirth').value,
+        gender: document.querySelector('input[name="gender"]:checked').value,
+        preferredCities: selectedPreferredCities,
+        preferredPincodes: selectedPreferredPincodes,
+        languagesKnown: selectedLanguages,
+        status: document.getElementById('status').value,
+        onboardingDate: document.getElementById('onboardingDate').value,
+        userType: document.getElementById('userType').value
+    };
+    
+    console.log('📋 Form Data:', formData);
+    
+    // Show success modal
+    showModal();
+    
+    console.log('✅ Registration completed successfully!');
+    
+    // Reset form after modal is shown
+    setTimeout(() => {
+        resetForm(form);
+    }, 1000);
+}
+
+// ============================================
+// Modal Functions
+// ============================================
+function showModal() {
+    const modal = document.getElementById('successModal');
+    modal.classList.add('show');
+}
+
+function closeModal() {
+    const modal = document.getElementById('successModal');
+    modal.classList.remove('show');
+}
+
+// ============================================
+// Reset Form
+// ============================================
+function resetForm(form) {
+    form.reset();
+    
+    // Clear custom select displays
+    document.querySelectorAll('.select-value').forEach(value => {
+        if (!value.textContent.startsWith('Select')) {
+            value.textContent = value.textContent.includes('City') ? 'Select Capital City' : 
+                               value.textContent.includes('State') ? 'Select State' :
+                               value.textContent.includes('Status') ? 'Select Status' :
+                               'Select Type';
+            value.classList.add('placeholder');
+        }
+    });
+    
+    // Clear hidden inputs
+    document.querySelectorAll('input[type="hidden"]').forEach(input => {
+        if (input.id !== 'onboardingDate' && input.id !== 'dateOfBirth') {
+            input.value = '';
+        }
+    });
+    
+    // Clear multi-select arrays
+    selectedPreferredCities = [];
+    selectedPreferredPincodes = [];
+    selectedLanguages = [];
+    
+    // Clear tag displays
+    document.getElementById('preferredCitiesTags').innerHTML = '';
+    document.getElementById('preferredPincodesTags').innerHTML = '';
+    document.getElementById('languagesKnownTags').innerHTML = '';
+    
+    // Clear multi-select inputs
+    document.querySelectorAll('.multi-input').forEach(input => {
+        input.value = '';
+    });
+    
+    // Remove error states
+    document.querySelectorAll('.form-group.error').forEach(group => {
+        group.classList.remove('error');
+    });
+    
+    // Reset onboarding date to today
+    document.getElementById('onboardingDate').valueAsDate = new Date();
+    
+    console.log('🔄 Form reset');
+}
