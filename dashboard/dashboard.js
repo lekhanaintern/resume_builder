@@ -126,10 +126,11 @@ function handleFileUpload(event) {
             
             console.log('✅ File loaded:', allUsers.length, 'users');
             
+            // Hide upload section and show dashboard content
             document.getElementById('uploadSection').style.display = 'none';
-            loadingScreen.classList.add('hide');
+            document.getElementById('dashboardContent').style.display = 'block';
             
-            document.getElementById('overviewPage').style.display = 'block';
+            loadingScreen.classList.add('hide');
             
             renderDashboard();
             
