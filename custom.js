@@ -950,3 +950,118 @@ document.addEventListener("input", function (e) {
     e.target.style.height = e.target.scrollHeight + "px";
   }
 });
+// ==================== DATABASE API INTEGRATION ====================
+const API_URL = 'http://localhost:5000/api';
+
+// Function to save resume to MSSQL database
+async function saveResumeToDatabase() {
+    try {
+        console.log('💾 Saving resume to MSSQL database...');
+        
+        // Collect all form data
+        const resumeData = {
+            name: document.getElementById('name').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            dob: document.getElementById('dob').value,
+            location: document.getElementById('location').value.trim(),
+            linkedin: document.getElementById('linkedin').value.trim(),
+            github: document.getElementById('github').value.trim(),
+            objective: document.getElementById('objective').value.trim(),
+            declaration: document.getElementById('declaration').value.trim(),
+            
+            // Collect experience
+            experience: collectList("#experienceContainer .experience-entry", (div) => {
+                const company = div.querySelector(".company").value.trim();
+                const jobRole = div.querySelector(".jobRole").value.trim();
+                const startDate = div.querySelector(".startDate").value;
+                const endDate = div.querySelector(".endDate").value;
+                
+                if (!company && !jobRole) return null;
+                return { company, jobRole, startDate, endDate };
+            }),
+            
+            // Collect education
+            education: collectList("#educationContainer .education-entry", (div) => {
+                const college = div.querySelector(".college").value.trim();
+                const university = div.querySelector(".university").value.trim();
+                const course = div.querySelector(".course").value.trim();
+                const year = div.querySelector(".year").value.trim();
+                const cgpa = div.querySelector(".cgpa").value.trim();
+                
+                if (!college && !university) return null;
+                return { college, university, course, year, cgpa };
+            }),
+            
+            // Collect projects
+            projects: collectList("#projectsContainer .project-entry", (div) => {
+                const title = div.querySelector(".projectTitle").value.trim();
+                const description = div.querySelector(".projectDesc").value.trim();
+                const link = div.querySelector(".projectLink").value.trim();
+                const company = div.querySelector(".projectCompany").value.trim();
+                
+                if (!title) return null;
+                return { title, description, link, company };
+            }),
+            
+            // Collect skills
+            personalSkills: getSkills("personalSkills"),
+            professionalSkills: getSkills("professionalSkills"),
+            technicalSkills: getSkills("technicalSkills"),
+            
+            // Collect hobbies
+            hobbies: collectList("#hobbiesContainer .hobby-entry", (div) => {
+                const value = div.querySelector(".hobbyItem").value.trim();
+                return value || null;
+            }),
+            
+            // Collect certifications
+            certifications: collectList("#certificationsContainer .cert-entry", (div) => {
+                const value = div.querySelector(".certItem").value.trim();
+                return value || null;
+            })
+        };
+        
+        console.log('📤 Sending data to MSSQL backend...');
+        
+        // Send to backend
+        const response = await fetch(`${API_URL}/save-resume`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(resumeData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert(`✅ SUCCESS!\n\nYour resume has been saved to MSSQL database!\n\nResume ID: ${result.resume_id}\n\nYou can now download it as PDF.`);
+            console.log('✅ Resume saved with ID:', result.resume_id);
+            return result.resume_id;
+        } else {
+            alert(`❌ Error saving resume:\n\n${result.error}\n\nCheck the backend console for details.`);
+            console.error('Error:', result.error);
+            return null;
+        }
+        
+    } catch (error) {
+        console.error('❌ Error:', error);
+        alert('❌ Failed to connect to database!\n\nMake sure:\n1. Backend server is running (python backend.py)\n2. SQL Server is running\n3. Check backend terminal for errors');
+        return null;
+    }
+}
+
+// Modify the existing handlePreview function
+const originalHandlePreview = handlePreview;
+handlePreview = async function() {
+    // First do the original preview
+    originalHandlePreview();
+    
+    // Check if preview was successful
+    const preview = document.getElementById("resumePreview");
+    if (preview && !preview.innerHTML.includes("Fill the form")) {
+        // Save to database
+        await saveResumeToDatabase();
+    }
+};

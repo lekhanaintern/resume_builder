@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Dashboard - Admin Panel</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Custom Dashboard Styles -->
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --secondary: #6c757d;
+            --success: #198754;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #0dcaf0;
+            --dark: #212529;
+            --light: #f8f9fa;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dashboard-container {
+            padding: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-header h1 {
+            color: var(--dark);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .stat-card p {
+            margin: 5px 0 0 0;
+            color: var(--secondary);
+            font-size: 0.95rem;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            opacity: 0.2;
+            float: right;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .chart-container h3 {
+            color: var(--dark);
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 1.25rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        /* User Cards Section */
+        .users-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            color: var(--dark);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            border-radius: 10px;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+            outline: none;
+        }
+
+        /* Scrollable Cards Container */
+        .cards-container {
+            max-height: 800px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .cards-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .cards-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .cards-container::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .cards-container::-webkit-scrollbar-thumb:hover {
+            background: #0b5ed7;
+        }
+
+        /* Cards Grid - 3 per row */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        /* User Card - Horizontal Compact Design */
+        .user-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .user-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .user-card-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .user-header-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-title {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            margin-top: 3px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            align-self: flex-start;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-draft {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .user-details {
+            flex: 1;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            color: var(--secondary);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .detail-item i {
+            margin-right: 8px;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .detail-item span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 15px;
+            padding: 10px 0;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--secondary);
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #0aa2c0;
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #b02a37;
+            transform: translateY(-2px);
+        }
+
+        .btn-create-new {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-create-new:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 5rem;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 900px;
+            margin: 50px auto;
+            border-radius: 15px;
+            padding: 40px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--secondary);
+            border: none;
+            background: none;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .modal-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .modal-title h2 {
+            color: var(--dark);
+            margin: 0;
+            font-size: 1.75rem;
+        }
+
+        .modal-title p {
+            color: var(--secondary);
+            margin: 5px 0 0 0;
+        }
+
+        .detail-section {
+            margin-bottom: 25px;
+        }
+
+        .detail-section h4 {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 1.1rem;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .detail-row {
+            padding: 10px 0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            color: var(--secondary);
+            font-size: 0.95rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin: 5px 5px 5px 0;
+        }
+
+        .badge-personal {
+            background: #e7f3ff;
+            color: #004085;
+        }
+
+        .badge-professional {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-technical {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .experience-item, .education-item, .project-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .experience-item h5, .education-item h5, .project-item h5 {
+            color: var(--dark);
+            margin: 0 0 5px 0;
+            font-size: 1rem;
+        }
+
+        .experience-item p, .education-item p, .project-item p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 1400px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .user-card-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1>📊 Resume Dashboard</h1>
+                    <p class="mb-0 text-muted">Manage all your resumes in one place</p>
+                </div>
+                <button class="btn-create-new" onclick="window.location.href='index.html'">
+                    ➕ Create New Resume
+                </button>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-container" id="statsContainer">
+            <div class="stat-card">
+                <span class="stat-icon">📄</span>
+                <h3 id="totalResumes">0</h3>
+                <p>Total Resumes</p>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">✅</span>
+                <h3 id="activeResumes">0</h3>
+                <p>Active Resumes</p>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">👁️</span>
+                <h3 id="totalViews">0</h3>
+                <p>Total Views</p>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">⬇️</span>
+                <h3 id="totalDownloads">0</h3>
+                <p>Total Downloads</p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <!-- Location Distribution Chart -->
+            <div class="chart-container">
+                <h3>📍 Users by Location</h3>
+                <div class="chart-wrapper">
+                    <canvas id="locationChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Status Distribution Chart -->
+            <div class="chart-container">
+                <h3>📊 Resume Status Distribution</h3>
+                <div class="chart-wrapper">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Section -->
+        <div class="users-section">
+            <div class="section-header">
+                <h3>👥 All Users</h3>
+                <span class="text-muted" id="userCount">0 users</span>
+            </div>
+
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    id="searchInput" 
+                    placeholder="🔍 Search users by name, email, location, or phone..."
+                    onkeyup="filterUsers()"
+                >
+            </div>
+
+            <div class="cards-container" id="usersContainer">
+                <!-- Loading spinner -->
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p class="mt-3 text-muted">Loading users...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Detail Modal -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div id="userModalContent">
+                <!-- Content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="js/bootstrap.bundle.min.js"></script>
+
+    <!-- Dashboard JavaScript -->
+    <script>
+        // API Configuration
+        const API_URL = 'http://localhost:5000/api';
+        let allResumes = [];
+        let locationChart = null;
+        let statusChart = null;
+
+        // Load resumes when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            loadResumes();
+        });
+
+        // Load all resumes from API
+        async function loadResumes() {
+            try {
+                console.log('📥 Fetching resumes from API...');
+                
+                const response = await fetch(`${API_URL}/get-resumes`);
+                const result = await response.json();
+
+                if (result.success) {
+                    allResumes = result.resumes;
+                    console.log(`✅ Loaded ${result.count} resumes`);
+                    
+                    // Update statistics
+                    updateStatistics(allResumes);
+                    
+                    // Create charts
+                    createCharts(allResumes);
+                    
+                    // Display user cards
+                    displayUsers(allResumes);
+                } else {
+                    showError('Failed to load resumes: ' + result.error);
+                }
+            } catch (error) {
+                console.error('❌ Error loading resumes:', error);
+                showError('Failed to connect to server. Make sure backend is running on http://localhost:5000');
+            }
+        }
+
+        // Update dashboard statistics
+        function updateStatistics(resumes) {
+            const totalResumes = resumes.length;
+            const activeResumes = resumes.filter(r => r.status === 'Active').length;
+            const totalViews = resumes.reduce((sum, r) => sum + (r.visitor_count || 0), 0);
+            const totalDownloads = resumes.reduce((sum, r) => sum + (r.download_count || 0), 0);
+
+            document.getElementById('totalResumes').textContent = totalResumes;
+            document.getElementById('activeResumes').textContent = activeResumes;
+            document.getElementById('totalViews').textContent = totalViews;
+            document.getElementById('totalDownloads').textContent = totalDownloads;
+        }
+
+        // Create charts
+        function createCharts(resumes) {
+            createLocationChart(resumes);
+            createStatusChart(resumes);
+        }
+
+        // Create Location Distribution Chart
+        function createLocationChart(resumes) {
+            // Count users by location
+            const locationCounts = {};
+            resumes.forEach(resume => {
+                const location = resume.location || 'Unknown';
+                locationCounts[location] = (locationCounts[location] || 0) + 1;
+            });
+
+            // Sort by count and take top 10
+            const sortedLocations = Object.entries(locationCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            const labels = sortedLocations.map(item => item[0]);
+            const data = sortedLocations.map(item => item[1]);
+
+            // Destroy existing chart if it exists
+            if (locationChart) {
+                locationChart.destroy();
+            }
+
+            const ctx = document.getElementById('locationChart').getContext('2d');
+            locationChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#667eea',
+                            '#764ba2',
+                            '#f093fb',
+                            '#4facfe',
+                            '#00f2fe',
+                            '#43e97b',
+                            '#38f9d7',
+                            '#fa709a',
+                            '#fee140',
+                            '#30cfd0'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 15,
+                                padding: 10,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return `${context.label}: ${context.parsed} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Create Status Distribution Chart
+        function createStatusChart(resumes) {
+            // Count users by status
+            const statusCounts = {
+                'Active': 0,
+                'Draft': 0,
+                'Inactive': 0
+            };
+
+            resumes.forEach(resume => {
+                const status = resume.status || 'Unknown';
+                if (statusCounts.hasOwnProperty(status)) {
+                    statusCounts[status]++;
+                } else {
+                    statusCounts[status] = 1;
+                }
+            });
+
+            const labels = Object.keys(statusCounts);
+            const data = Object.values(statusCounts);
+
+            // Destroy existing chart if it exists
+            if (statusChart) {
+                statusChart.destroy();
+            }
+
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#198754',
+                            '#ffc107',
+                            '#dc3545'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 20,
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return `${context.label}: ${context.parsed} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Display user cards in 3-column grid
+        function displayUsers(resumes) {
+            const container = document.getElementById('usersContainer');
+            const userCount = document.getElementById('userCount');
+
+            userCount.textContent = `${resumes.length} user${resumes.length !== 1 ? 's' : ''}`;
+
+            if (resumes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>No users found</h3>
+                        <p class="text-muted">Create your first resume to get started!</p>
+                        <button class="btn-create-new mt-3" onclick="window.location.href='index.html'">
+                            ➕ Create New Resume
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="cards-grid">';
+            
+            resumes.forEach(resume => {
+                const statusClass = resume.status === 'Active' ? 'status-active' : 'status-draft';
+                const createdDate = new Date(resume.created_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                // Get initials for avatar
+                const initials = (resume.name || 'U').split(' ')
+                    .map(word => word[0])
+                    .join('')
+                    .toUpperCase()
+                    .substring(0, 2);
+
+                html += `
+                    <div class="user-card" data-resume-id="${resume.id}">
+                        <div class="user-card-header">
+                            <div class="user-avatar">${initials}</div>
+                            <div class="user-header-info">
+                                <h3 class="user-name" title="${resume.name || 'Untitled'}">${resume.name || 'Untitled'}</h3>
+                                <div class="user-title" title="${resume.title || 'Resume'}">${resume.title || 'Resume'}</div>
+                            </div>
+                            <span class="user-status ${statusClass}">${resume.status}</span>
+                        </div>
+
+                        <div class="user-details">
+                            <div class="detail-item">
+                                <i>📧</i>
+                                <span title="${resume.email || 'N/A'}">${resume.email || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i>📱</i>
+                                <span>${resume.phone || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i>📍</i>
+                                <span title="${resume.location || 'N/A'}">${resume.location || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i>📅</i>
+                                <span>${createdDate}</span>
+                            </div>
+                        </div>
+
+                        <div class="user-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">${resume.visitor_count || 0}</div>
+                                <div class="stat-label">Views</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${resume.download_count || 0}</div>
+                                <div class="stat-label">Downloads</div>
+                            </div>
+                        </div>
+
+                        <div class="user-actions">
+                            <button class="btn-action btn-view" onclick="viewUser(${resume.id})">
+                                👁️ View
+                            </button>
+                            <button class="btn-action btn-delete" onclick="confirmDelete(${resume.id}, '${(resume.name || '').replace(/'/g, "\\'")}')">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Filter users based on search input
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filtered = allResumes.filter(resume => {
+                return (
+                    (resume.name && resume.name.toLowerCase().includes(searchTerm)) ||
+                    (resume.email && resume.email.toLowerCase().includes(searchTerm)) ||
+                    (resume.location && resume.location.toLowerCase().includes(searchTerm)) ||
+                    (resume.phone && resume.phone.toLowerCase().includes(searchTerm)) ||
+                    (resume.title && resume.title.toLowerCase().includes(searchTerm))
+                );
+            });
+
+            displayUsers(filtered);
+        }
+
+        // View user details - Fetch full details from API
+        async function viewUser(resumeId) {
+            try {
+                console.log(`📥 Fetching full details for resume ${resumeId}...`);
+                
+                // Show loading in modal
+                const modal = document.getElementById('userModal');
+                const content = document.getElementById('userModalContent');
+                
+                content.innerHTML = `
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p class="mt-3 text-muted">Loading details...</p>
+                    </div>
+                `;
+                modal.style.display = 'block';
+
+                // First get basic resume info from our cached data
+                const basicResume = allResumes.find(r => r.id === resumeId);
+                
+                // Try to fetch detailed information (if endpoint exists)
+                let detailedResume = null;
+                try {
+                    const response = await fetch(`${API_URL}/get-resume/${resumeId}`);
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success) {
+                            detailedResume = result.resume;
+                        }
+                    }
+                } catch (err) {
+                    console.log('Detailed endpoint not available, using basic info');
+                }
+
+                // Use detailed info if available, otherwise use basic
+                const resume = detailedResume || basicResume;
+                
+                displayUserModal(resume);
+
+            } catch (error) {
+                console.error('Error loading user details:', error);
+                alert('Failed to load user details!');
+                closeModal();
+            }
+        }
+
+        // Display user details in modal
+        function displayUserModal(resume) {
+            const content = document.getElementById('userModalContent');
+            
+            const initials = (resume.name || 'U').split(' ')
+                .map(word => word[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+
+            const createdDate = new Date(resume.created_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            let html = `
+                <div class="modal-header">
+                    <div class="modal-avatar">${initials}</div>
+                    <div class="modal-title">
+                        <h2>${resume.name || 'Untitled Resume'}</h2>
+                        <p>${resume.title || 'Resume'}</p>
+                    </div>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="detail-section">
+                    <h4>👤 Personal Information</h4>
+                    <div class="detail-grid">
+                        <div class="detail-row">
+                            <div class="detail-label">Full Name</div>
+                            <div class="detail-value">${resume.name || 'N/A'}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value">${resume.email || 'N/A'}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Phone</div>
+                            <div class="detail-value">${resume.phone || 'N/A'}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Location</div>
+                            <div class="detail-value">${resume.location || 'N/A'}</div>
+                        </div>
+                        ${resume.dob ? `
+                        <div class="detail-row">
+                            <div class="detail-label">Date of Birth</div>
+                            <div class="detail-value">${resume.dob}</div>
+                        </div>
+                        ` : ''}
+                        <div class="detail-row">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value">${resume.status || 'N/A'}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Created Date</div>
+                            <div class="detail-value">${createdDate}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Total Views</div>
+                            <div class="detail-value">${resume.visitor_count || 0}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Total Downloads</div>
+                            <div class="detail-value">${resume.download_count || 0}</div>
+                        </div>
+                        ${resume.linkedin ? `
+                        <div class="detail-row">
+                            <div class="detail-label">LinkedIn</div>
+                            <div class="detail-value"><a href="${resume.linkedin}" target="_blank">${resume.linkedin}</a></div>
+                        </div>
+                        ` : ''}
+                        ${resume.github ? `
+                        <div class="detail-row">
+                            <div class="detail-label">GitHub</div>
+                            <div class="detail-value"><a href="${resume.github}" target="_blank">${resume.github}</a></div>
+                        </div>
+                        ` : ''}
+                    </div>
+                    ${resume.objective ? `
+                    <div class="detail-row" style="margin-top: 15px;">
+                        <div class="detail-label">Career Objective</div>
+                        <div class="detail-value">${resume.objective}</div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+
+            // Work Experience Section
+            if (resume.experience && resume.experience.length > 0) {
+                html += `
+                    <div class="detail-section">
+                        <h4>💼 Work Experience</h4>
+                        ${resume.experience.map(exp => `
+                            <div class="experience-item">
+                                <h5>${exp.jobRole || 'Position'} at ${exp.company || 'Company'}</h5>
+                                <p class="text-muted">
+                                    ${exp.startDate || 'N/A'} to ${exp.endDate || 'Present'}
+                                    ${exp.experience ? `<br><small>${exp.experience}</small>` : ''}
+                                </p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Education Section
+            if (resume.education && resume.education.length > 0) {
+                html += `
+                    <div class="detail-section">
+                        <h4>🎓 Education</h4>
+                        ${resume.education.map(edu => `
+                            <div class="education-item">
+                                <h5>${edu.course || 'Course'}</h5>
+                                <p>${edu.college || 'College'}, ${edu.university || 'University'}</p>
+                                <p class="text-muted">
+                                    Year: ${edu.year || 'N/A'}
+                                    ${edu.cgpa ? `| CGPA: ${edu.cgpa}` : ''}
+                                </p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Projects Section
+            if (resume.projects && resume.projects.length > 0) {
+                html += `
+                    <div class="detail-section">
+                        <h4>🚀 Projects</h4>
+                        ${resume.projects.map(proj => `
+                            <div class="project-item">
+                                <h5>${proj.title || 'Project'}</h5>
+                                ${proj.company ? `<p><strong>Organization:</strong> ${proj.company}</p>` : ''}
+                                ${proj.description ? `<p>${proj.description}</p>` : ''}
+                                ${proj.link ? `<p><a href="${proj.link}" target="_blank">View Project →</a></p>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Skills Section
+            if (resume.skills) {
+                html += `<div class="detail-section"><h4>💡 Skills</h4>`;
+                
+                if (resume.skills.personal && resume.skills.personal.length > 0) {
+                    html += `
+                        <div style="margin-bottom: 15px;">
+                            <strong>Personal Skills:</strong><br>
+                            ${resume.skills.personal.map(skill => `<span class="badge badge-personal">${skill}</span>`).join('')}
+                        </div>
+                    `;
+                }
+                
+                if (resume.skills.professional && resume.skills.professional.length > 0) {
+                    html += `
+                        <div style="margin-bottom: 15px;">
+                            <strong>Professional Skills:</strong><br>
+                            ${resume.skills.professional.map(skill => `<span class="badge badge-professional">${skill}</span>`).join('')}
+                        </div>
+                    `;
+                }
+                
+                if (resume.skills.technical && resume.skills.technical.length > 0) {
+                    html += `
+                        <div style="margin-bottom: 15px;">
+                            <strong>Technical Skills:</strong><br>
+                            ${resume.skills.technical.map(skill => `<span class="badge badge-technical">${skill}</span>`).join('')}
+                        </div>
+                    `;
+                }
+                
+                html += `</div>`;
+            }
+
+            // Hobbies Section
+            if (resume.hobbies && resume.hobbies.length > 0) {
+                html += `
+                    <div class="detail-section">
+                        <h4>🎨 Hobbies & Interests</h4>
+                        <p>${resume.hobbies.join(', ')}</p>
+                    </div>
+                `;
+            }
+
+            // Certifications Section
+            if (resume.certifications && resume.certifications.length > 0) {
+                html += `
+                    <div class="detail-section">
+                        <h4>📜 Certifications</h4>
+                        <ul>
+                            ${resume.certifications.map(cert => `<li>${cert}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = html;
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('userModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Confirm delete
+        function confirmDelete(resumeId, resumeName) {
+            if (confirm(`Are you sure you want to delete the resume for "${resumeName}"?\n\nThis action cannot be undone!`)) {
+                deleteResume(resumeId);
+            }
+        }
+
+        // Delete resume
+        async function deleteResume(resumeId) {
+            try {
+                console.log(`🗑️ Deleting resume ${resumeId}...`);
+                
+                const response = await fetch(`${API_URL}/delete-resume/${resumeId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ Resume deleted successfully!');
+                    loadResumes(); // Reload the list
+                } else {
+                    alert('❌ Failed to delete resume: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error deleting resume:', error);
+                alert('❌ Failed to delete resume!');
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const container = document.getElementById('usersContainer');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">⚠️</div>
+                    <h3>Error Loading Users</h3>
+                    <p class="text-danger">${message}</p>
+                    <button class="btn-create-new mt-3" onclick="loadResumes()">
+                        🔄 Retry
+                    </button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

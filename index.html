@@ -14,10 +14,16 @@
 <body class="container py-4">
 
   <header class="app-header mb-4">
-    <h1 class="h3 mb-1">ATS Friendly Resume Builder</h1>
-    <p class="mb-0">A clean, validated, dynamic, and exportable resume builder — optimized for ATS parsing.</p>
-  </header>
-
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <h1 class="h3 mb-1">ATS Friendly Resume Builder</h1>
+      <p class="mb-0">A clean, validated, dynamic, and exportable resume builder — optimized for ATS parsing.</p>
+    </div>
+<a href="rdashboard.html" class="btn btn-dashboard">
+  📊 View Dashboard
+</a>
+  </div>
+</header>
   <form id="resumeForm" novalidate>
     <!-- Personal Information -->
     <div class="card p-3 mb-4">
@@ -265,7 +271,11 @@
   <!-- Local html2canvas -->
   <script src="js/html2canvas.min.js"></script>
 
-  <!-- Custom JS -->
-  <script src="custom.js"></script>
+<!-- Models (MUST come BEFORE custom.js) -->
+<script src="models.js"></script>
+
+<!-- Custom JS -->
+<script src="custom.js"></script>
 </body>
 </html>
+```
