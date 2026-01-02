@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Resume Builder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Additional Registration Page Styles */
+        .register-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        .register-card {
+            max-width: 600px;
+            width: 100%;
+            background: var(--card, #ffffff);
+            border-radius: 14px;
+            box-shadow: 0 10px 40px rgba(13, 110, 253, 0.2);
+            padding: 40px;
+            animation: slideUp 0.5s ease;
+            margin: 20px auto;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .register-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #0d6efd, #0dcaf0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .register-subtitle {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .form-control.is-valid {
+            border-color: #28a745;
+        }
+
+        .invalid-feedback,
+        .valid-feedback {
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+
+        .btn-register {
+            width: 100%;
+            background: linear-gradient(90deg, #0d6efd, #0dcaf0);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: block;
+            position: relative;
+            z-index: 10;
+        }
+
+        .btn-register:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4);
+        }
+
+        .btn-register:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+            margin-bottom: 0;
+            padding-bottom: 10px;
+            color: #6c757d;
+        }
+
+        .login-link a {
+            color: #0d6efd;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .password-requirements {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 5px;
+            padding-left: 5px;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.15em;
+        }
+
+        .alert {
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Input icons */
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        /* Form spacing fixes */
+        .mb-3 {
+            margin-bottom: 20px !important;
+        }
+
+        .row {
+            margin-bottom: 0;
+        }
+
+        .row > div {
+            margin-bottom: 20px;
+        }
+
+        /* Ensure everything is visible */
+        body {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        #registerForm {
+            overflow: visible;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <!-- Header -->
+            <div class="register-header">
+                <h1 class="register-title">Create Account</h1>
+                <p class="register-subtitle">Join us to build your professional resume</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertContainer"></div>
+
+            <!-- Registration Form -->
+            <form id="registerForm" novalidate>
+                <!-- Username -->
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="username" 
+                        name="username"
+                        placeholder="Choose a unique username"
+                        required
+                        minlength="3"
+                        maxlength="50"
+                        pattern="[a-zA-Z0-9_]+"
+                    >
+                    <div class="invalid-feedback">Username must be 3-50 characters (letters, numbers, underscores only)</div>
+                    <div class="valid-feedback">Username is available!</div>
+                </div>
+
+                <!-- First Name & Last Name -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="firstName" 
+                            name="firstName"
+                            placeholder="John"
+                            required
+                            minlength="2"
+                            maxlength="100"
+                        >
+                        <div class="invalid-feedback">First name is required (2-100 characters)</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="lastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="lastName" 
+                            name="lastName"
+                            placeholder="Doe"
+                            required
+                            minlength="2"
+                            maxlength="100"
+                        >
+                        <div class="invalid-feedback">Last name is required (2-100 characters)</div>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="emailID" class="form-label">Email Address <span class="text-danger">*</span></label>
+                    <input 
+                        type="email" 
+                        class="form-control" 
+                        id="emailID" 
+                        name="emailID"
+                        placeholder="john.doe@example.com"
+                        required
+                    >
+                    <div class="invalid-feedback">Please enter a valid email address</div>
+                    <div class="valid-feedback">Email is available!</div>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="mb-3">
+                    <label for="phoneNumber" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                    <input 
+                        type="tel" 
+                        class="form-control" 
+                        id="phoneNumber" 
+                        name="phoneNumber"
+                        placeholder="9876543210"
+                        required
+                        pattern="[0-9]{10}"
+                        maxlength="10"
+                    >
+                    <div class="invalid-feedback">Phone number must be exactly 10 digits</div>
+                    <small class="password-requirements">Enter 10 digit mobile number (without country code)</small>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                    <input 
+                        type="password" 
+                        class="form-control" 
+                        id="password" 
+                        name="password"
+                        placeholder="Create a strong password"
+                        required
+                        minlength="6"
+                    >
+                    <div class="invalid-feedback">Password must be at least 6 characters long</div>
+                    <small class="password-requirements">Minimum 6 characters required</small>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                    <input 
+                        type="password" 
+                        class="form-control" 
+                        id="confirmPassword" 
+                        name="confirmPassword"
+                        placeholder="Re-enter your password"
+                        required
+                    >
+                    <div class="invalid-feedback">Passwords do not match</div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-register" id="submitBtn">
+                    <span id="btnText">Create Account</span>
+                    <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </button>
+            </form>
+
+            <!-- Login Link -->
+            <div class="login-link">
+                Already have an account? <a href="login.html">Login here</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Registration JavaScript -->
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const API_BASE_URL = 'http://localhost:5000/api';
+
+        // ============================================
+        // DOM ELEMENTS
+        // ============================================
+        const form = document.getElementById('registerForm');
+        const alertContainer = document.getElementById('alertContainer');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+
+        // Form inputs
+        const usernameInput = document.getElementById('username');
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const emailInput = document.getElementById('emailID');
+        const phoneInput = document.getElementById('phoneNumber');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        
+        function showAlert(message, type = 'danger') {
+            const alertHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <strong>${type === 'success' ? '✅' : '❌'}</strong> ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertContainer.innerHTML = alertHTML;
+            alertContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function setLoading(isLoading) {
+            submitBtn.disabled = isLoading;
+            if (isLoading) {
+                btnText.classList.add('d-none');
+                btnSpinner.classList.remove('d-none');
+            } else {
+                btnText.classList.remove('d-none');
+                btnSpinner.classList.add('d-none');
+            }
+        }
+
+        // ============================================
+        // REAL-TIME VALIDATION
+        // ============================================
+
+        // Username validation with debounce
+        let usernameTimeout;
+        usernameInput.addEventListener('input', function() {
+            clearTimeout(usernameTimeout);
+            const username = this.value.trim();
+
+            // Basic validation
+            if (username.length < 3 || !/^[a-zA-Z0-9_]+$/.test(username)) {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+                return;
+            }
+
+            // Check availability in database
+            usernameTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/check-username`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: username })
+                    });
+                    const data = await response.json();
+
+                    if (data.exists) {
+                        usernameInput.classList.remove('is-valid');
+                        usernameInput.classList.add('is-invalid');
+                        usernameInput.nextElementSibling.textContent = 'Username already taken';
+                    } else {
+                        usernameInput.classList.remove('is-invalid');
+                        usernameInput.classList.add('is-valid');
+                    }
+                } catch (error) {
+                    console.error('Username check error:', error);
+                }
+            }, 500);
+        });
+
+        // Email validation with debounce
+        let emailTimeout;
+        emailInput.addEventListener('input', function() {
+            clearTimeout(emailTimeout);
+            const email = this.value.trim();
+
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+                return;
+            }
+
+            // Check availability in database
+            emailTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/check-email`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ emailId: email })
+                    });
+                    const data = await response.json();
+
+                    if (data.exists) {
+                        emailInput.classList.remove('is-valid');
+                        emailInput.classList.add('is-invalid');
+                        emailInput.nextElementSibling.textContent = 'Email already registered';
+                    } else {
+                        emailInput.classList.remove('is-invalid');
+                        emailInput.classList.add('is-valid');
+                    }
+                } catch (error) {
+                    console.error('Email check error:', error);
+                }
+            }, 500);
+        });
+
+        // Phone number validation
+        phoneInput.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').substring(0, 10);
+            
+            if (this.value.length === 10) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+
+        // Password match validation
+        confirmPasswordInput.addEventListener('input', function() {
+            if (this.value === passwordInput.value && this.value.length >= 6) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+
+        passwordInput.addEventListener('input', function() {
+            if (confirmPasswordInput.value) {
+                confirmPasswordInput.dispatchEvent(new Event('input'));
+            }
+        });
+
+        // ============================================
+        // FORM SUBMISSION
+        // ============================================
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            alertContainer.innerHTML = '';
+
+            // Validate form
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                showAlert('Please fill in all required fields correctly');
+                return;
+            }
+
+            // Check password match
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                showAlert('Passwords do not match');
+                confirmPasswordInput.classList.add('is-invalid');
+                return;
+            }
+
+            // Prepare form data
+            const formData = {
+                username: usernameInput.value.trim(),
+                firstName: firstNameInput.value.trim(),
+                lastName: lastNameInput.value.trim(),
+                password: passwordInput.value,
+                emailId: emailInput.value.trim(),
+                phoneNumber: phoneInput.value.trim()
+            };
+
+            // Submit to API
+            setLoading(true);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('Registration successful! Redirecting to login...', 'success');
+                    
+                    // Redirect to login page after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    showAlert(data.message || 'Registration failed. Please try again.');
+                    setLoading(false);
+                }
+
+            } catch (error) {
+                console.error('Registration error:', error);
+                showAlert('Server error. Please try again later.');
+                setLoading(false);
+            }
+        });
+
+        // ============================================
+        // PREVENT FORM RESUBMISSION ON PAGE REFRESH
+        // ============================================
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+</body>
+</html>

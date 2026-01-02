@@ -11,7 +11,41 @@
   <!-- Custom styles -->
   <link rel="stylesheet" href="style.css" />
 </head>
+
+<script>
+// Add this RIGHT AFTER opening <body> tag in index.html
+(function() {
+    const user = localStorage.getItem('user');
+    if (!user) {
+        window.location.href = 'login.html';
+    } else {
+        const userData = JSON.parse(user);
+        console.log('Logged in as:', userData.username);
+    }
+})();
+</script>
+
 <body class="container py-4">
+  <script>
+       // Check if user is logged in
+       window.addEventListener('load', function() {
+           const user = localStorage.getItem('user');
+           if (!user) {
+               alert('Please login first!');
+               window.location.href = 'login.html';
+           } else {
+               const userData = JSON.parse(user);
+               console.log('Welcome, ' + userData.firstName + '!');
+               // You can display user name in your resume builder header
+           }
+       });
+
+       // Logout function
+       function logout() {
+           localStorage.removeItem('user');
+           window.location.href = 'login.html';
+       }
+   </script>
 
   <header class="app-header mb-4">
   <div class="d-flex justify-content-between align-items-center">
@@ -19,9 +53,12 @@
       <h1 class="h3 mb-1">ATS Friendly Resume Builder</h1>
       <p class="mb-0">A clean, validated, dynamic, and exportable resume builder — optimized for ATS parsing.</p>
     </div>
-<a href="rdashboard.html" class="btn btn-dashboard">
-  📊 View Dashboard
-</a>
+<button onclick="window.location.href='dashboard.html'" class="btn btn-dashboard me-2">
+    🏠 Back to Dashboard
+</button>
+<button onclick="logout()" class="btn btn-danger">
+    🚪 Logout
+</button>
   </div>
 </header>
   <form id="resumeForm" novalidate>
