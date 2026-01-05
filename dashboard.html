@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Builder - Dashboard</title>
+    <title>ResumePro | Elite Command Center</title>
     
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    
-    <!-- Chart.js for Analytics -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
         :root {
-            --primary: #0d6efd;
-            --accent: #7c3aed;
-            --bg: #f8fafc;
-            --text: #0f172a;
-            --muted: #64748b;
-            --card: #ffffff;
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --primary: #4361ee;
+            --accent: #7209b7;
+            --text-dark: #1a1c2c;
         }
 
         * {
@@ -27,849 +26,1147 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
+        body { 
+            background: radial-gradient(circle at top right, #eef2ff, #f8f9ff);
+            color: var(--text-dark);
+            font-family: 'Inter', sans-serif;
             min-height: 100vh;
-            color: var(--text);
+            margin: 0;
         }
 
-        /* ===== PROFESSIONAL HEADER/NAVBAR ===== */
-        .top-navbar {
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
+        /* Enhanced Navigation Bar */
+        .app-header {
+            background: linear-gradient(135deg, #5b71f5 0%, #4c63e8 100%);
             padding: 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 1050;
         }
 
-        .navbar-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 30px;
+        .navbar-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 70px;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 40px;
         }
 
-        .navbar-brand {
+        .navbar-left {
             display: flex;
             align-items: center;
-            gap: 12px;
-            color: white;
-            font-size: 1.4rem;
-            font-weight: 700;
-            text-decoration: none;
+            gap: 40px;
         }
 
-        .brand-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .brand {
             font-size: 1.5rem;
-        }
-
-        .navbar-menu {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .navbar-menu li a {
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .navbar-menu li a:hover,
-        .navbar-menu li a.active {
-            background: rgba(255, 255, 255, 0.2);
+            font-weight: 800;
             color: white;
+            padding: 20px 0;
         }
 
-        .navbar-user {
+        .brand-light {
+            opacity: 0.6;
+        }
+
+        /* Enhanced Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+        }
+
+        .nav-tab {
+            padding: 20px 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-tab i {
+            font-size: 1rem;
+        }
+
+        .nav-tab:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-tab.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: white;
+        }
+
+        /* Right Section */
+        .navbar-right {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        .user-info-nav {
-            text-align: right;
-            color: white;
-        }
-
-        .user-info-nav .user-name {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .user-info-nav .user-email {
-            font-size: 0.8rem;
-            opacity: 0.9;
-            margin: 0;
-        }
-
-        .user-avatar-nav {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            display: flex;
+        .back-button {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 1rem;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-        }
-
-        .btn-logout {
+            gap: 8px;
+            padding: 10px 20px;
             background: rgba(255, 255, 255, 0.2);
             color: white;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .btn-logout:hover {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.6);
-            transform: translateY(-2px);
-        }
-
-        .btn-back-home {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 12px rgba(86, 171, 47, 0.3);
-        }
-
-        .btn-back-home:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(86, 171, 47, 0.5);
-        }
-
-        /* ===== MAIN CONTENT ===== */
-        .main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 30px;
-        }
-
-        /* ===== PAGE HEADER ===== */
-        .page-header {
-            margin-bottom: 35px;
-        }
-
-        .page-header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .page-header p {
-            color: var(--muted);
-            font-size: 1.05rem;
-            margin: 0;
-        }
-
-        /* ===== STATS CARDS ===== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 35px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 14px;
-            padding: 28px;
-            box-shadow: 0 10px 28px rgba(2, 6, 23, 0.08);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 35px rgba(2, 6, 23, 0.12);
-        }
-
-        .stat-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 18px;
-        }
-
-        .stat-icon {
-            width: 55px;
-            height: 55px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 6px 18px rgba(102, 126, 234, 0.3);
-        }
-
-        .stat-icon.green {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            box-shadow: 0 6px 18px rgba(86, 171, 47, 0.3);
-        }
-
-        .stat-icon.orange {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            box-shadow: 0 6px 18px rgba(245, 87, 108, 0.3);
-        }
-
-        .stat-icon.blue {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            box-shadow: 0 6px 18px rgba(79, 172, 254, 0.3);
-        }
-
-        .stat-label {
-            color: var(--muted);
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-value {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: var(--text);
-            line-height: 1;
-            margin-bottom: 12px;
-        }
-
-        .stat-change {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
             font-size: 0.9rem;
             font-weight: 600;
-            color: #22c55e;
-        }
-
-        .stat-change.neutral {
-            color: var(--muted);
-        }
-
-        /* ===== QUICK ACTIONS ===== */
-        .quick-actions {
-            background: white;
-            border-radius: 14px;
-            padding: 35px;
-            margin-bottom: 35px;
-            box-shadow: 0 10px 28px rgba(2, 6, 23, 0.08);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .quick-actions h3 {
-            color: var(--text);
-            font-size: 1.4rem;
-            margin-bottom: 25px;
-            font-weight: 700;
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        .action-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 28px;
-            text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
         }
 
-        .action-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: 0 12px 30px rgba(13, 110, 253, 0.2);
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
         }
 
-        .action-icon {
-            width: 65px;
-            height: 65px;
-            margin: 0 auto 18px;
-            border-radius: 14px;
+        .exit-button {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .exit-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+        }
+
+        .avatar-section {
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-            box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3);
-        }
-
-        .action-card h4 {
-            color: var(--text);
             font-size: 1.1rem;
-            margin: 12px 0 8px 0;
             font-weight: 700;
+            cursor: pointer;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
         }
 
-        .action-card p {
-            color: var(--muted);
-            font-size: 0.9rem;
-            margin: 0;
+        .user-avatar:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .dropdown-user-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .dropdown-user-email {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: #475569;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .dropdown-item:last-of-type {
+            border-radius: 0 0 12px 12px;
+            color: #ef4444;
+        }
+
+        .dropdown-item:last-of-type:hover {
+            background: #fef2f2;
+        }
+
+        .dropdown-item i {
+            width: 18px;
+        }
+
+        /* Modern Dashboard Cards */
+        .card-custom {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            padding: 24px;
+            height: 100%;
+        }
+        .card-custom:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 15px 40px rgba(67, 97, 238, 0.08); 
+        }
+
+        .stat-icon {
+            width: 48px; height: 48px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; margin-bottom: 15px;
+        }
+
+        .chart-container { 
+            height: 200px; 
+            width: 100%; 
+            position: relative; 
+        }
+
+        /* Candidate Grid */
+        .candidate-card { 
+            border-left: 5px solid var(--primary); 
+            cursor: pointer; 
+        }
+        
+        .preview-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Chrome, Edge, Safari */
+             line-clamp: 2;         /* Standard property */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 0.85rem;
+            color: #64748b;
             line-height: 1.5;
         }
 
-        /* ===== CHARTS SECTION ===== */
-        .charts-section {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-            margin-bottom: 35px;
-        }
-
-        .chart-card {
-            background: white;
-            border-radius: 14px;
-            padding: 30px;
-            box-shadow: 0 10px 28px rgba(2, 6, 23, 0.08);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .chart-card h3 {
-            color: var(--text);
-            font-size: 1.2rem;
-            margin-bottom: 25px;
-            font-weight: 700;
-        }
-
-        .chart-wrapper {
-            position: relative;
-            height: 280px;
-        }
-
-        /* ===== RECENT ACTIVITY ===== */
-        .recent-activity {
-            background: white;
-            border-radius: 14px;
-            padding: 35px;
-            box-shadow: 0 10px 28px rgba(2, 6, 23, 0.08);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .recent-activity h3 {
-            color: var(--text);
-            font-size: 1.4rem;
-            margin-bottom: 25px;
-            font-weight: 700;
-        }
-
-        .activity-item {
-            display: flex;
-            gap: 18px;
-            padding: 18px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-            transition: background 0.2s ease;
-            border: 1px solid transparent;
-        }
-
-        .activity-item:hover {
-            background: #f8fafc;
-            border-color: #e2e8f0;
-        }
-
-        .activity-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            flex-shrink: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-content h5 {
-            color: var(--text);
-            font-size: 1rem;
-            margin: 0 0 6px 0;
+        .experience-tag {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 6px;
             font-weight: 600;
         }
 
-        .activity-content p {
-            color: var(--muted);
-            font-size: 0.9rem;
-            margin: 0;
+        /* NEW: Scrollable Resumes Container */
+        .resumes-container {
+            max-height: 800px;
+            overflow-y: auto;
+            padding-right: 10px;
         }
 
-        .activity-time {
-            color: var(--muted);
+        .resumes-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .resumes-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        .resumes-container::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+
+        .resumes-container::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* NEW: Objective Preview */
+        .objective-preview {
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Chrome, Edge, Safari */
+    line-clamp: 2;         /* Standard property */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
             font-size: 0.85rem;
-            font-weight: 500;
+            color: #64748b;
+            line-height: 1.5;
+            margin-top: 8px;
         }
 
-        /* ===== MOBILE MENU TOGGLE ===== */
-        .mobile-menu-toggle {
-            display: none;
-            background: rgba(255, 255, 255, 0.2);
+        /* User Management Table */
+        .user-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .user-table thead th {
+            background: transparent;
+            color: #64748b;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 16px;
             border: none;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.3rem;
         }
 
-        /* ===== RESPONSIVE DESIGN ===== */
+        .user-table tbody tr {
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .user-table tbody tr:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.1);
+        }
+
+        .user-table tbody td {
+            padding: 16px;
+            border: none;
+            background: white;
+        }
+
+        .user-table tbody tr td:first-child {
+            border-radius: 12px 0 0 12px;
+        }
+
+        .user-table tbody tr td:last-child {
+            border-radius: 0 12px 12px 0;
+        }
+
+        /* Activity Timeline */
+        .activity-timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .activity-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), transparent);
+        }
+
+        .activity-item {
+            position: relative;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            left: -43px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid #eef2ff;
+        }
+
+        .activity-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            margin-right: 12px;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 45px;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        /* Badge Styles */
+        .badge-custom {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* Animations */
+        @keyframes slideUp { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        @keyframes fadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        }
+
+        .page-view { 
+            display: none; 
+            animation: slideUp 0.4s ease-out; 
+            padding: 40px 0; 
+        }
+
+        .page-view.active { 
+            display: block; 
+        }
+
+        /* Profile Detail */
+        .profile-hero {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white; 
+            border-radius: 24px; 
+            padding: 50px; 
+            margin-bottom: 30px;
+        }
+
+        .badge-skill {
+            background: #f0f3ff; 
+            color: var(--primary);
+            border: 1px solid #dbe4ff; 
+            padding: 6px 14px;
+            border-radius: 10px; 
+            font-weight: 600; 
+            font-size: 0.8rem;
+        }
+
+        /* Stats Card Enhanced */
+        .stat-card-large {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card-large::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        /* Quick Actions */
+        .quick-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .quick-action-btn.secondary {
+            background: #64748b;
+        }
+
+        .quick-action-btn.danger {
+            background: #ef4444;
+        }
+
+        /* Loading Spinner */
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
         @media (max-width: 1200px) {
-            .charts-section {
-                grid-template-columns: 1fr;
+            .nav-tab {
+                padding: 20px 16px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .navbar-container {
+                flex-direction: column;
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .navbar-left {
+                flex-direction: column;
+                gap: 20px;
+                width: 100%;
+            }
+
+            .nav-tabs {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .navbar-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .search-box {
+                max-width: 100%;
             }
         }
 
         @media (max-width: 768px) {
-            .navbar-content {
-                padding: 0 20px;
-            }
-
-            .navbar-menu {
-                position: fixed;
-                top: 70px;
-                left: 0;
-                right: 0;
-                background: linear-gradient(90deg, var(--primary), var(--accent));
-                flex-direction: column;
-                padding: 20px;
-                gap: 8px;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            }
-
-            .navbar-menu.active {
-                transform: translateX(0);
-            }
-
-            .navbar-menu li a {
-                width: 100%;
-                justify-content: flex-start;
-            }
-
-            .mobile-menu-toggle {
-                display: block;
-            }
-
-            .user-info-nav {
+            .nav-tab span {
                 display: none;
             }
 
-            .main-container {
-                padding: 25px 20px;
+            .nav-tab {
+                padding: 20px 12px;
             }
-
-            .page-header h1 {
-                font-size: 1.6rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ===== BUTTON STYLES ===== */
-        .btn-primary-custom {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3);
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary-custom:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(13, 110, 253, 0.4);
-            color: white;
-        }
-
-        .btn-back {
-            background: white;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            padding: 10px 25px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-back:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3);
         }
     </style>
 </head>
 <body>
-    <!-- Professional Top Navbar -->
-    <nav class="top-navbar">
-        <div class="navbar-content">
-            <a href="index.html" class="navbar-brand">
-                <div class="brand-icon">📄</div>
-                <span>Resume Pro</span>
-            </a>
 
-            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
-
-            <ul class="navbar-menu" id="navbarMenu">
-                <li><a href="dashboard.html" class="active">🏠 Dashboard</a></li>
-                <li><a href="index.html">➕ Build Resume</a></li>
-                <li><a href="admin-dashboard.html">👥 All Resumes</a></li>
-                <li><a href="#" onclick="showTemplates()">📋 Templates</a></li>
-                <li><a href="#" onclick="showAnalytics()">📊 Analytics</a></li>
-            </ul>
-
-            <div class="navbar-user">
-                <div class="user-info-nav">
-                    <p class="user-name" id="userName">User Name</p>
-                    <p class="user-email" id="userEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="91e4e2f4e3d1f4fcf0f8fdbff2fefc">[email&#160;protected]</a></p>
-                </div>
-                <div class="user-avatar-nav" id="userAvatar">U</div>
-                <button class="btn-back-home" onclick="window.location.href='maindashboard.html'">🏠 Back to Home</button>
-                <button class="btn-logout" onclick="logout()">Logout</button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content Container -->
-    <div class="main-container">
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1>Welcome Back! 👋</h1>
-            <p>Here's an overview of your resume building activity</p>
-        </div>
-
-        <!-- Stats Grid -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <div>
-                        <div class="stat-label">Total Resumes</div>
-                        <div class="stat-value" id="totalResumes">0</div>
-                        <div class="stat-change" id="resumesChange">↗ +0 this week</div>
-                    </div>
-                    <div class="stat-icon">📄</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <div>
-                        <div class="stat-label">Active Resumes</div>
-                        <div class="stat-value" id="activeResumes">0</div>
-                        <div class="stat-change neutral" id="activeChange">0% of total</div>
-                    </div>
-                    <div class="stat-icon green">✅</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <div>
-                        <div class="stat-label">Total Views</div>
-                        <div class="stat-value" id="totalViews">0</div>
-                        <div class="stat-change" id="viewsChange">↗ 0 avg per resume</div>
-                    </div>
-                    <div class="stat-icon orange">👁️</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <div>
-                        <div class="stat-label">Downloads</div>
-                        <div class="stat-value" id="totalDownloads">0</div>
-                        <div class="stat-change" id="downloadsChange">0% conversion rate</div>
-                    </div>
-                    <div class="stat-icon blue">⬇️</div>
-                </div>
+<header class="app-header">
+    <div class="navbar-container">
+        <div class="navbar-left">
+            <div class="brand">Resume<span class="brand-light">Builder</span></div>
+            <div class="nav-tabs">
+                <button id="nav-analytics" class="nav-tab active" onclick="showSection('analytics')">
+                    <span class="nav-tab-icon">📊</span>
+                    <span>Insights</span>
+                </button>
+                <button id="nav-grid" class="nav-tab" onclick="showSection('grid')">
+                    <span class="nav-tab-icon">👥</span>
+                    <span>Talent Pool</span>
+                </button>
+                <button id="nav-users" class="nav-tab" onclick="showSection('users')">
+                    <span class="nav-tab-icon">📋</span>
+                    <span>Users</span>
+                </button>
+                <button id="nav-reports" class="nav-tab" onclick="showSection('reports')">
+                    <span class="nav-tab-icon">📄</span>
+                    <span>Reports</span>
+                </button>
+                <button id="nav-activity" class="nav-tab" onclick="showSection('activity')">
+                    <span class="nav-tab-icon">🕐</span>
+                    <span>Activity</span>
+                </button>
             </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <h3>⚡ Quick Actions</h3>
-            <div class="actions-grid">
-                <a href="index.html" class="action-card">
-                    <div class="action-icon">➕</div>
-                    <h4>Create Resume</h4>
-                    <p>Build a new professional resume from scratch</p>
-                </a>
-
-                <a href="admin-dashboard.html" class="action-card">
-                    <div class="action-icon">📋</div>
-                    <h4>View All Resumes</h4>
-                    <p>Browse and manage all your saved resumes</p>
-                </a>
-
-                <a href="#" onclick="showTemplates()" class="action-card">
-                    <div class="action-icon">🎨</div>
-                    <h4>Browse Templates</h4>
-                    <p>Choose from professional resume templates</p>
-                </a>
-
-                <a href="index.html" class="action-card">
-                    <div class="action-icon">🏠</div>
-                    <h4>Back to Home</h4>
-                    <p>Return to the resume builder homepage</p>
-                </a>
-            </div>
-        </div>
-
-        <!-- Charts Section -->
-        <div class="charts-section">
-            <div class="chart-card">
-                <h3>📈 Resume Activity (Last 7 Days)</h3>
-                <div class="chart-wrapper">
-                    <canvas id="activityChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <h3>📊 Resume Status Distribution</h3>
-                <div class="chart-wrapper">
-                    <canvas id="statusChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="recent-activity">
-            <h3>🕐 Recent Activity</h3>
-            <div id="recentActivityList">
-                <div class="activity-item">
-                    <div class="activity-icon">📄</div>
-                    <div class="activity-content">
-                        <h5>No activity yet</h5>
-                        <p>Create your first resume to see activity here</p>
+        <div class="navbar-right">
+            <a href="index.html" class="back-button">
+    <i class="bi bi-plus-circle-fill"></i> Create New Resume
+</a>
+            
+            <div class="avatar-section">
+                <div class="user-avatar" id="userAvatar">AD</div>
+                
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-header">
+                        <div class="dropdown-user-name" id="dropdownUserName">Admin User</div>
+                        <div class="dropdown-user-email" id="dropdownUserEmail">admin@resumepro.com</div>
                     </div>
-                    <div class="activity-time">Just now</div>
+                    <button class="dropdown-item" onclick="goToMainDashboard()">
+                        <i class="bi bi-arrow-left-circle-fill"></i>
+                        Back to Dashboard
+                    </button>
+                    <button class="dropdown-item" onclick="goToSettings()">
+                        <i class="bi bi-gear-fill"></i>
+                        Settings
+                    </button>
+                    <button class="dropdown-item" onclick="goToProfile()">
+                        <i class="bi bi-person-fill"></i>
+                        My Profile
+                    </button>
+                    <button class="dropdown-item" onclick="logout()">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+</header>
 
-    <!-- Bootstrap JS -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/bootstrap.bundle.min.js"></script>
+<main class="container">
+    
+    <!-- INSIGHTS SECTION -->
+    <section id="view-analytics" class="page-view active">
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card-custom stat-card-large">
+                    <div class="stat-icon bg-primary text-white"><i class="bi bi-database-fill"></i></div>
+                    <div class="text-muted small fw-bold">TOTAL RESUMES</div>
+                    <h2 id="st-total" class="fw-800 mb-0">0</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card-custom stat-card-large">
+                    <div class="stat-icon bg-info text-white"><i class="bi bi-graph-up-arrow"></i></div>
+                    <div class="text-muted small fw-bold">TOTAL VIEWS</div>
+                    <h2 id="st-views" class="fw-800 mb-0">0</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card-custom stat-card-large">
+                    <div class="stat-icon bg-success text-white"><i class="bi bi-file-earmark-arrow-down"></i></div>
+                    <div class="text-muted small fw-bold">DOWNLOADS</div>
+                    <h2 id="st-downloads" class="fw-800 mb-0">0</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card-custom stat-card-large">
+                    <div class="stat-icon bg-warning text-white"><i class="bi bi-person-check"></i></div>
+                    <div class="text-muted small fw-bold">ACTIVE USERS</div>
+                    <h2 id="st-users" class="fw-800 mb-0">0</h2>
+                </div>
+            </div>
+        </div>
 
-    <script>
-        const API_URL = 'http://localhost:5000/api';
-        let activityChart = null;
-        let statusChart = null;
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card-custom">
+                    <h6 class="fw-bold mb-3 text-uppercase small text-muted">Experience Level Distribution</h6>
+                    <div class="chart-container"><canvas id="experienceChart"></canvas></div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card-custom">
+                    <h6 class="fw-bold mb-3 text-uppercase small text-muted">Top 5 Locations</h6>
+                    <div class="chart-container"><canvas id="locationChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        // Check authentication
-        window.addEventListener('load', function() {
-            const user = localStorage.getItem('user');
-            if (!user) {
-                window.location.href = 'login.html';
+<section id="view-grid" class="page-view">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-800 m-0">Candidate Management</h3>
+            <p class="text-muted small">Quick-screen objectives and experience below.</p>
+        </div>
+        <div class="d-flex gap-3 align-items-center">
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" id="resumeSearch" placeholder="Search by name or objective..." onkeyup="filterResumes()">
+            </div>
+            <a href="index.html" class="btn btn-primary rounded-pill px-4 fw-bold">
+                <i class="bi bi-plus-circle me-2"></i>Add Candidate
+            </a>
+        </div>
+    </div>
+    <div id="resumesGrid" class="row g-4"></div>
+</section>
+
+    <!-- USER MANAGEMENT SECTION -->
+    <section id="view-users" class="page-view">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-800 m-0">User Management</h3>
+                <p class="text-muted small">Manage registered users and their activities.</p>
+            </div>
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" id="userSearch" placeholder="Search users..." onkeyup="filterUsers()">
+            </div>
+        </div>
+        <div class="card-custom">
+            <table class="user-table" id="userTable">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Joined Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <!-- Users will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- REPORTS SECTION -->
+    <section id="view-reports" class="page-view">
+        <div class="mb-4">
+            <h3 class="fw-800 m-0">Advanced Reports & Analytics</h3>
+            <p class="text-muted small">Deep insights into resume data and trends.</p>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <div class="card-custom">
+                    <h6 class="fw-bold mb-3 text-uppercase small text-muted">Resume Creation Timeline</h6>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card-custom">
+                    <h6 class="fw-bold mb-3 text-uppercase small text-muted">Top Skills Distribution</h6>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card-custom">
+                    <h6 class="fw-bold mb-3 text-uppercase small text-muted">Most Viewed Resumes</h6>
+                    <div id="topViewedList"></div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card-custom">
+                    <h6 class="fw-bold mb-3 text-uppercase small text-muted">Most Downloaded Resumes</h6>
+                    <div id="topDownloadedList"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACTIVITY LOG SECTION -->
+    <section id="view-activity" class="page-view">
+        <div class="mb-4">
+            <h3 class="fw-800 m-0">Activity Timeline</h3>
+            <p class="text-muted small">Recent system activities and user actions.</p>
+        </div>
+
+        <div class="card-custom">
+            <div class="activity-timeline" id="activityTimeline">
+                <!-- Activity items will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- PROFILE DETAIL SECTION -->
+    <section id="view-detail" class="page-view">
+        <div id="detail-content"></div>
+    </section>
+
+</main>
+
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const API = 'http://localhost:5000/api';
+    let charts = {};
+    let allResumes = [];
+    let allUsers = [];
+
+    // ============================================
+// SESSION TRACKING FOR VIEW COUNTS
+// ============================================
+
+function hasViewedResume(resumeId) {
+    const viewedResumes = JSON.parse(sessionStorage.getItem('viewedResumes') || '[]');
+    return viewedResumes.includes(resumeId);
+}
+
+function markResumeAsViewed(resumeId) {
+    const viewedResumes = JSON.parse(sessionStorage.getItem('viewedResumes') || '[]');
+    if (!viewedResumes.includes(resumeId)) {
+        viewedResumes.push(resumeId);
+        sessionStorage.setItem('viewedResumes', JSON.stringify(viewedResumes));
+    }
+}
+
+async function incrementViewCount(resumeId) {
+    // Only increment if not already viewed in this session
+    if (!hasViewedResume(resumeId)) {
+        try {
+            const response = await fetch(`${API}/increment-view/${resumeId}`, {
+                method: 'POST'
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                markResumeAsViewed(resumeId);
+                console.log(`✅ View count incremented for resume ${resumeId}. New count: ${data.new_count}`);
+                return data.new_count;
+            }
+        } catch (error) {
+            console.error('Error incrementing view count:', error);
+        }
+    }
+    return null;
+}
+
+    // ============================================
+    // USER AVATAR & DROPDOWN FUNCTIONS
+    // ============================================
+    
+function getUserInitials(name) {
+    return name.substring(0, 1).toUpperCase();
+}
+
+async function initializeUserAvatar() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    if (user.userId) {
+        try {
+            // Fetch user details from database
+            const response = await fetch(`${API}/get-user/${user.userId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                const dbUser = data.user;
+                const userName = dbUser.firstName || dbUser.username || 'User';
+                const userEmail = dbUser.email || 'user@resumepro.com';
+                
+                document.getElementById('userAvatar').textContent = getUserInitials(userName);
+                document.getElementById('dropdownUserName').textContent = userName;
+                document.getElementById('dropdownUserEmail').textContent = userEmail;
                 return;
             }
-            
-            const userData = JSON.parse(user);
-            document.getElementById('userName').textContent = userData.firstName + ' ' + userData.lastName;
-            document.getElementById('userEmail').textContent = userData.email || userData.username;
-            
-            const initials = (userData.firstName[0] + userData.lastName[0]).toUpperCase();
-            document.getElementById('userAvatar').textContent = initials;
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+        }
+    }
+    
+    // Fallback to localStorage if API fails
+    const userName = user.firstName || user.username || 'User';
+    const userEmail = user.email || 'user@resumepro.com';
+    
+    document.getElementById('userAvatar').textContent = getUserInitials(userName);
+    document.getElementById('dropdownUserName').textContent = userName;
+    document.getElementById('dropdownUserEmail').textContent = userEmail;
+}
 
-            loadDashboardData();
+    // Toggle dropdown menu
+    document.getElementById('userAvatar').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('dropdownMenu');
+        const avatar = document.getElementById('userAvatar');
+        if (!dropdown.contains(e.target) && !avatar.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    });
+
+    //function goToMainDashboard() {
+        //window.location.href = 'maindashboard.html';
+    //}
+
+ function goToSettings() {
+            alert('Settings page coming soon!');
+    }
+
+    function goToProfile() {
+        alert('Profile page coming soon!');
+        document.getElementById('dropdownMenu').classList.remove('show');
+    }
+
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        sessionStorage.clear(); // ADD THIS LINE
+        window.location.href = 'login.html';
+    }
+}
+
+    // ============================================
+    // NAVIGATION & SECTION SWITCHING
+    // ============================================
+    
+    function showSection(section) {
+        // Hide all sections
+        document.querySelectorAll('.page-view').forEach(view => {
+            view.classList.remove('active');
         });
+        
+        // Remove active class from all tabs
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Show selected section
+        document.getElementById('view-' + section).classList.add('active');
+        document.getElementById('nav-' + section).classList.add('active');
+        
+        // Load data based on section
+        switch(section) {
+            case 'analytics':
+                loadAnalytics();
+                break;
+            case 'grid':
+                loadResumes();
+                break;
+            case 'users':
+                loadUsers();
+                break;
+            case 'reports':
+                loadReports();
+                break;
+            case 'activity':
+                loadActivityLog();
+                break;
+        }
+    }
 
-        // Load dashboard data
-        async function loadDashboardData() {
-            try {
-                const response = await fetch(`${API_URL}/get-resumes`);
-                const result = await response.json();
-
-                if (result.success) {
-                    updateStatistics(result.resumes);
-                    createCharts(result.resumes);
-                    displayRecentActivity(result.resumes);
-                }
-            } catch (error) {
-                console.error('Error loading dashboard data:', error);
+    // ============================================
+    // ANALYTICS SECTION - CONNECTED TO DATABASE
+    // ============================================
+    
+    async function loadAnalytics() {
+        try {
+            const response = await fetch(`${API}/get-resumes`);
+            const data = await response.json();
+            
+            if (data.success) {
+                allResumes = data.resumes;
+                
+                // Update stat cards with REAL DATA
+                document.getElementById('st-total').textContent = allResumes.length;
+                
+                const totalViews = allResumes.reduce((sum, r) => sum + (r.visitor_count || 0), 0);
+                document.getElementById('st-views').textContent = totalViews;
+                
+                const totalDownloads = allResumes.reduce((sum, r) => sum + (r.download_count || 0), 0);
+                document.getElementById('st-downloads').textContent = totalDownloads;
+                
+                // Get users count from database
+                await loadUsersCount();
+                
+                // Create charts with REAL DATA
+                createExperienceChartFromDB();
+                createLocationChartFromDB();
             }
+        } catch (error) {
+            console.error('Error loading analytics:', error);
         }
+    }
 
-        // Update statistics
-        function updateStatistics(resumes) {
-            const total = resumes.length;
-            const active = resumes.filter(r => r.status === 'Active').length;
-            const totalViews = resumes.reduce((sum, r) => sum + (r.visitor_count || 0), 0);
-            const totalDownloads = resumes.reduce((sum, r) => sum + (r.download_count || 0), 0);
-
-            document.getElementById('totalResumes').textContent = total;
-            document.getElementById('activeResumes').textContent = active;
-            document.getElementById('totalViews').textContent = totalViews;
-            document.getElementById('totalDownloads').textContent = totalDownloads;
-
-            // Calculate weekly changes
-            const lastWeek = new Date();
-            lastWeek.setDate(lastWeek.getDate() - 7);
-            
-            const newThisWeek = resumes.filter(r => 
-                new Date(r.created_at) > lastWeek
-            ).length;
-
-            document.getElementById('resumesChange').textContent = `↗ +${newThisWeek} this week`;
-            
-            const activePercentage = total > 0 ? Math.round((active / total) * 100) : 0;
-            document.getElementById('activeChange').textContent = `${activePercentage}% of total resumes`;
-            
-            const avgViewsPerResume = total > 0 ? Math.round(totalViews / total) : 0;
-            document.getElementById('viewsChange').textContent = `↗ ${avgViewsPerResume} avg per resume`;
-            
-            const downloadRate = totalViews > 0 ? Math.round((totalDownloads / totalViews) * 100) : 0;
-            document.getElementById('downloadsChange').textContent = `${downloadRate}% conversion rate`;
-        }
-
-        // Create charts
-        function createCharts(resumes) {
-            createActivityChart(resumes);
-            createStatusChart(resumes);
-        }
-
-        // Activity Chart
-        function createActivityChart(resumes) {
-            const last7Days = [];
-            const counts = [];
-
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                last7Days.push(dateStr);
-
-                const count = resumes.filter(r => {
-                    const createdDate = new Date(r.created_at);
-                    return createdDate.toDateString() === date.toDateString();
-                }).length;
-                counts.push(count);
+    async function loadUsersCount() {
+        try {
+            const response = await fetch(`${API}/get-all-users`);
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById('st-users').textContent = data.users.length;
             }
-
-            if (activityChart) activityChart.destroy();
-
-            const ctx = document.getElementById('activityChart').getContext('2d');
-            activityChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: last7Days,
-                    datasets: [{
-                        label: 'Resumes Created',
-                        data: counts,
-                        borderColor: '#0d6efd',
-                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        borderWidth: 3,
-                        pointBackgroundColor: '#0d6efd',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { stepSize: 1 },
-                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
-                        },
-                        x: {
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
+        } catch (error) {
+            console.error('Error loading users count:', error);
         }
+    }
 
-        // Status Chart
-        function createStatusChart(resumes) {
-            const statusCounts = {
-                'Active': resumes.filter(r => r.status === 'Active').length,
-                'Draft': resumes.filter(r => r.status === 'Draft').length,
-                'Inactive': resumes.filter(r => r.status === 'Inactive').length
+    function calculateExperienceYears(experience) {
+        if (!experience) return 0;
+        // Experience format from DB: "X year(s) Y month(s)"
+        const yearMatch = experience.match(/(\d+)\s*year/i);
+        const monthMatch = experience.match(/(\d+)\s*month/i);
+        
+        let years = yearMatch ? parseInt(yearMatch[1]) : 0;
+        let months = monthMatch ? parseInt(monthMatch[1]) : 0;
+        
+        return years + (months / 12);
+    }
+
+    async function createExperienceChartFromDB() {
+        const ctx = document.getElementById('experienceChart');
+        if (!ctx) return;
+        
+        if (charts.experience) {
+            charts.experience.destroy();
+        }
+        
+        try {
+            // Fetch work experience data from database
+            const experienceData = {
+                'Entry Level (0-2 yrs)': 0,
+                'Mid Level (3-5 yrs)': 0,
+                'Senior (6-10 yrs)': 0,
+                'Expert (10+ yrs)': 0
             };
-
-            if (statusChart) statusChart.destroy();
-
-            const ctx = document.getElementById('statusChart').getContext('2d');
-            statusChart = new Chart(ctx, {
+            
+            // Count experiences from all resumes
+            for (const resume of allResumes) {
+                const response = await fetch(`${API}/get-resume/${resume.id}`);
+                const data = await response.json();
+                
+                if (data.success && data.resume.experience && data.resume.experience.length > 0) {
+                    // Calculate total experience for this resume
+                    let totalYears = 0;
+                    data.resume.experience.forEach(exp => {
+                        if (exp.start && exp.end) {
+                            const start = new Date(exp.start);
+                            const end = new Date(exp.end);
+                            const months = (end.getFullYear() - start.getFullYear()) * 12 + 
+                                          (end.getMonth() - start.getMonth());
+                            totalYears += months / 12;
+                        }
+                    });
+                    
+                    // Categorize
+                    if (totalYears <= 2) experienceData['Entry Level (0-2 yrs)']++;
+                    else if (totalYears <= 5) experienceData['Mid Level (3-5 yrs)']++;
+                    else if (totalYears <= 10) experienceData['Senior (6-10 yrs)']++;
+                    else experienceData['Expert (10+ yrs)']++;
+                } else {
+                    // No experience data = Entry Level
+                    experienceData['Entry Level (0-2 yrs)']++;
+                }
+            }
+            
+            charts.experience = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(statusCounts),
+                    labels: Object.keys(experienceData),
                     datasets: [{
-                        data: Object.values(statusCounts),
-                        backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'],
-                        borderWidth: 0,
-                        borderRadius: 5
+                        data: Object.values(experienceData),
+                        backgroundColor: [
+                            '#4361ee',
+                            '#3b82f6',
+                            '#06b6d4',
+                            '#7209b7'
+                        ],
+                        borderWidth: 0
                     }]
                 },
                 options: {
@@ -881,77 +1178,806 @@
                             labels: {
                                 padding: 15,
                                 font: {
-                                    size: 13,
-                                    weight: 600
+                                    size: 11,
+                                    weight: '600'
                                 }
                             }
                         }
                     }
                 }
             });
+        } catch (error) {
+            console.error('Error creating experience chart:', error);
         }
+    }
 
-        // Display recent activity
-        function displayRecentActivity(resumes) {
-            const sortedResumes = [...resumes]
-                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-                .slice(0, 5);
-
-            const container = document.getElementById('recentActivityList');
-
-            if (sortedResumes.length === 0) {
-                return;
+    function createLocationChartFromDB() {
+        const ctx = document.getElementById('locationChart');
+        if (!ctx) return;
+        
+        if (charts.location) {
+            charts.location.destroy();
+        }
+        
+        // Count locations from REAL DATA
+        const locationCounts = {};
+        allResumes.forEach(resume => {
+            if (resume.location) {
+                const location = resume.location.trim();
+                locationCounts[location] = (locationCounts[location] || 0) + 1;
             }
+        });
+        
+        // Get top 5 locations
+        const sortedLocations = Object.entries(locationCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+        
+        if (sortedLocations.length === 0) {
+            sortedLocations.push(['No Location Data', 0]);
+        }
+        
+        charts.location = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: sortedLocations.map(l => l[0]),
+                datasets: [{
+                    label: 'Candidates',
+                    data: sortedLocations.map(l => l[1]),
+                    backgroundColor: '#4361ee',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
 
-            container.innerHTML = sortedResumes.map(resume => {
-                const date = new Date(resume.created_at);
-                const timeAgo = getTimeAgo(date);
+    // ============================================
+    // TALENT POOL SECTION - REAL DATABASE DATA
+    // ============================================
+    
+    async function loadResumes() {
+        try {
+            const response = await fetch(`${API}/get-resumes`);
+            const data = await response.json();
+            
+            if (data.success) {
+                allResumes = data.resumes;
+                displayResumes(allResumes);
+            }
+        } catch (error) {
+            console.error('Error loading resumes:', error);
+            document.getElementById('resumesGrid').innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-danger">Error loading resumes. Please try again.</div>
+                </div>
+            `;
+        }
+    }
 
-                return `
-                    <div class="activity-item">
-                        <div class="activity-icon">📄</div>
-                        <div class="activity-content">
-                            <h5>Created "${resume.name || resume.title || 'Untitled Resume'}"</h5>
-                            <p>Status: ${resume.status} • Views: ${resume.visitor_count || 0} • Downloads: ${resume.download_count || 0}</p>
+function displayResumes(resumes) {
+    const grid = document.getElementById('resumesGrid');
+    
+    if (resumes.length === 0) {
+        grid.innerHTML = `
+            <div class="col-12">
+                <div class="card-custom text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+                    <h4>No resumes found</h4>
+                    <p class="text-muted">Start by adding your first candidate.</p>
+                    <a href="index.html" class="btn btn-primary mt-3">Add Candidate</a>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Display only first 8 resumes initially
+    const displayCount = Math.min(8, resumes.length);
+    const resumesToShow = resumes.slice(0, displayCount);
+    
+    grid.innerHTML = `
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <p class="text-muted mb-0">Showing ${displayCount} of ${resumes.length} candidates</p>
+                ${resumes.length > 8 ? '<p class="text-muted mb-0"><i class="bi bi-arrow-down"></i> Scroll to see more</p>' : ''}
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="resumes-container">
+                <div class="row g-4">
+                    ${resumesToShow.map(resume => `
+                        <div class="col-lg-6 col-md-6">
+                            <div class="card-custom candidate-card" onclick="viewResumeDetail(${resume.id})">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h5 class="fw-bold mb-1">${resume.name || 'Unnamed'}</h5>
+                                        <p class="text-muted small mb-0">
+                                            <i class="bi bi-geo-alt me-1"></i>${resume.location || 'Location not specified'}
+                                        </p>
+                                    </div>
+                                    <span class="experience-tag">${resume.visitor_count || 0} views</span>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <p class="text-muted small mb-2">
+                                        <i class="bi bi-envelope me-2"></i>${resume.email || 'No email'}
+                                    </p>
+                                    <p class="text-muted small mb-0">
+                                        <i class="bi bi-telephone me-2"></i>${resume.phone || 'No phone'}
+                                    </p>
+                                </div>
+                                
+                                ${resume.objective ? `
+                                    <div class="mb-3">
+                                        <strong class="small text-muted d-block mb-1">
+                                            <i class="bi bi-target me-1"></i>Objective:
+                                        </strong>
+                                        <div class="objective-preview">${resume.objective}</div>
+                                    </div>
+                                ` : ''}
+                                
+                                <div class="d-flex gap-2 align-items-center">
+                                    <span class="badge badge-success">${resume.status || 'Active'}</span>
+                                    <span class="badge badge-info">${resume.download_count || 0} downloads</span>
+                                </div>
+                                
+                                <div class="mt-3 pt-3 border-top">
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar me-1"></i>
+                                        Created: ${new Date(resume.created_at).toLocaleDateString()}
+                                    </small>
+                                </div>
+                            </div>
                         </div>
-                        <div class="activity-time">${timeAgo}</div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Load remaining resumes after initial display
+    if (resumes.length > 8) {
+        setTimeout(() => {
+            loadRemainingResumes(resumes.slice(8));
+        }, 100);
+    }
+}
+
+function loadRemainingResumes(remainingResumes) {
+    const container = document.querySelector('.resumes-container .row');
+    if (!container) return;
+    
+    const htmlContent = remainingResumes.map(resume => `
+        <div class="col-lg-6 col-md-6">
+            <div class="card-custom candidate-card" onclick="viewResumeDetail(${resume.id})">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="fw-bold mb-1">${resume.name || 'Unnamed'}</h5>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-geo-alt me-1"></i>${resume.location || 'Location not specified'}
+                        </p>
+                    </div>
+                    <span class="experience-tag">${resume.visitor_count || 0} views</span>
+                </div>
+                
+                <div class="mb-3">
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-envelope me-2"></i>${resume.email || 'No email'}
+                    </p>
+                    <p class="text-muted small mb-0">
+                        <i class="bi bi-telephone me-2"></i>${resume.phone || 'No phone'}
+                    </p>
+                </div>
+                
+                ${resume.objective ? `
+                    <div class="mb-3">
+                        <strong class="small text-muted d-block mb-1">
+                            <i class="bi bi-target me-1"></i>Objective:
+                        </strong>
+                        <div class="objective-preview">${resume.objective}</div>
+                    </div>
+                ` : ''}
+                
+                <div class="d-flex gap-2 align-items-center">
+                    <span class="badge badge-success">${resume.status || 'Active'}</span>
+                    <span class="badge badge-info">${resume.download_count || 0} downloads</span>
+                </div>
+                
+                <div class="mt-3 pt-3 border-top">
+                    <small class="text-muted">
+                        <i class="bi bi-calendar me-1"></i>
+                        Created: ${new Date(resume.created_at).toLocaleDateString()}
+                    </small>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    container.insertAdjacentHTML('beforeend', htmlContent);
+}
+
+function filterResumes() {
+    const searchTerm = document.getElementById('resumeSearch').value.toLowerCase();
+    
+    if (!searchTerm.trim()) {
+        // If search is empty, show all resumes
+        displayResumes(allResumes);
+        return;
+    }
+    
+    const filteredResumes = allResumes.filter(resume => {
+        const nameMatch = resume.name && resume.name.toLowerCase().includes(searchTerm);
+        const objectiveMatch = resume.objective && resume.objective.toLowerCase().includes(searchTerm);
+        return nameMatch || objectiveMatch;
+    });
+    
+    displayResumes(filteredResumes);
+}
+
+async function viewResumeDetail(resumeId) {
+    try {
+        console.log('📋 Loading resume details for ID:', resumeId);
+        
+        // First, increment view count (only if not viewed in this session)
+        const newCount = await incrementViewCount(resumeId);
+        console.log('👁️ View count updated:', newCount);
+        
+        // Then fetch resume details (without incrementing)
+        console.log('🔍 Fetching resume data...');
+        const response = await fetch(`${API}/get-resume/${resumeId}`);
+        const data = await response.json();
+        console.log('📦 Response received:', data);
+        
+        if (data.success) {
+            console.log('✅ Resume loaded successfully');
+            const resume = data.resume;
+            
+            // Use the updated count if we just incremented (but don't use displayCount variable)
+            if (newCount !== null) {
+                resume.visitor_count = newCount;
+            }
+                
+                document.getElementById('detail-content').innerHTML = `
+                    <div class="mb-4">
+                        <button onclick="showSection('grid')" class="btn btn-outline-primary">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Talent Pool
+                        </button>
+                    </div>
+                    
+                    <div class="profile-hero">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h1 class="fw-bold mb-2">${resume.name}</h1>
+                                <p class="mb-3 opacity-90">
+                                    <i class="bi bi-geo-alt me-2"></i>${resume.location || 'Location not specified'}
+                                </p>
+                                <p class="mb-0">
+                                    <i class="bi bi-envelope me-2"></i>${resume.email}
+                                    <span class="mx-3">|</span>
+                                    <i class="bi bi-telephone me-2"></i>${resume.phone}
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                <div class="d-inline-block bg-white bg-opacity-25 rounded-3 px-4 py-3">
+                                    <div class="text-white mb-1">Views: ${resume.visitor_count}</div>
+                                    <div class="text-white">Downloads: ${resume.download_count}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${resume.objective ? `
+                    <div class="card-custom mb-4">
+                        <h5 class="fw-bold mb-3">Career Objective</h5>
+                        <p class="text-muted">${resume.objective}</p>
+                    </div>
+                    ` : ''}
+                    
+                    ${resume.experience && resume.experience.length > 0 ? `
+                    <div class="card-custom mb-4">
+                        <h5 class="fw-bold mb-3">Work Experience</h5>
+                        ${resume.experience.map(exp => `
+                            <div class="mb-3 pb-3 border-bottom">
+                                <h6 class="fw-bold">${exp.role}</h6>
+                                <p class="text-muted mb-1">${exp.company}</p>
+                                <small class="text-muted">${exp.start} - ${exp.end}</small>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                    
+                    ${resume.education && resume.education.length > 0 ? `
+                    <div class="card-custom mb-4">
+                        <h5 class="fw-bold mb-3">Education</h5>
+                        ${resume.education.map(edu => `
+                            <div class="mb-3">
+                                <h6 class="fw-bold">${edu.course}</h6>
+                                <p class="text-muted mb-1">${edu.college}</p>
+                                <small class="text-muted">Year: ${edu.year} | CGPA: ${edu.cgpa}</small>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                    
+                    ${resume.skills && resume.skills.length > 0 ? `
+                    <div class="card-custom mb-4">
+                        <h5 class="fw-bold mb-3">Skills</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            ${resume.skills.map(skill => `
+                                <span class="badge-skill">${skill.name}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    ${resume.projects && resume.projects.length > 0 ? `
+                    <div class="card-custom mb-4">
+                        <h5 class="fw-bold mb-3">Projects</h5>
+                        ${resume.projects.map(proj => `
+                            <div class="mb-3 pb-3 border-bottom">
+                                <h6 class="fw-bold">${proj.title}</h6>
+                                ${proj.link ? `<p class="mb-1"><a href="${proj.link}" target="_blank" class="text-primary">${proj.link}</a></p>` : ''}
+                                <p class="text-muted mb-0">${proj.desc || ''}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                    
+                    <div class="d-flex gap-3">
+                        <button onclick="downloadResume(${resumeId})" class="quick-action-btn">
+                            <i class="bi bi-download"></i>Download Resume
+                        </button>
+                        <button onclick="deleteResume(${resumeId})" class="quick-action-btn danger">
+                            <i class="bi bi-trash"></i>Delete Resume
+                        </button>
                     </div>
                 `;
-            }).join('');
-        }
+                
+                showSection('detail');
+            }
+        }  
+    catch (error) {
+        console.error('Error loading resume detail:', error);
+    }
+}
 
-        // Helper: Get time ago
-        function getTimeAgo(date) {
-            const seconds = Math.floor((new Date() - date) / 1000);
+    async function downloadResume(resumeId) {
+        try {
+            await fetch(`${API}/increment-download/${resumeId}`, { method: 'POST' });
+            alert('Resume download initiated!');
+            viewResumeDetail(resumeId); // Refresh to show updated count
+        } catch (error) {
+            console.error('Error downloading resume:', error);
+        }
+    }
+
+    async function deleteResume(resumeId) {
+        if (!confirm('Are you sure you want to delete this resume?')) return;
+        
+        try {
+            const response = await fetch(`${API}/delete-resume/${resumeId}`, {
+                method: 'DELETE'
+            });
+            const data = await response.json();
             
-            if (seconds < 60) return 'Just now';
-            if (seconds < 3600) return Math.floor(seconds / 60) + ' min ago';
-            if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
-            if (seconds < 604800) return Math.floor(seconds / 86400) + ' days ago';
-            return date.toLocaleDateString();
+            if (data.success) {
+                alert('Resume deleted successfully!');
+                showSection('grid');
+                loadResumes();
+            } else {
+                alert('Error deleting resume: ' + data.error);
+            }
+        } catch (error) {
+            console.error('Error deleting resume:', error);
+            alert('Error deleting resume');
         }
+    }
 
-        // Toggle mobile menu
-        function toggleMobileMenu() {
-            document.getElementById('navbarMenu').classList.toggle('active');
+    // ============================================
+    // USER MANAGEMENT SECTION - REAL DATABASE DATA
+    // ============================================
+    
+async function loadUsers() {
+    try {
+        console.log('🔄 Loading all users from database...');
+        const response = await fetch(`${API}/get-all-users`);
+        const data = await response.json();
+        
+        if (data.success) {
+            allUsers = data.users;
+            console.log(`✅ Loaded ${allUsers.length} users from database`);
+            displayUsers(allUsers);
+        } else {
+            console.error('❌ Failed to load users:', data.error);
+            displayUsers([]);
         }
+    } catch (error) {
+        console.error('❌ Error loading users:', error);
+        alert('Unable to load users. Please check if the backend server is running.');
+        displayUsers([]);
+    }
+}
 
-        // Placeholder functions
-        function showTemplates() {
-            alert('Templates feature coming soon!');
+// ============================================
+// EXACT FIX - MATCHES YOUR BACKEND API RESPONSE
+// Based on lines 260-271 of your app.py
+// ============================================
+
+// Replace your existing displayUsers() function with this:
+
+function displayUsers(users) {
+    const tbody = document.getElementById('userTableBody');
+    
+    // DEBUG: See what we're receiving
+    if (users.length > 0) {
+        console.log('📊 First user from API:', users[0]);
+    }
+    
+    if (users.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-5">
+                    <i class="bi bi-inbox display-4 text-muted"></i>
+                    <p class="mt-3">No users found</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = users.map(user => `
+        <tr>
+            <td>#${user.userId}</td>
+            <td>${user.username}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.phone}</td>
+            <td>${new Date(user.createdDate).toLocaleDateString()}</td>
+            <td><span class="badge badge-success">${user.status}</span></td>
+        </tr>
+    `).join('');
+}
+
+function filterUsers() {
+    const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+    const filteredUsers = allUsers.filter(user => 
+        user.username.toLowerCase().includes(searchTerm) ||
+        user.name.toLowerCase().includes(searchTerm) ||
+        user.email.toLowerCase().includes(searchTerm)
+    );
+    displayUsers(filteredUsers);
+}
+
+    // ============================================
+    // REPORTS SECTION - REAL DATABASE DATA
+    // ============================================
+    
+    async function loadReports() {
+        createTimelineChartFromDB();
+        createSkillsChartFromDB();
+        displayTopViewedFromDB();
+        displayTopDownloadedFromDB();
+    }
+
+    function createTimelineChartFromDB() {
+        const ctx = document.getElementById('timelineChart');
+        if (!ctx) return;
+        
+        if (charts.timeline) {
+            charts.timeline.destroy();
         }
-
-        function showAnalytics() {
-            window.location.href = 'admin-dashboard.html';
+        
+        // Group resumes by creation date FROM DATABASE
+        const dateCounts = {};
+        allResumes.forEach(resume => {
+            const date = new Date(resume.created_at).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+            });
+            dateCounts[date] = (dateCounts[date] || 0) + 1;
+        });
+        
+        const sortedDates = Object.keys(dateCounts).sort((a, b) => {
+            return new Date(a) - new Date(b);
+        });
+        
+        if (sortedDates.length === 0) {
+            sortedDates.push('No Data');
+            dateCounts['No Data'] = 0;
         }
+        
+        charts.timeline = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: sortedDates,
+                datasets: [{
+                    label: 'Resumes Created',
+                    data: sortedDates.map(date => dateCounts[date]),
+                    borderColor: '#4361ee',
+                    backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
 
-        // Logout
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('user');
-                window.location.href = 'login.html';
+    async function createSkillsChartFromDB() {
+        const ctx = document.getElementById('skillsChart');
+        if (!ctx) return;
+        
+        if (charts.skills) {
+            charts.skills.destroy();
+        }
+        
+        try {
+            // Fetch skills from all resumes
+            const skillCounts = {};
+            
+            for (const resume of allResumes) {
+                const response = await fetch(`${API}/get-resume/${resume.id}`);
+                const data = await response.json();
+                
+                if (data.success && data.resume.skills) {
+                    data.resume.skills.forEach(skill => {
+                        const skillName = skill.name;
+                        skillCounts[skillName] = (skillCounts[skillName] || 0) + 1;
+                    });
+                }
+            }
+            
+            // Get top 5 skills
+            const topSkills = Object.entries(skillCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            if (topSkills.length === 0) {
+                topSkills.push(['No Skills Data', 0]);
+            }
+            
+            charts.skills = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: topSkills.map(s => s[0]),
+                    datasets: [{
+                        data: topSkills.map(s => s[1]),
+                        backgroundColor: [
+                            '#4361ee',
+                            '#3b82f6',
+                            '#06b6d4',
+                            '#7209b7',
+                            '#f59e0b'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 10,
+                                font: {
+                                    size: 10,
+                                    weight: '600'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error creating skills chart:', error);
+        }
+    }
+
+    function displayTopViewedFromDB() {
+        const topViewed = [...allResumes]
+            .sort((a, b) => (b.visitor_count || 0) - (a.visitor_count || 0))
+            .slice(0, 5);
+        
+        const container = document.getElementById('topViewedList');
+        
+        if (topViewed.length === 0) {
+            container.innerHTML = '<p class="text-muted text-center py-4">No data available</p>';
+            return;
+        }
+        
+        container.innerHTML = topViewed.map((resume, index) => `
+            <div class="d-flex align-items-center justify-content-between p-3 mb-2 bg-white rounded-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="fw-bold text-primary" style="min-width: 30px;">#${index + 1}</div>
+                    <div>
+                        <div class="fw-600">${resume.name}</div>
+                        <small class="text-muted">${resume.email}</small>
+                    </div>
+                </div>
+                <div class="badge badge-info">${resume.visitor_count || 0} views</div>
+            </div>
+        `).join('');
+    }
+
+    function displayTopDownloadedFromDB() {
+        const topDownloaded = [...allResumes]
+            .sort((a, b) => (b.download_count || 0) - (a.download_count || 0))
+            .slice(0, 5);
+        
+        const container = document.getElementById('topDownloadedList');
+        
+        if (topDownloaded.length === 0) {
+            container.innerHTML = '<p class="text-muted text-center py-4">No data available</p>';
+            return;
+        }
+        
+        container.innerHTML = topDownloaded.map((resume, index) => `
+            <div class="d-flex align-items-center justify-content-between p-3 mb-2 bg-white rounded-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="fw-bold text-success" style="min-width: 30px;">#${index + 1}</div>
+                    <div>
+                        <div class="fw-600">${resume.name}</div>
+                        <small class="text-muted">${resume.email}</small>
+                    </div>
+                </div>
+                <div class="badge badge-success">${resume.download_count || 0} downloads</div>
+            </div>
+        `).join('');
+    }
+
+    // ============================================
+    // ACTIVITY LOG SECTION - REAL DATABASE DATA
+    // ============================================
+    
+    function getTimeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const seconds = Math.floor((now - date) / 1000);
+        
+        const intervals = {
+            year: 31536000,
+            month: 2592000,
+            week: 604800,
+            day: 86400,
+            hour: 3600,
+            minute: 60
+        };
+        
+        for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+            const interval = Math.floor(seconds / secondsInUnit);
+            if (interval >= 1) {
+                return `${interval} ${unit}${interval !== 1 ? 's' : ''} ago`;
             }
         }
-    </script>
+        
+        return 'Just now';
+    }
+
+    function loadActivityLog() {
+        const timeline = document.getElementById('activityTimeline');
+        
+        if (allResumes.length === 0) {
+            timeline.innerHTML = '<p class="text-muted text-center py-4">No activities yet</p>';
+            return;
+        }
+        
+        // Generate activities from REAL DATABASE DATA
+        const activities = [];
+        
+        // Add most recent resume creations
+        allResumes
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .slice(0, 10)
+            .forEach(resume => {
+                activities.push({
+                    icon: 'bi-file-earmark-plus',
+                    color: 'bg-primary',
+                    title: 'New Resume Added',
+                    description: `${resume.name}'s resume was created`,
+                    time: getTimeAgo(resume.created_at)
+                });
+            });
+        
+        // Add activities for resumes with views
+        allResumes
+            .filter(r => r.visitor_count > 0)
+            .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+            .slice(0, 5)
+            .forEach(resume => {
+                activities.push({
+                    icon: 'bi-eye',
+                    color: 'bg-info',
+                    title: 'Resume Viewed',
+                    description: `${resume.name}'s resume was viewed`,
+                    time: getTimeAgo(resume.updated_at)
+                });
+            });
+        
+        // Add activities for resumes with downloads
+        allResumes
+            .filter(r => r.download_count > 0)
+            .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+            .slice(0, 5)
+            .forEach(resume => {
+                activities.push({
+                    icon: 'bi-download',
+                    color: 'bg-success',
+                    title: 'Resume Downloaded',
+                    description: `${resume.name}'s resume was downloaded`,
+                    time: getTimeAgo(resume.updated_at)
+                });
+            });
+        
+        // Sort by most recent
+        activities.sort((a, b) => {
+            const timeA = a.time.includes('Just now') ? 0 : parseInt(a.time);
+            const timeB = b.time.includes('Just now') ? 0 : parseInt(b.time);
+            return timeA - timeB;
+        });
+        
+        // Display top 15 activities
+        timeline.innerHTML = activities.slice(0, 15).map(activity => `
+            <div class="activity-item">
+                <div class="d-flex align-items-start">
+                    <div class="activity-icon ${activity.color} text-white">
+                        <i class="${activity.icon}"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="fw-bold mb-1">${activity.title}</h6>
+                        <p class="text-muted mb-1">${activity.description}</p>
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>${activity.time}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+    
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🚀 Admin Dashboard Loading...');
+    await initializeUserAvatar();
+    loadAnalytics();
+});
+</script>
+
 </body>
 </html>

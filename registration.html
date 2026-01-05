@@ -64,7 +64,7 @@
             margin-bottom: 8px;
         }
 
-        .form-control {
+        .form-control, .form-select {
             border: 2px solid #e2e8f0;
             border-radius: 8px;
             padding: 12px 16px;
@@ -72,12 +72,12 @@
             transition: all 0.3s ease;
         }
 
-        .form-control:focus {
+        .form-control:focus, .form-select:focus {
             border-color: #0d6efd;
             box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
         }
 
-        .form-control.is-invalid {
+        .form-control.is-invalid, .form-select.is-invalid {
             border-color: #dc3545;
         }
 
@@ -155,20 +155,6 @@
             margin-bottom: 20px;
         }
 
-        /* Input icons */
-        .input-icon {
-            position: relative;
-        }
-
-        .input-icon i {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6c757d;
-        }
-
-        /* Form spacing fixes */
         .mb-3 {
             margin-bottom: 20px !important;
         }
@@ -181,7 +167,6 @@
             margin-bottom: 20px;
         }
 
-        /* Ensure everything is visible */
         body {
             overflow-x: hidden;
             overflow-y: auto;
@@ -206,6 +191,24 @@
 
             <!-- Registration Form -->
             <form id="registerForm" novalidate>
+                <!-- User Type Selection -->
+                <div class="mb-3">
+                    <label for="userType" class="form-label">Register As <span class="text-danger">*</span></label>
+                    <select 
+                        class="form-select" 
+                        id="userType" 
+                        name="userType"
+                        required
+                    >
+                        <option value="" selected disabled>Select your role</option>
+                        <option value="candidate">Candidate (Job Seeker)</option>
+                        <option value="recruiter">Recruiter (Employer)</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <div class="invalid-feedback">Please select your role</div>
+                    <small class="password-requirements">Choose how you want to use the platform</small>
+                </div>
+
                 <!-- Username -->
                 <div class="mb-3">
                     <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
@@ -354,6 +357,7 @@
         const btnSpinner = document.getElementById('btnSpinner');
 
         // Form inputs
+        const userTypeSelect = document.getElementById('userType');
         const usernameInput = document.getElementById('username');
         const firstNameInput = document.getElementById('firstName');
         const lastNameInput = document.getElementById('lastName');
@@ -379,6 +383,7 @@
 
         function setLoading(isLoading) {
             submitBtn.disabled = isLoading;
+            userTypeSelect.disabled = isLoading;
             if (isLoading) {
                 btnText.classList.add('d-none');
                 btnSpinner.classList.remove('d-none');
@@ -518,8 +523,9 @@
                 return;
             }
 
-            // Prepare form data
+            // Prepare form data WITH userType
             const formData = {
+                userType: userTypeSelect.value,  // NEW: Include userType
                 username: usernameInput.value.trim(),
                 firstName: firstNameInput.value.trim(),
                 lastName: lastNameInput.value.trim(),

@@ -94,3 +94,129 @@ except Exception as e:
     print("="*70)
     print(f"Error: {e}")
     print("="*70 + "\n")
+    
+    """
+Database Connection Test Script
+Run this before starting the backend to verify your configuration
+"""
+
+
+
+def main():
+    print("\n" + "="*70)
+    print("🔧 DATABASE CONFIGURATION TEST")
+    print("="*70)
+    
+    # Show current configuration
+    print("\n📋 Current Configuration:")
+    print(f"   Server:   {Config.DB_SERVER}")
+    print(f"   Database: {Config.DB_NAME}")
+    print(f"   Auth:     {'Windows' if Config.USE_WINDOWS_AUTH else 'SQL Server'}")
+    
+    # Test connection
+    print("\n🔍 Testing Connection...")
+    success, message = Config.test_connection()
+    
+    print(message)
+    
+    if success:
+        print("\n✅ SUCCESS! Your database is ready.")
+        print("\n📊 Checking tables...")
+        
+        try:
+            import pyodbc
+            conn = pyodbc.connect(Config.get_connection_string())
+            cursor = conn.cursor()
+            
+            # Check for required tables
+            required_tables = [
+                'Users', 'Resumes', 'PersonalInformation', 
+                'WorkExperience', 'Education', 'Projects', 
+                'Skills', 'Certifications', 'Interests',
+                'Companies', 'Jobs', 'jobskill', 'JobSkills'
+            ]
+            
+            cursor.execute("""
+                SELECT TABLE_NAME 
+                FROM INFORMATION_SCHEMA.TABLES 
+                WHERE TABLE_TYPE = 'BASE TABLE'
+                ORDER BY TABLE_NAME
+            """)
+            
+            existing_tables = [row[0] for row in cursor.fetchall()]
+            
+            print(f"\n   Found {len(existing_tables)} tables in database:")
+            
+            missing_tables = []
+            for table in required_tables:
+                if table in existing_tables:
+                    print(f"   ✅ {table}")
+                else:
+                    print(f"   ❌ {table} (MISSING)")
+                    missing_tables.append(table)
+            
+            if missing_tables:
+                print(f"\n⚠️  WARNING: {len(missing_tables)} required table(s) missing!")
+                print("   Please create these tables before running the backend.")
+            else:
+                print("\n✅ All required tables exist!")
+            
+            # Get record counts
+            print("\n📊 Current Data:")
+            cursor.execute("SELECT COUNT(*) FROM Users")
+            print(f"   Users:   {cursor.fetchone()[0]}")
+            
+            cursor.execute("SELECT COUNT(*) FROM Resumes")
+            print(f"   Resumes: {cursor.fetchone()[0]}")
+            
+            cursor.execute("SELECT COUNT(*) FROM Jobs")
+            print(f"   Jobs:    {cursor.fetchone()[0]}")
+            
+            cursor.close()
+            conn.close()
+            
+            print("\n" + "="*70)
+            print("✅ READY TO START BACKEND")
+            print("="*70)
+            print("\nRun: python unified_backend.py")
+            print("="*70 + "\n")
+            
+        except Exception as e:
+            print(f"\n⚠️  Error checking tables: {e}")
+    
+    else:
+        print("\n" + "="*70)
+        print("❌ CONNECTION FAILED")
+        print("="*70)
+        print("\n🔧 Troubleshooting Steps:")
+        print("\n1. Check SQL Server is running:")
+        print("   - Open SQL Server Configuration Manager")
+        print("   - Verify SQL Server (SQLEXPRESS) service is running")
+        
+        print("\n2. Verify your server name:")
+        print("   - Open SQL Server Management Studio (SSMS)")
+        print("   - Note the server name when connecting")
+        print(f"   - Current config: {Config.DB_SERVER}")
+        
+        print("\n3. Check database exists:")
+        print("   - In SSMS, expand 'Databases'")
+        print(f"   - Look for: {Config.DB_NAME}")
+        
+        print("\n4. Verify ODBC Driver:")
+        print("   - Run in Python: import pyodbc; print(pyodbc.drivers())")
+        print("   - Should see 'ODBC Driver 17 for SQL Server'")
+        
+        print("\n5. If using SQL Server Auth:")
+        print("   - Set Config.USE_WINDOWS_AUTH = False")
+        print("   - Set Config.DB_USERNAME and Config.DB_PASSWORD")
+        
+        print("\n6. Common server name formats:")
+        print("   - localhost\\SQLEXPRESS")
+        print("   - .\\SQLEXPRESS")
+        print("   - COMPUTERNAME\\SQLEXPRESS")
+        print(f"   - {Config.DB_SERVER} (your current setting)")
+        
+        print("\n" + "="*70 + "\n")
+
+if __name__ == '__main__':
+    main()

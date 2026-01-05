@@ -10,57 +10,403 @@
 
   <!-- Custom styles -->
   <link rel="stylesheet" href="style.css" />
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    /* Reset body container padding for full-width navbar */
+    body.container {
+      padding: 0 !important;
+      max-width: 100% !important;
+    }
+
+    /* ============================================
+       COMPLETE RECTANGLE NAVBAR - NO CURVED EDGES
+       ============================================ */
+    
+    .app-header {
+      background: linear-gradient(90deg, #5b6ef5 0%, #6574f7 50%, #7a85f9 100%);
+      padding: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1050;
+      margin: 0;
+      width: 100%;
+      border-radius: 0; /* Completely rectangular */
+    }
+
+    .navbar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 100%;
+      padding: 0 40px;
+      height: 70px;
+      margin: 0;
+    }
+
+    /* Left Section - Brand + Tabs */
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* Brand Logo */
+    .brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      padding-right: 60px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .brand:hover {
+      color: white;
+    }
+
+    .brand-light {
+      opacity: 0.7;
+      font-weight: 500;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 0;
+      align-items: center;
+    }
+
+    .nav-tab {
+      padding: 10px 24px;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      margin: 0 2px;
+      font-family: 'Inter', sans-serif;
+      position: relative;
+      height: 70px;
+    }
+
+    .nav-tab-icon {
+      font-size: 1.1rem;
+    }
+
+    .nav-tab:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .nav-tab.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+    }
+
+    .nav-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: white;
+    }
+
+    /* Right Section */
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Back Button */
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .back-button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+      color: white;
+    }
+
+    /* Avatar Section */
+    .avatar-section {
+      position: relative;
+    }
+
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .user-avatar:hover {
+      transform: scale(1.05);
+      border-color: rgba(255, 255, 255, 0.7);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Dropdown Menu - FIXED */
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      min-width: 220px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 2000;
+      overflow: hidden;
+    }
+
+    .dropdown-menu.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Dropdown Items */
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      color: #475569;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-item:hover {
+      background: #f8fafc;
+      color: #1e293b;
+    }
+
+    .dropdown-item.logout-item {
+      color: #ef4444;
+    }
+
+    .dropdown-item.logout-item:hover {
+      background: #fef2f2;
+    }
+
+    .dropdown-item i {
+      width: 20px;
+      font-size: 1.1rem;
+      font-style: normal;
+    }
+
+    /* Page Title Section */
+    .page-title-section {
+      text-align: center;
+      padding: 30px 20px;
+      background: #f8f9fa;
+      margin: 0;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1c2c;
+      margin-bottom: 10px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .page-subtitle {
+      font-size: 1rem;
+      color: #64748b;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Content Container */
+    .content-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .navbar-container {
+        padding: 0 20px;
+        flex-wrap: wrap;
+        height: auto;
+      }
+
+      .navbar-left {
+        width: 100%;
+        justify-content: space-between;
+        padding: 10px 0;
+      }
+
+      .nav-tabs {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .nav-tab {
+        height: auto;
+      }
+
+      .nav-tab span:not(.nav-tab-icon) {
+        display: none;
+      }
+
+      .navbar-right {
+        width: 100%;
+        justify-content: space-between;
+        padding: 10px 0;
+      }
+
+      .back-button span,
+      .create-button span {
+        display: none;
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+      }
+
+      .page-subtitle {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
 </head>
 
-<script>
-// Add this RIGHT AFTER opening <body> tag in index.html
-(function() {
-    const user = localStorage.getItem('user');
-    if (!user) {
-        window.location.href = 'login.html';
-    } else {
-        const userData = JSON.parse(user);
-        console.log('Logged in as:', userData.username);
-    }
-})();
-</script>
-
-<body class="container py-4">
+<body>
   <script>
-       // Check if user is logged in
-       window.addEventListener('load', function() {
-           const user = localStorage.getItem('user');
-           if (!user) {
-               alert('Please login first!');
-               window.location.href = 'login.html';
-           } else {
-               const userData = JSON.parse(user);
-               console.log('Welcome, ' + userData.firstName + '!');
-               // You can display user name in your resume builder header
-           }
-       });
+    // Check if user is logged in - MOVED TO TOP
+    (function() {
+      const user = localStorage.getItem('user');
+      if (!user) {
+        window.location.href = 'login.html';
+      }
+    })();
+  </script>
 
-       // Logout function
-       function logout() {
-           localStorage.removeItem('user');
-           window.location.href = 'login.html';
-       }
-   </script>
+  <!-- NAVBAR -->
+  <header class="app-header">
+    <div class="navbar-container">
+      <div class="navbar-left">
+        <a href="dashboard.html" class="brand">
+          <span>Resume</span><span class="brand-light">Builder</span>
+        </a>
+        <div class="nav-tabs">
+          <a href="dashboard.html" class="nav-tab">
+            <span class="nav-tab-icon">📊</span>
+            <span>Insights</span>
+          </a>
+          <a href="dashboard.html" class="nav-tab">
+            <span class="nav-tab-icon">👥</span>
+            <span>Talent Pool</span>
+          </a>
+          <a href="dashboard.html" class="nav-tab">
+            <span class="nav-tab-icon">📋</span>
+            <span>Users</span>
+          </a>
+          <a href="dashboard.html" class="nav-tab">
+            <span class="nav-tab-icon">📄</span>
+            <span>Reports</span>
+          </a>
+          <a href="dashboard.html" class="nav-tab">
+            <span class="nav-tab-icon">🕐</span>
+            <span>Activity</span>
+          </a>
+        </div>
+      </div>
 
-  <header class="app-header mb-4">
-  <div class="d-flex justify-content-between align-items-center">
-    <div>
-      <h1 class="h3 mb-1">ATS Friendly Resume Builder</h1>
-      <p class="mb-0">A clean, validated, dynamic, and exportable resume builder — optimized for ATS parsing.</p>
+      <div class="navbar-right">
+        <a href="dashboard.html" class="back-button">
+          ← Back
+        </a>
+        
+        <div class="avatar-section">
+          <div class="user-avatar" id="userAvatar">U</div>
+          
+          <div class="dropdown-menu" id="dropdownMenu">
+            <button class="dropdown-item" onclick="goToSettings()">
+              <i>⚙️</i>
+              Settings
+            </button>
+            <button class="dropdown-item" onclick="goToProfile()">
+              <i>👤</i>
+              My Profile
+            </button>
+            <button class="dropdown-item logout-item" onclick="handleLogout()">
+              <i>🚪</i>
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-<button onclick="window.location.href='dashboard.html'" class="btn btn-dashboard me-2">
-    🏠 Back to Dashboard
-</button>
-<button onclick="logout()" class="btn btn-danger">
-    🚪 Logout
-</button>
+  </header>
+
+  <!-- Page Title Section Below Navbar -->
+  <div class="page-title-section">
+    <h1 class="page-title">ATS Friendly Resume Builder</h1>
+    <p class="page-subtitle">A clean, validated, dynamic, and exportable resume builder — optimized for ATS parsing.</p>
   </div>
-</header>
+
+  <!-- Main Content Container -->
+  <div class="content-container">
   <form id="resumeForm" novalidate>
     <!-- Personal Information -->
     <div class="card p-3 mb-4">
@@ -299,6 +645,8 @@
     <div class="text-muted">Fill the form and click Preview to see your ATS-friendly resume.</div>
   </div>
 
+  </div><!-- Close content-container -->
+
   <!-- Local Bootstrap JS -->
   <script src="js/bootstrap.bundle.min.js"></script>
 
@@ -308,11 +656,76 @@
   <!-- Local html2canvas -->
   <script src="js/html2canvas.min.js"></script>
 
-<!-- Models (MUST come BEFORE custom.js) -->
-<script src="models.js"></script>
+  <!-- Models (MUST come BEFORE custom.js) -->
+  <script src="models.js"></script>
 
-<!-- Custom JS -->
-<script src="custom.js"></script>
+  <!-- Custom JS -->
+  <script src="custom.js"></script>
+
+  <script>
+    // Initialize user avatar with logged-in user's initial
+    window.addEventListener('DOMContentLoaded', function() {
+      try {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const userName = user.firstName || user.username || user.name || 'User';
+        
+        // Set avatar initial (first letter of username/name)
+        const avatarElement = document.getElementById('userAvatar');
+        if (avatarElement) {
+          avatarElement.textContent = userName.substring(0, 1).toUpperCase();
+        }
+        
+        console.log('User avatar initialized for:', userName);
+      } catch (error) {
+        console.error('Error initializing avatar:', error);
+      }
+    });
+
+    // Toggle dropdown menu functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const userAvatar = document.getElementById('userAvatar');
+      const dropdownMenu = document.getElementById('dropdownMenu');
+
+      if (userAvatar && dropdownMenu) {
+        // Toggle dropdown on avatar click
+        userAvatar.addEventListener('click', function(e) {
+          e.stopPropagation();
+          dropdownMenu.classList.toggle('show');
+          console.log('Dropdown toggled:', dropdownMenu.classList.contains('show'));
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!userAvatar.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+          }
+        });
+
+        // Prevent dropdown from closing when clicking inside it
+        dropdownMenu.addEventListener('click', function(e) {
+          e.stopPropagation();
+        });
+      }
+    });
+
+    // Dropdown action functions
+    function goToSettings() {
+      alert('Settings page coming soon!');
+      document.getElementById('dropdownMenu').classList.remove('show');
+    }
+
+    function goToProfile() {
+      alert('Profile page coming soon!');
+      document.getElementById('dropdownMenu').classList.remove('show');
+    }
+
+    function handleLogout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+      }
+    }
+  </script>
 </body>
 </html>
-```

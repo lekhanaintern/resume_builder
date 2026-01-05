@@ -1065,3 +1065,45 @@ handlePreview = async function() {
         await saveResumeToDatabase();
     }
 };
+function initializeUserAvatar() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userName = user.firstName || user.username || 'User';
+    const userEmail = user.email || 'user@example.com';
+    
+    document.getElementById('userAvatar').textContent = userName.substring(0, 1).toUpperCase();
+    document.getElementById('dropdownUserName').textContent = userName;
+    document.getElementById('dropdownUserEmail').textContent = userEmail;
+}
+
+// Navigation functions
+function goToDashboard() {
+    window.location.href = 'dashboard.html';
+}
+
+function goToCreateResume() {
+    window.location.href = 'index.html';
+}
+
+function goToAdmin() {
+    window.location.href = 'admin.html';
+}
+
+// Toggle dropdown menu
+document.addEventListener('DOMContentLoaded', function() {
+    initializeUserAvatar();
+    
+    const avatar = document.getElementById('userAvatar');
+    const dropdown = document.getElementById('dropdownMenu');
+    
+    avatar.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdown.classList.toggle('show');
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!dropdown.contains(e.target) && !avatar.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    });
+});

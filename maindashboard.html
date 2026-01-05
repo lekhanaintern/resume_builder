@@ -1,177 +1,569 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resume Builder</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-  <!-- LOCAL BOOTSTRAP -->
-  <link rel="stylesheet" href="css/bootstrap.min.css">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <style>
-    :root {
-      --primary: #0d6efd;
-      --accent: #7c3aed;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+            min-height: 100vh;
+        }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+        /* Navigation Bar */
+        .navbar {
+            background: linear-gradient(135deg, #5b71f5 0%, #4c63e8 100%);
+            padding: 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
 
-    /* HEADER */
-    .top-navbar {
-      background: linear-gradient(90deg, var(--primary), var(--accent));
-      box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
-    }
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
 
-    .navbar-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 30px;
-      display: flex;
-      align-items: center;
-      height: 70px;
-    }
+        /* Left Section - Brand and Tabs */
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
 
-    .navbar-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: white;
-      font-size: 1.4rem;
-      font-weight: 700;
-      text-decoration: none;
-    }
+        /* Brand */
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            padding: 20px 0;
+        }
 
-    .brand-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
+        /* Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
 
-    /* MAIN CONTENT */
-    .main-content {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-    }
+        .nav-tab {
+            padding: 20px 24px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            position: relative;
+        }
 
-    /* CARD */
-    .app-card {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-      max-width: 600px;
-      width: 100%;
-      overflow: hidden;
-      position: relative;
-    }
+        .nav-tab:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-    .app-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 6px;
-      background: linear-gradient(90deg, var(--primary), var(--accent));
-    }
+        .nav-tab.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
 
-    .app-card-body {
-      padding: 60px 50px;
-      text-align: center;
-    }
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: white;
+        }
 
-    .app-card h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      color: #0f172a;
-    }
+        /* Right Section - User Avatar */
+        .navbar-right {
+            position: relative;
+        }
 
-    .app-card p {
-      color: #64748b;
-      font-size: 1.1rem;
-      line-height: 1.7;
-      margin-bottom: 40px;
-    }
+        /* Avatar */
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
 
-    .btn-primary-large {
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: white;
-      border: none;
-      padding: 16px 40px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 8px 25px rgba(13, 110, 253, 0.3);
-      text-decoration: none;
-      display: inline-block;
-      width: 100%;
-    }
+        .user-avatar:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
 
-    .btn-primary-large:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 35px rgba(13, 110, 253, 0.4);
-      color: white;
-    }
+        /* Dropdown Menu */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
 
-    @media (max-width: 768px) {
-      .navbar-content {
-        padding: 0 20px;
-      }
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
 
-      .app-card-body {
-        padding: 40px 30px;
-      }
+        .dropdown-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
 
-      .app-card h2 {
-        font-size: 1.6rem;
-      }
+        .dropdown-user-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
 
-      .app-card p {
-        font-size: 1rem;
-      }
-    }
-  </style>
+        .dropdown-user-email {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: #475569;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .dropdown-item:first-of-type {
+            border-radius: 0;
+        }
+
+        .dropdown-item:last-of-type {
+            border-radius: 0 0 12px 12px;
+            color: #ef4444;
+        }
+
+        .dropdown-item:last-of-type:hover {
+            background: #fef2f2;
+        }
+
+        .dropdown-item svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Header */
+        .app-header {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 80px;
+            text-align: center;
+        }
+
+        /* Cards Container */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 50px 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Card Title */
+        .card-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+
+        /* Card Description */
+        .card-description {
+            font-size: 1rem;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+
+        /* Button */
+        .card-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .card-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Features List */
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .feature-item svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .navbar-container {
+                flex-direction: column;
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .navbar-left {
+                flex-direction: column;
+                gap: 20px;
+                width: 100%;
+            }
+
+            .nav-tabs {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                max-width: 600px;
+            }
+
+            .app-header {
+                font-size: 2rem;
+                margin-bottom: 50px;
+            }
+
+            .card {
+                padding: 40px 30px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .brand {
+                font-size: 1.25rem;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-tab {
+                width: 100%;
+                text-align: center;
+            }
+
+            .app-header {
+                font-size: 1.75rem;
+            }
+
+            .card-title {
+                font-size: 1.5rem;
+            }
+
+            .features {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <!-- HEADER -->
-  <nav class="top-navbar">
-    <div class="navbar-content">
-      <a href="#" class="navbar-brand">
-        <div class="brand-icon">📄</div>
-        <span>Resume Pro</span>
-      </a>
-    </div>
-  </nav>
 
-  <!-- MAIN CONTENT -->
-  <div class="main-content">
-    <div class="app-card">
-      <div class="app-card-body">
-        <h2>Resume Builder</h2>
-        <p>Create, update, preview, and download professional ATS-friendly resumes with ease.</p>
-        <a href="dashboard.html" class="btn-primary-large">
-          🚀 Create Resume
-        </a>
-      </div>
-    </div>
-  </div>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <!-- Left Section -->
+            <div class="navbar-left">
+                <div class="brand">Applications</div>
+            </div>
 
+            <!-- Right Section - User Avatar -->
+            <div class="navbar-right">
+                <div class="user-avatar" id="userAvatar">JD</div>
+                
+                <!-- Dropdown Menu -->
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-header">
+                        <div class="dropdown-user-name" id="dropdownUserName">John Doe</div>
+                        <div class="dropdown-user-email" id="dropdownUserEmail">john.doe@example.com</div>
+                    </div>
+                    <button class="dropdown-item" onclick="goToProfile()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        My Profile
+                    </button>
+                    <button class="dropdown-item" onclick="logout()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <h1 class="app-header"></h1>
+
+        <!-- Cards Container -->
+        <div class="cards-container">
+            
+            <!-- Card 1: Build Your Future -->
+            <div class="card">
+                <h2 class="card-title">Build Your Future</h2>
+                <p class="card-description">
+                    Create a professional, ATS-friendly resume in minutes with our clean editor.
+                </p>
+                <button class="card-button" onclick="navigateToResume()">
+                    Resume Builder
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 19l7-7-7-7M19 12H5"/>
+                    </svg>
+                </button>
+                <div class="features">
+                    <div class="feature-item">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        ATS FRIENDLY
+                    </div>
+                    <div class="feature-item">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        PDF EXPORT
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Find Your Match -->
+            <div class="card">
+                <h2 class="card-title">Find Your Match</h2>
+                <p class="card-description">
+                    Discover job opportunities tailored to your skills and experience.
+                </p>
+                <button class="card-button" onclick="navigateToJobs()">
+                    Jobs
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 19l7-7-7-7M19 12H5"/>
+                    </svg>
+                </button>
+                <div class="features">
+                    <div class="feature-item">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        TOP COMPANIES
+                    </div>
+                    <div class="feature-item">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        REMOTE OPTIONS
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Get user initials and display
+        function getUserInitials(name) {
+            const names = name.split(' ');
+            if (names.length >= 2) {
+                return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+            }
+            return name.substring(0, 1).toUpperCase();
+        }
+
+        // Initialize user info
+        function initializeUser() {
+            const userDataStr = localStorage.getItem('user');
+            if (userDataStr) {
+                const userData = JSON.parse(userDataStr);
+                const userName = userData.name || userData.username || 'John Doe';
+                const userEmail = userData.email || 'user@example.com';
+                
+                // Set avatar initials
+                document.getElementById('userAvatar').textContent = getUserInitials(userName);
+                
+                // Set dropdown info
+                document.getElementById('dropdownUserName').textContent = userName;
+                document.getElementById('dropdownUserEmail').textContent = userEmail;
+            }
+        }
+
+        // Toggle dropdown
+        const userAvatar = document.getElementById('userAvatar');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        userAvatar.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!dropdownMenu.contains(e.target) && e.target !== userAvatar) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+
+        // Navigation functions
+        function navigateToResume() {
+            const user = localStorage.getItem('user');
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                window.location.href = 'dashboard.html';
+            }
+        }
+
+        function navigateToJobs() {
+            const user = localStorage.getItem('user');
+            if (!user) {
+                alert('Please login to access Jobs portal');
+                window.location.href = 'login.html';
+            } else {
+                window.location.href = 'jobdashboard.html';
+            }
+        }
+
+        // Dropdown menu functions
+        function goToSettings() {
+            alert('Settings page coming soon!');
+            // window.location.href = 'settings.html';
+        }
+
+        function goToProfile() {
+            alert('Profile page coming soon!');
+            // window.location.href = 'profile.html';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Tab navigation
+        const tabs = document.querySelectorAll('.nav-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Initialize on page load
+        initializeUser();
+    </script>
 </body>
 </html>
