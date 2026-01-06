@@ -216,9 +216,9 @@
         /* Cards Container */
         .cards-container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 40px;
-            max-width: 1200px;
+            max-width: 1400px;
             width: 100%;
         }
 
@@ -300,6 +300,12 @@
         }
 
         /* Responsive */
+        @media (max-width: 1200px) {
+            .cards-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 992px) {
             .navbar-container {
                 flex-direction: column;
@@ -413,12 +419,8 @@
         <!-- Cards Container -->
         <div class="cards-container">
             
-            <!-- Card 1: Build Your Future -->
+            <!-- Card 1: Resume Builder -->
             <div class="card">
-                <h2 class="card-title">Build Your Future</h2>
-                <p class="card-description">
-                    Create a professional, ATS-friendly resume in minutes with our clean editor.
-                </p>
                 <button class="card-button" onclick="navigateToResume()">
                     Resume Builder
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -441,12 +443,8 @@
                 </div>
             </div>
 
-            <!-- Card 2: Find Your Match -->
+            <!-- Card 2: Jobs -->
             <div class="card">
-                <h2 class="card-title">Find Your Match</h2>
-                <p class="card-description">
-                    Discover job opportunities tailored to your skills and experience.
-                </p>
                 <button class="card-button" onclick="navigateToJobs()">
                     Jobs
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -469,6 +467,30 @@
                 </div>
             </div>
 
+            <!-- Card 3: Master Data -->
+            <div class="card">
+                <button class="card-button" onclick="navigateToMasterData()">
+                    Master Data
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 19l7-7-7-7M19 12H5"/>
+                    </svg>
+                </button>
+                <div class="features">
+                    <div class="feature-item">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        ANALYTICS
+                    </div>
+                    <div class="feature-item">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        INSIGHTS
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -487,7 +509,7 @@
             const userDataStr = localStorage.getItem('user');
             if (userDataStr) {
                 const userData = JSON.parse(userDataStr);
-                const userName = userData.name || userData.username || 'John Doe';
+                const userName = userData.firstName || userData.username || 'John Doe';
                 const userEmail = userData.email || 'user@example.com';
                 
                 // Set avatar initials
@@ -535,6 +557,22 @@
             }
         }
 
+        function navigateToMasterData() {
+            const user = localStorage.getItem('user');
+            if (!user) {
+                alert('Please login to access Master Data');
+                window.location.href = 'login.html';
+            } else {
+                // Check if user is admin
+                const userData = JSON.parse(user);
+                if (userData.userType === 'admin') {
+                    window.location.href = 'masterdata.html';
+                } else {
+                    alert('Access Denied: Only administrators can access Master Data');
+                }
+            }
+        }
+
         // Dropdown menu functions
         function goToSettings() {
             alert('Settings page coming soon!');
@@ -549,6 +587,7 @@
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('user');
+                sessionStorage.clear();
                 window.location.href = 'login.html';
             }
         }

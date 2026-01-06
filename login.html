@@ -27,14 +27,8 @@
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .login-header {
@@ -81,7 +75,7 @@
             margin-bottom: 8px;
         }
 
-        .form-control, .form-select {
+        .form-control {
             border: 2px solid #e2e8f0;
             border-radius: 8px;
             padding: 12px 16px;
@@ -89,12 +83,12 @@
             transition: all 0.3s ease;
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus {
             border-color: #0d6efd;
             box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
         }
 
-        .form-control.is-invalid, .form-select.is-invalid {
+        .form-control.is-invalid {
             border-color: #dc3545;
         }
 
@@ -208,23 +202,6 @@
 
             <!-- Login Form -->
             <form id="loginForm" novalidate>
-                <!-- User Type Selection -->
-                <div class="mb-3">
-                    <label for="userType" class="form-label">Login As <span class="text-danger">*</span></label>
-                    <select 
-                        class="form-select" 
-                        id="userType" 
-                        name="userType"
-                        required
-                    >
-                        <option value="" selected disabled>Select your role</option>
-                        <option value="recruiter">Recruiter</option>
-                        <option value="candidate">Candidate</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                    <div class="invalid-feedback">Please select your role</div>
-                </div>
-
                 <!-- Username -->
                 <div class="mb-3">
                     <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
@@ -293,11 +270,11 @@
         // ============================================
         const API_BASE_URL = 'http://localhost:5000/api'; 
 
-        // Role-based redirect mapping
+        // Role-based redirect mapping - UPDATED PATHS
         const ROLE_REDIRECTS = {
             'recruiter': 'jobdashboard.html',
             'candidate': 'dashboard.html',
-            'admin': 'maindashboard.html'
+            'admin': 'maindashboard.html'  // Changed from 'main.html' to 'maindashboard.html'
         };
 
         // ============================================
@@ -308,7 +285,6 @@
         const submitBtn = document.getElementById('submitBtn');
         const btnText = document.getElementById('btnText');
         const btnSpinner = document.getElementById('btnSpinner');
-        const userTypeSelect = document.getElementById('userType');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
         const togglePasswordBtn = document.getElementById('togglePassword');
@@ -330,7 +306,6 @@
 
         function setLoading(isLoading) {
             submitBtn.disabled = isLoading;
-            userTypeSelect.disabled = isLoading;
             usernameInput.disabled = isLoading;
             passwordInput.disabled = isLoading;
             
@@ -350,7 +325,6 @@
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             
-            // Toggle eye icon
             if (type === 'text') {
                 document.getElementById('eyeIcon').innerHTML = `
                     <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>
@@ -370,13 +344,13 @@
             if (user) {
                 try {
                     const userData = JSON.parse(user);
-                    // Redirect to their specific dashboard based on stored userType
                     const redirectUrl = ROLE_REDIRECTS[userData.userType] || 'maindashboard.html';
-                    window.location.replace(redirectUrl); // Use replace to prevent back button issues
+                    window.location.replace(redirectUrl);
                 } catch (e) {
-                    // If there's an error parsing user data, clear it
                     localStorage.removeItem('user');
                 }
+            } else {
+                usernameInput.focus();
             }
         });
 
@@ -387,25 +361,20 @@
             e.preventDefault();
             alertContainer.innerHTML = '';
 
-            // Basic validation
-            const userType = userTypeSelect.value;
             const username = usernameInput.value.trim();
             const password = passwordInput.value;
 
-            if (!userType || !username || !password) {
+            if (!username || !password) {
                 showAlert('Please fill in all required fields');
                 form.classList.add('was-validated');
                 return;
             }
 
-            // Prepare login data
             const loginData = {
-                userType: userType,
                 username: username,
                 password: password
             };
 
-            // Submit to API
             setLoading(true);
 
             try {
@@ -420,29 +389,28 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    // Add userType to user data
-                    const userData = {
-                        ...data.user,
-                        userType: userType
-                    };
-                    
-                    // Store user data in localStorage
+                    const userData = data.user;
                     localStorage.setItem('user', JSON.stringify(userData));
                     
-                    // Get the appropriate redirect URL based on user type
-                    const redirectUrl = ROLE_REDIRECTS[userType];
+                    const userType = userData.userType;
+                    const redirectUrl = ROLE_REDIRECTS[userType] || 'maindashboard.html';
                     
-                    showAlert(`Welcome back, ${data.user.firstName}! Redirecting to ${userType} dashboard...`, 'success');
+                    const roleNames = {
+                        'admin': 'Admin',
+                        'recruiter': 'Recruiter',
+                        'candidate': 'Candidate'
+                    };
                     
-                    // Redirect based on user type after 1.5 seconds
-                    // Use replace() to prevent back button from returning to login
+                    showAlert(`Welcome back, ${userData.firstName}! Redirecting to ${roleNames[userType]} dashboard...`, 'success');
+                    
                     setTimeout(() => {
                         window.location.replace(redirectUrl);
                     }, 1500);
                 } else {
-                    showAlert(data.message || 'Login failed. Please check your credentials and selected role.');
+                    showAlert(data.message || 'Login failed. Please check your credentials.');
                     setLoading(false);
-                    passwordInput.value = ''; // Clear password
+                    passwordInput.value = '';
+                    passwordInput.focus();
                 }
 
             } catch (error) {
@@ -458,17 +426,6 @@
         passwordInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 form.dispatchEvent(new Event('submit'));
-            }
-        });
-
-        // ============================================
-        // AUTO-FOCUS USER TYPE FIELD
-        // ============================================
-        window.addEventListener('load', function() {
-            // Only focus if user is not already logged in
-            const user = localStorage.getItem('user');
-            if (!user) {
-                userTypeSelect.focus();
             }
         });
     </script>

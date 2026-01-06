@@ -5,7 +5,7 @@ let sectionStates = {
   projectsContainer: true,
   skillsMainContainer: true,
   hobbiesContainer: true,
-  certificationsContainer: true
+  certificationsContainer: true,
 };
 
 /* ========= Regex ========= */
@@ -868,7 +868,9 @@ function handlePreview() {
 }
 
 /* ========= PDF ========= */
-async function downloadPDF() {
+// Base URL of your backend
+const API = "http://localhost:5000"; // change port if needed
+async function downloadPDF(resumeId) {
   try {
     const preview = document.getElementById("resumePreview");
 
@@ -877,23 +879,31 @@ async function downloadPDF() {
       return;
     }
 
-    // Check if jsPDF is loaded
-    if (typeof window.jspdf === 'undefined') {
-      alert("PDF library not loaded. Please check if js/jspdf.umd.min.js file exists.");
+    // 🔹 Increment download count (backend call)
+    try {
+      await fetch(`${API}/api/increment-download/${resumeId}`, {
+        method: "POST"
+      });
+    } catch (err) {
+      console.warn("⚠️ Download count update failed", err);
+      // PDF should still download even if backend fails
+    }
+
+    // Check jsPDF
+    if (typeof window.jspdf === "undefined") {
+      alert("PDF library not loaded. Please check jsPDF file.");
       return;
     }
 
-    // Check if html2canvas is loaded
-    if (typeof html2canvas === 'undefined') {
-      alert("HTML2Canvas library not loaded. Please check if js/html2canvas.min.js file exists.");
+    // Check html2canvas
+    if (typeof html2canvas === "undefined") {
+      alert("HTML2Canvas library not loaded.");
       return;
     }
 
-    // Check if user wants to include photo in PDF
-    const includePhoto = document.getElementById("includePhotoInPDF").checked;
+    const includePhoto = document.getElementById("includePhotoInPDF")?.checked;
     const photoElement = document.getElementById("previewPhoto");
-    
-    // Temporarily hide photo if user doesn't want it in PDF
+
     let photoDisplayStyle = "";
     if (!includePhoto && photoElement) {
       photoDisplayStyle = photoElement.style.display;
@@ -909,7 +919,7 @@ async function downloadPDF() {
       logging: false
     });
 
-    // Restore photo visibility
+    // Restore photo
     if (!includePhoto && photoElement) {
       photoElement.style.display = photoDisplayStyle;
     }
@@ -937,19 +947,17 @@ async function downloadPDF() {
     }
 
     pdf.save("resume.pdf");
+
   } catch (error) {
     console.error("PDF Generation Error:", error);
-    alert("Error generating PDF: " + error.message + "\n\nPlease ensure all library files are loaded correctly.");
+    alert(
+      "Error generating PDF: " +
+      error.message +
+      "\n\nPlease ensure all library files are loaded correctly."
+    );
   }
 }
 
-// Auto-resize textareas
-document.addEventListener("input", function (e) {
-  if (e.target.classList.contains("projectDesc")) {
-    e.target.style.height = "auto";
-    e.target.style.height = e.target.scrollHeight + "px";
-  }
-});
 // ==================== DATABASE API INTEGRATION ====================
 const API_URL = 'http://localhost:5000/api';
 
@@ -1036,6 +1044,7 @@ async function saveResumeToDatabase() {
         const result = await response.json();
         
         if (result.success) {
+          currentResumeId = result.resume_id;
             alert(`✅ SUCCESS!\n\nYour resume has been saved to MSSQL database!\n\nResume ID: ${result.resume_id}\n\nYou can now download it as PDF.`);
             console.log('✅ Resume saved with ID:', result.resume_id);
             return result.resume_id;

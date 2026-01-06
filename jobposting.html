@@ -31,10 +31,6 @@
       margin: 0;
     }
 
-    /* ============================================
-       EXACT NAVBAR FROM SCREENSHOT
-       ============================================ */
-    
     .app-header {
       background: linear-gradient(90deg, #4169e1 0%, #6366f1 50%, #7c3aed 100%);
       padding: 0;
@@ -53,14 +49,12 @@
       height: 70px;
     }
 
-    /* Left Section - Brand + Tabs */
     .navbar-left {
       display: flex;
       align-items: center;
       gap: 0;
     }
 
-    /* Brand Logo */
     .brand {
       font-size: 1.4rem;
       font-weight: 700;
@@ -80,7 +74,6 @@
       font-size: 1.6rem;
     }
 
-    /* Navigation Tabs */
     .nav-tabs {
       display: flex;
       gap: 0;
@@ -112,14 +105,12 @@
       background: rgba(255, 255, 255, 0.15);
     }
 
-    /* Right Section */
     .navbar-right {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    /* Back Button */
     .back-button {
       display: inline-flex;
       align-items: center;
@@ -142,7 +133,6 @@
       color: white;
     }
 
-    /* Post a Job Button */
     .post-job-button {
       display: inline-flex;
       align-items: center;
@@ -164,7 +154,10 @@
       color: #4169e1;
     }
 
-    /* User Avatar */
+    .avatar-section {
+      position: relative;
+    }
+
     .user-avatar {
       width: 48px;
       height: 48px;
@@ -177,106 +170,77 @@
       font-size: 1.2rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .user-avatar:hover {
       transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-    /* Avatar Section */
-.avatar-section {
-  position: relative;
-}
 
-.user-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: white;
-  color: #4169e1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      min-width: 220px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 2000;
+      overflow: hidden;
+    }
 
-.user-avatar:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
+    .dropdown-menu.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
 
-/* Dropdown Menu */
-.dropdown-menu {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  min-width: 220px;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-  z-index: 2000;
-  overflow: hidden;
-}
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      color: #475569;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      border-bottom: 1px solid #f1f5f9;
+    }
 
-.dropdown-menu.show {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
 
-/* Dropdown Items */
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
-  color: #475569;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  font-family: 'Inter', sans-serif;
-  border-bottom: 1px solid #f1f5f9;
-}
+    .dropdown-item:hover {
+      background: #f8fafc;
+      color: #1e293b;
+    }
 
-.dropdown-item:last-child {
-  border-bottom: none;
-}
+    .dropdown-item.logout-item {
+      color: #ef4444;
+    }
 
-.dropdown-item:hover {
-  background: #f8fafc;
-  color: #1e293b;
-}
+    .dropdown-item.logout-item:hover {
+      background: #fef2f2;
+    }
 
-.dropdown-item.logout-item {
-  color: #ef4444;
-}
-
-.dropdown-item.logout-item:hover {
-  background: #fef2f2;
-}
-
-.dropdown-item i {
-  width: 20px;
-  font-size: 1.1rem;
-  font-style: normal;
-}
-
-    /* ============================================
-       JOB FORM CONTENT STYLES
-       ============================================ */
+    .dropdown-item i {
+      width: 20px;
+      font-size: 1.1rem;
+      font-style: normal;
+    }
 
     .container {
       max-width: 1200px;
@@ -409,80 +373,46 @@
       width: 100%;
     }
 
-    .skill-list-container {
-      min-height: 120px;
-      max-height: 300px;
-      overflow-y: auto;
-      border: 2px dashed #cbd5e1;
-      border-radius: 8px;
-      padding: 15px;
-      background: #f8f9fa;
-      margin-bottom: 12px;
+    .multi-select-container {
+      position: relative;
     }
 
-    .skill-list-container:empty::before {
-      content: "No skills added yet. Click '+ Add Skill' button below.";
-      color: #6c757d;
-      font-style: italic;
-      display: block;
-      text-align: center;
-      padding: 30px 10px;
-      font-size: 14px;
-    }
-
-    .skill-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #ffffff;
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      padding: 10px 12px;
-      margin-bottom: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      transition: all 0.2s ease;
-    }
-
-    .skill-item:hover {
-      border-color: var(--primary);
-      box-shadow: 0 3px 8px rgba(76, 99, 232, 0.15);
-    }
-
-    .skill-item input {
-      flex: 1;
-      border: 1px solid #ced4da;
-      border-radius: 6px;
+    .multi-select-display {
+      min-height: 48px;
       padding: 8px 12px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .skill-item input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(76, 99, 232, 0.1);
-    }
-
-    .btn-remove {
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
       background: white;
-      color: #dc3545;
-      border: 2px solid #dc3545;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
+      cursor: pointer;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .multi-select-display:hover {
+      border-color: #cbd5e1;
+    }
+
+    .selected-skill-tag {
+      background: var(--primary);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 18px;
-      font-weight: bold;
-      flex-shrink: 0;
-      transition: all 0.2s ease;
+      gap: 8px;
     }
 
-    .btn-remove:hover {
-      background: #dc3545;
-      color: white;
-      transform: scale(1.1);
+    .remove-skill {
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .multi-select-placeholder {
+      color: #94a3b8;
+      font-size: 15px;
     }
 
     .btn {
@@ -567,6 +497,56 @@
       display: block;
     }
 
+    .skill-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.skill-item input {
+  flex: 1;
+}
+
+.remove-skill-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.remove-skill-btn:hover {
+  background: #dc2626;
+  transform: scale(1.05);
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
     @keyframes slideDown {
       from {
         opacity: 0;
@@ -631,16 +611,10 @@
         width: 100%;
       }
     }
-
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-      opacity: 1;
-    }
   </style>
 </head>
 <body>
 
-<!-- EXACT NAVBAR FROM SCREENSHOT -->
 <header class="app-header">
   <div class="navbar-container">
     <div class="navbar-left">
@@ -671,29 +645,28 @@
       <a href="jobposting.html" class="post-job-button">
         ✚ Post a Job
       </a>
-<div class="avatar-section">
-  <div class="user-avatar" id="userAvatar">L</div>
-  
-  <div class="dropdown-menu" id="dropdownMenu">
-    <button class="dropdown-item" onclick="goToSettings()">
-      <i>⚙️</i>
-      Settings
-    </button>
-    <button class="dropdown-item" onclick="goToProfile()">
-      <i>👤</i>
-      My Profile
-    </button>
-    <button class="dropdown-item logout-item" onclick="handleLogout()">
-      <i>🚪</i>
-      Logout
-    </button>
-  </div>
-</div>
+      <div class="avatar-section">
+        <div class="user-avatar" id="userAvatar">L</div>
+        
+        <div class="dropdown-menu" id="dropdownMenu">
+          <button class="dropdown-item" onclick="goToSettings()">
+            <i>⚙️</i>
+            Settings
+          </button>
+          <button class="dropdown-item" onclick="goToProfile()">
+            <i>👤</i>
+            My Profile
+          </button>
+          <button class="dropdown-item logout-item" onclick="handleLogout()">
+            <i>🚪</i>
+            Logout
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </header>
 
-<!-- MAIN CONTENT -->
 <div class="container">
   <div class="page-title">
     <h1>📋 Create Job Posting</h1>
@@ -719,7 +692,6 @@
               class="form-control" 
               placeholder="e.g., Senior Software Engineer" 
               required 
-              tabindex="1"
             />
             <div class="error" id="error-jobTitle">Please enter a job title</div>
           </div>
@@ -733,9 +705,39 @@
               class="form-control" 
               placeholder="e.g., Tech Innovations Pvt. Ltd." 
               required 
-              tabindex="2"
             />
             <div class="error" id="error-companyName">Please enter company name</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label required">Sector / Industry</label>
+            <input 
+              type="text" 
+              id="sector" 
+              class="form-control" 
+              placeholder="e.g., IT, Healthcare, Finance, Education" 
+              required
+            />
+            <small class="small-muted">Enter the industry or sector type</small>
+            <div class="error" id="error-sector">Please enter a sector</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label required">Job Type</label>
+            <select id="jobType" class="form-control" required>
+              <option value="">-- Select Job Type --</option>
+              <option value="Full-Time">Full-Time</option>
+              <option value="Part-Time">Part-Time</option>
+              <option value="Contract">Contract</option>
+              <option value="Internship">Internship</option>
+              <option value="Freelance">Freelance</option>
+            </select>
+            <div class="error" id="error-jobType">Please select a job type</div>
           </div>
         </div>
       </div>
@@ -747,11 +749,10 @@
           class="form-control" 
           rows="5" 
           placeholder="Describe the role, responsibilities, and what makes this position unique..." 
-          required 
-          tabindex="3"
+          required
         ></textarea>
-        <small class="small-muted">Provide a comprehensive description of the role and responsibilities</small>
-        <div class="error" id="error-jobDescription">Please enter job description</div>
+        <small class="small-muted">Minimum 50 characters required</small>
+        <div class="error" id="error-jobDescription">Please enter at least 50 characters</div>
       </div>
     </div>
 
@@ -760,41 +761,32 @@
       <h4>🎯 Job Requirements</h4>
       
       <div class="form-group">
-        <label class="form-label required">Skills Required</label>
-        <div id="skillsContainer" class="skill-list-container"></div>
-        <button 
-          type="button" 
-          class="btn btn-primary" 
-          onclick="addSkill()" 
-          tabindex="4"
-        >
-          ➕ Add Skill
-        </button>
-        <small class="small-muted">Add all technical and professional skills required for this position</small>
-        <div class="error" id="error-skills">Please add at least one skill</div>
-      </div>
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <label class="form-label required mb-0">Required Skills</label>
+    <button type="button" class="btn btn-sm btn-primary" onclick="addSkillInput()" style="padding: 6px 16px; font-size: 14px;">
+      ✚ Add Skill
+    </button>
+  </div>
+  <small class="small-muted">Click "+ Add Skill" to add each required skill. Click "×" to remove.</small>
+  <div id="skillsContainer" style="margin-top: 12px;">
+    <!-- Skills will be added here dynamically -->
+  </div>
+  <div class="error" id="error-skills">Please add at least one skill</div>
+</div>
 
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            <label class="form-label required">Education Qualification</label>
-            <select 
-              id="education" 
+            <label class="form-label required">Required Education / Course</label>
+            <input 
+              type="text" 
+              id="course" 
               class="form-control" 
-              required 
-              tabindex="5"
-            >
-              <option value="">-- Select Education --</option>
-              <option value="High School">High School / SSLC</option>
-              <option value="Intermediate">Intermediate / PUC</option>
-              <option value="Diploma">Diploma</option>
-              <option value="Bachelor's Degree">Bachelor's Degree</option>
-              <option value="Master's Degree">Master's Degree</option>
-              <option value="PhD">PhD / Doctorate</option>
-              <option value="Any Graduate">Any Graduate</option>
-              <option value="Not Required">Not Required</option>
-            </select>
-            <div class="error" id="error-education">Please select education qualification</div>
+              placeholder="e.g., B.Tech, MBA, BCA, Any Graduate" 
+              required
+            />
+            <small class="small-muted">Enter the required qualification</small>
+            <div class="error" id="error-course">Please enter required education</div>
           </div>
         </div>
         <div class="col-md-6">
@@ -808,52 +800,73 @@
               min="0" 
               max="50" 
               step="0.5"
-              required 
-              tabindex="6"
+              required
             />
             <small class="small-muted">Enter 0 for fresher positions</small>
-            <div class="error" id="error-experience">Please enter experience required (0 for freshers)</div>
+            <div class="error" id="error-experience">Please enter experience required</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Job Details -->
+    <!-- Job Details & Location -->
     <div class="card">
-      <h4>💼 Job Details</h4>
+      <h4>📍 Job Location & Details</h4>
+      
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            <label class="form-label required">Job Type</label>
-            <select 
-              id="jobType" 
+            <label class="form-label required">Country</label>
+            <input 
+              type="text" 
+              id="country" 
               class="form-control" 
-              required 
-              tabindex="7"
-            >
-              <option value="">-- Select Job Type --</option>
-              <option value="Full-Time">Full-Time</option>
-              <option value="Part-Time">Part-Time</option>
-              <option value="Contract">Contract</option>
-              <option value="Freelance">Freelance</option>
-              <option value="Internship">Internship</option>
-              <option value="Temporary">Temporary</option>
-            </select>
-            <div class="error" id="error-jobType">Please select job type</div>
+              placeholder="e.g., India, USA, UK" 
+              required
+            />
+            <div class="error" id="error-country">Please enter country</div>
           </div>
         </div>
         <div class="col-md-6">
           <div class="form-group">
-            <label class="form-label required">Salary Package (Annual LPA)</label>
+            <label class="form-label required">State / Province</label>
+            <input 
+              type="text" 
+              id="state" 
+              class="form-control" 
+              placeholder="e.g., Karnataka, California" 
+              required
+            />
+            <div class="error" id="error-state">Please enter state</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label required">City</label>
+            <input 
+              type="text" 
+              id="city" 
+              class="form-control" 
+              placeholder="e.g., Bengaluru, Mumbai, New York" 
+              required
+            />
+            <div class="error" id="error-city">Please enter city</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label required">Salary Package</label>
             <input 
               type="text" 
               id="package" 
               class="form-control" 
               placeholder="e.g., 8-12 LPA or 50000/month" 
-              required 
-              tabindex="8"
+              required
             />
-            <small class="small-muted">You can specify a range (e.g., 8-12 LPA) or exact amount</small>
+            <small class="small-muted">You can specify a range or exact amount</small>
             <div class="error" id="error-package">Please enter salary package</div>
           </div>
         </div>
@@ -862,29 +875,27 @@
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            <label class="form-label required">Location</label>
-            <input 
-              type="text" 
-              id="location" 
-              class="form-control" 
-              placeholder="e.g., Bengaluru, Karnataka or Remote" 
-              required 
-              tabindex="9"
-            />
-            <div class="error" id="error-location">Please enter job location</div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
             <label class="form-label">Application Deadline</label>
             <input 
               type="date" 
               id="deadline" 
-              class="form-control" 
-              tabindex="10"
+              class="form-control"
             />
             <small class="small-muted">Optional: Set a deadline for applications</small>
             <div class="error" id="error-deadline">Please enter a valid future date</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label">Contact Email</label>
+            <input 
+              type="email" 
+              id="contactEmail" 
+              class="form-control" 
+              placeholder="hr@company.com"
+            />
+            <small class="small-muted">Optional: Email for applications</small>
+            <div class="error" id="error-contactEmail">Please enter a valid email</div>
           </div>
         </div>
       </div>
@@ -899,35 +910,21 @@
           id="benefits" 
           class="form-control" 
           rows="3" 
-          placeholder="e.g., Health insurance, Flexible work hours, Professional development, Work from home..." 
-          tabindex="11"
+          placeholder="e.g., Health insurance, Flexible work hours, Professional development..." 
         ></textarea>
-        <small class="small-muted">Optional: List benefits and perks to attract candidates</small>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Contact Email</label>
-        <input 
-          type="email" 
-          id="contactEmail" 
-          class="form-control" 
-          placeholder="hr@company.com" 
-          tabindex="12"
-        />
-        <small class="small-muted">Optional: Email where applications should be sent</small>
-        <div class="error" id="error-contactEmail">Please enter a valid email address</div>
+        <small class="small-muted">Optional: List benefits to attract candidates</small>
       </div>
     </div>
 
     <!-- Form Actions -->
     <div class="footer-actions">
-      <button type="button" class="btn btn-gradient" onclick="handlePreview()" tabindex="13">
+      <button type="button" class="btn btn-gradient" onclick="handlePreview()">
         👁️ Preview Job Posting
       </button>
-      <button type="submit" class="btn btn-success" tabindex="14">
+      <button type="submit" class="btn btn-success">
         ✅ Post Job
       </button>
-      <button type="button" class="btn btn-outline-primary" onclick="resetForm()" tabindex="15">
+      <button type="button" class="btn btn-outline-primary" onclick="resetForm()">
         🔄 Reset Form
       </button>
     </div>
@@ -936,105 +933,160 @@
 
 <script>
   const API_BASE_URL = 'http://localhost:5000/api';
+
   let skillCounter = 0;
-  // Initialize user avatar with logged-in user's initial
+
+// Add initial skill input on page load
 window.addEventListener('DOMContentLoaded', function() {
-  try {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const userName = user.firstName || user.username || user.name || 'User';
-    
-    // Set avatar initial (first letter of username/name)
-    const avatarElement = document.getElementById('userAvatar');
-    if (avatarElement) {
-      avatarElement.textContent = userName.substring(0, 1).toUpperCase();
-    }
-    
-    console.log('User avatar initialized for:', userName);
-  } catch (error) {
-    console.error('Error initializing avatar:', error);
-  }
+  addSkillInput(); // Add one skill input by default
 });
 
-// Toggle dropdown menu functionality
-document.addEventListener('DOMContentLoaded', function() {
-  const userAvatar = document.getElementById('userAvatar');
-  const dropdownMenu = document.getElementById('dropdownMenu');
+function addSkillInput() {
+  skillCounter++;
+  const container = document.getElementById('skillsContainer');
+  
+  const skillItem = document.createElement('div');
+  skillItem.className = 'skill-item';
+  skillItem.id = `skill-item-${skillCounter}`;
+  
+  skillItem.innerHTML = `
+    <input 
+      type="text" 
+      class="form-control skill-input" 
+      placeholder="e.g., Python, React, SQL"
+      data-skill-id="${skillCounter}"
+    />
+    <button 
+      type="button" 
+      class="remove-skill-btn" 
+      onclick="removeSkillInput(${skillCounter})"
+      title="Remove this skill"
+    >×</button>
+  `;
+  
+  container.appendChild(skillItem);
+}
 
-  if (userAvatar && dropdownMenu) {
-    // Toggle dropdown on avatar click
+function removeSkillInput(id) {
+  const skillItem = document.getElementById(`skill-item-${id}`);
+  if (skillItem) {
+    skillItem.remove();
+  }
+  
+  // Ensure at least one skill input exists
+  const remainingSkills = document.querySelectorAll('.skill-item');
+  if (remainingSkills.length === 0) {
+    addSkillInput();
+  }
+}
+
+function getSkillsArray() {
+  const skillInputs = document.querySelectorAll('.skill-input');
+  const skills = [];
+  
+  skillInputs.forEach(input => {
+    const value = input.value.trim();
+    if (value) {
+      skills.push(value);
+    }
+  });
+  
+  return skills;
+}
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userName = user.firstName || user.username || 'User';
+    document.getElementById('userAvatar').textContent = userName.substring(0, 1).toUpperCase();
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const userAvatar = document.getElementById('userAvatar');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+
     userAvatar.addEventListener('click', function(e) {
       e.stopPropagation();
       dropdownMenu.classList.toggle('show');
     });
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', function(e) {
       if (!userAvatar.contains(e.target) && !dropdownMenu.contains(e.target)) {
         dropdownMenu.classList.remove('show');
       }
     });
+  });
 
-    // Prevent dropdown from closing when clicking inside it
-    dropdownMenu.addEventListener('click', function(e) {
-      e.stopPropagation();
-    });
-  }
-});
-
-// Dropdown action functions
-function goToSettings() {
-  alert('Settings page coming soon!');
-  document.getElementById('dropdownMenu').classList.remove('show');
-}
-
-function goToProfile() {
-  alert('Profile page coming soon!');
-  document.getElementById('dropdownMenu').classList.remove('show');
-}
-
-function handleLogout() {
-  if (confirm('Are you sure you want to logout?')) {
-    localStorage.removeItem('user');
-    sessionStorage.clear();
-    window.location.href = 'login.html';
-  }
-}
-
-  function addSkill() {
-    const container = document.getElementById('skillsContainer');
-    const skillItem = document.createElement('div');
-    skillItem.className = 'skill-item';
-    skillItem.innerHTML = `
-      <input 
-        type="text" 
-        class="skill-input" 
-        placeholder="e.g., JavaScript, Python, Project Management..." 
-        data-skill-id="${skillCounter}"
-      />
-      <button type="button" class="btn-remove" onclick="removeSkill(this)">×</button>
-    `;
-    container.appendChild(skillItem);
-    skillItem.querySelector('input').focus();
-    skillCounter++;
+  function goToSettings() {
+    alert('Settings page coming soon!');
   }
 
-  function removeSkill(button) {
-    button.closest('.skill-item').remove();
+  function goToProfile() {
+    alert('Profile page coming soon!');
   }
 
-  function getSkills() {
-    const inputs = document.querySelectorAll('.skill-input');
-    const skills = [];
-    inputs.forEach(input => {
-      const value = input.value.trim();
-      if (value) {
-        skills.push(value);
-      }
-    });
-    return skills;
+  function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+      localStorage.removeItem('user');
+      sessionStorage.clear();
+      window.location.href = 'login.html';
+    }
   }
 
-  function validateField(fieldId, condition, errorMsg) {
+  function validateForm() {
+    let isValid = true;
+
+    const jobTitle = document.getElementById('jobTitle').value.trim();
+    isValid &= validateField('jobTitle', jobTitle.length > 0);
+
+    const companyName = document.getElementById('companyName').value.trim();
+    isValid &= validateField('companyName', companyName.length > 0);
+
+    const sector = document.getElementById('sector').value.trim();
+    isValid &= validateField('sector', sector.length > 0);
+
+    const jobType = document.getElementById('jobType').value;
+    isValid &= validateField('jobType', jobType !== '');
+
+    const jobDescription = document.getElementById('jobDescription').value.trim();
+    isValid &= validateField('jobDescription', jobDescription.length >= 50);
+
+    const skillsArray = getSkillsArray();
+    const skillsError = document.getElementById('error-skills');
+    if (skillsArray.length === 0) {
+      skillsError.classList.add('show');
+        isValid = false;
+  } else {
+      skillsError.classList.remove('show');
+  }
+
+    const course = document.getElementById('course').value.trim();
+    isValid &= validateField('course', course.length > 0);
+
+    const experience = document.getElementById('experience').value;
+    isValid &= validateField('experience', experience !== '' && experience >= 0);
+
+    const country = document.getElementById('country').value.trim();
+    isValid &= validateField('country', country.length > 0);
+
+    const state = document.getElementById('state').value.trim();
+    isValid &= validateField('state', state.length > 0);
+
+    const city = document.getElementById('city').value.trim();
+    isValid &= validateField('city', city.length > 0);
+
+    const packageVal = document.getElementById('package').value.trim();
+    isValid &= validateField('package', packageVal.length > 0);
+
+    const email = document.getElementById('contactEmail').value.trim();
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      isValid &= validateField('contactEmail', emailRegex.test(email));
+    }
+
+    return isValid;
+  }
+
+  function validateField(fieldId, condition) {
     const field = document.getElementById(fieldId);
     const error = document.getElementById(`error-${fieldId}`);
     
@@ -1049,85 +1101,17 @@ function handleLogout() {
     }
   }
 
-  function validateForm() {
-    let isValid = true;
-
-    const jobTitle = document.getElementById('jobTitle').value.trim();
-    isValid &= validateField('jobTitle', jobTitle.length > 0, 'Please enter a job title');
-
-    const companyName = document.getElementById('companyName').value.trim();
-    isValid &= validateField('companyName', companyName.length > 0, 'Please enter company name');
-
-    const jobDescription = document.getElementById('jobDescription').value.trim();
-    isValid &= validateField('jobDescription', jobDescription.length >= 50, 'Please enter at least 50 characters');
-
-    const skills = getSkills();
-    const skillsError = document.getElementById('error-skills');
-    if (skills.length === 0) {
-      skillsError.classList.add('show');
-      isValid = false;
-    } else {
-      skillsError.classList.remove('show');
-    }
-
-    const education = document.getElementById('education').value;
-    isValid &= validateField('education', education !== '', 'Please select education qualification');
-
-    const experience = document.getElementById('experience').value;
-    isValid &= validateField('experience', experience !== '' && experience >= 0, 'Please enter experience required');
-
-    const jobType = document.getElementById('jobType').value;
-    isValid &= validateField('jobType', jobType !== '', 'Please select job type');
-
-    const packageVal = document.getElementById('package').value.trim();
-    isValid &= validateField('package', packageVal.length > 0, 'Please enter salary package');
-
-    const location = document.getElementById('location').value.trim();
-    isValid &= validateField('location', location.length > 0, 'Please enter job location');
-
-    const email = document.getElementById('contactEmail').value.trim();
-    if (email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      isValid &= validateField('contactEmail', emailRegex.test(email), 'Please enter a valid email');
-    }
-
-    const deadline = document.getElementById('deadline').value;
-    if (deadline) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const selectedDate = new Date(deadline);
-      isValid &= validateField('deadline', selectedDate >= today, 'Deadline must be today or a future date');
-    }
-
-    return isValid;
-  }
-
   function handlePreview() {
     if (validateForm()) {
-      const jobData = {
-        title: document.getElementById('jobTitle').value.trim(),
-        company: document.getElementById('companyName').value.trim(),
-        description: document.getElementById('jobDescription').value.trim(),
-        skills: getSkills(),
-        education: document.getElementById('education').value,
-        experience: document.getElementById('experience').value,
-        jobType: document.getElementById('jobType').value,
-        package: document.getElementById('package').value.trim(),
-        location: document.getElementById('location').value.trim(),
-        deadline: document.getElementById('deadline').value || "", 
-        benefits: document.getElementById('benefits').value.trim() || "",
-        email: document.getElementById('contactEmail').value.trim() || ""
-      };
-
       alert('✅ Job posting validated successfully! Preview:\n\n' + 
-            `Job Title: ${jobData.title}\n` +
-            `Company: ${jobData.company}\n` +
-            `Location: ${jobData.location}\n` +
-            `Package: ${jobData.package}\n` +
-            `Experience: ${jobData.experience} years\n` +
-            `Skills: ${jobData.skills.join(', ')}`);
+            `Job Title: ${document.getElementById('jobTitle').value}\n` +
+            `Company: ${document.getElementById('companyName').value}\n` +
+            `Sector: ${document.getElementById('sector').value}\n` +
+            `Location: ${document.getElementById('city').value}, ${document.getElementById('state').value}, ${document.getElementById('country').value}\n` +
+            `Package: ${document.getElementById('package').value}\n` +
+            `Skills: ${getSkillsArray().join(', ')}`);
     } else {
-      alert('❌ Please fill all required fields correctly before previewing.');
+      alert('❌ Please fill all required fields correctly.');
       const firstError = document.querySelector('.error.show');
       if (firstError) {
         firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1138,98 +1122,81 @@ function handleLogout() {
   document.getElementById('jobForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    if (validateForm()) {
-      const jobData = {
-        title: document.getElementById('jobTitle').value.trim(),
-        company: document.getElementById('companyName').value.trim(),
-        description: document.getElementById('jobDescription').value.trim(),
-        skills: getSkills(),
-        education: document.getElementById('education').value,
-        experience: document.getElementById('experience').value,
-        jobType: document.getElementById('jobType').value,
-        package: document.getElementById('package').value.trim(),
-        location: document.getElementById('location').value.trim(),
-        deadline: document.getElementById('deadline').value || null,
-        benefits: document.getElementById('benefits').value.trim() || null,
-        email: document.getElementById('contactEmail').value.trim() || null
-      };
-
-      try {
-        const submitBtn = document.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '⏳ Posting Job...';
-
-        const response = await fetch(`${API_BASE_URL}/jobs`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(jobData)
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result.success) {
-          const successMsg = document.getElementById('successMessage');
-          successMsg.querySelector('p').textContent = 
-            `Job posted successfully! Job ID: ${result.jobId}. Your job posting is now live.`;
-          successMsg.classList.add('show');
-          
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          
-          setTimeout(() => {
-            resetForm();
-            successMsg.classList.remove('show');
-          }, 3000);
-        } else {
-          alert('❌ Error: ' + (result.error || 'Failed to post job. Please try again.'));
-        }
-
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-
-      } catch (error) {
-        console.error('Error posting job:', error);
-        alert('❌ Network error. Please check if the backend server is running and try again.');
-        
-        const submitBtn = document.querySelector('button[type="submit"]');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '✅ Post Job';
-      }
-    } else {
+    if (!validateForm()) {
       alert('❌ Please fill all required fields correctly.');
-      const firstError = document.querySelector('.error.show');
-      if (firstError) {
-        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // Parse skills from comma-separated string
+    // Get skills from dynamic inputs
+    const skillsArray = getSkillsArray();
+
+    const jobData = {
+      title: document.getElementById('jobTitle').value.trim(),
+      company: document.getElementById('companyName').value.trim(),
+      sector: document.getElementById('sector').value.trim(),
+      jobType: document.getElementById('jobType').value,
+      description: document.getElementById('jobDescription').value.trim(),
+      skills: skillsArray,
+      course: document.getElementById('course').value.trim(),
+      experience: document.getElementById('experience').value,
+      country: document.getElementById('country').value.trim(),
+      state: document.getElementById('state').value.trim(),
+      city: document.getElementById('city').value.trim(),
+      package: document.getElementById('package').value.trim(),
+      deadline: document.getElementById('deadline').value || null,
+      email: document.getElementById('contactEmail').value.trim() || null,
+      benefits: document.getElementById('benefits').value.trim() || null
+    };
+
+    try {
+      const submitBtn = document.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '⏳ Posting Job...';
+
+      const response = await fetch(`${API_BASE_URL}/jobs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(jobData)
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        const successMsg = document.getElementById('successMessage');
+        successMsg.classList.add('show');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        setTimeout(() => {
+          resetForm();
+          successMsg.classList.remove('show');
+          window.location.href = 'jobdashboard.html';
+        }, 2000);
+      } else {
+        alert('❌ Error: ' + (result.error || result.message || 'Failed to post job'));
+        console.error('Server error:', result);
       }
+
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
+
+    } catch (error) {
+      console.error('Error posting job:', error);
+      alert('❌ Network error. Please check if backend is running on http://localhost:5000');
+      
+      const submitBtn = document.querySelector('button[type="submit"]');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '✅ Post Job';
     }
   });
 
   function resetForm() {
     document.getElementById('jobForm').reset();
-    document.getElementById('skillsContainer').innerHTML = '';
     
-    document.querySelectorAll('.error').forEach(error => {
-      error.classList.remove('show');
-    });
-    
-    document.querySelectorAll('.form-control').forEach(field => {
-      field.style.borderColor = '#e2e8f0';
-    });
-    
-    skillCounter = 0;
+    document.querySelectorAll('.error').forEach(error => error.classList.remove('show'));
+    document.querySelectorAll('.form-control').forEach(field => field.style.borderColor = '#e2e8f0');
   }
-
-  document.querySelectorAll('.form-control').forEach(field => {
-    field.addEventListener('blur', function() {
-      validateForm();
-    });
-  });
-
-  window.addEventListener('load', function() {
-    addSkill();
-  });
 </script>
 </body>
 </html>

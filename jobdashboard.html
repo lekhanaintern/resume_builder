@@ -1093,94 +1093,114 @@ function handleLogout() {
 
     // Create Job Type Chart
     function createJobTypeChart(jobs) {
-      const jobTypeCounts = {};
-      jobs.forEach(job => {
-        const type = job.jobType || 'Unknown';
-        jobTypeCounts[type] = (jobTypeCounts[type] || 0) + 1;
-      });
+  const jobTypeCounts = {};
+  jobs.forEach(job => {
+    const type = job.jobType || 'Unknown';
+    jobTypeCounts[type] = (jobTypeCounts[type] || 0) + 1;
+  });
 
-      const ctx = document.getElementById('jobTypeChart').getContext('2d');
-      jobTypeChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: Object.keys(jobTypeCounts),
-          datasets: [{
-            data: Object.values(jobTypeCounts),
-            backgroundColor: [
-              '#667eea',
-              '#0ea5e9',
-              '#10b981',
-              '#f59e0b',
-              '#ef4444',
-              '#8b5cf6'
-            ],
-            borderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                padding: 15,
-                font: { size: 13 }
-              }
+  const ctx = document.getElementById('jobTypeChart').getContext('2d');
+  
+  // A palette of 6 distinct, high-contrast colors
+  const vibrantPalette = [
+    '#6366f1', // Indigo
+    '#10b981', // Emerald
+    '#f59e0b', // Amber
+    '#f43f5e', // Rose
+    '#06b6d4', // Cyan
+    '#8b5cf6'  // Violet
+  ];
+
+  jobTypeChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(jobTypeCounts),
+      datasets: [{
+        data: Object.values(jobTypeCounts),
+        backgroundColor: vibrantPalette,
+        hoverOffset: 8,
+        borderWidth: 2,
+        borderColor: '#ffffff' // Creates a clean gap between segments
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '70%', // Makes the center hole slightly larger for a modern look
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 20,
+            usePointStyle: true,
+            font: { 
+              size: 13,
+              weight: '500'
             }
           }
         }
-      });
+      }
     }
-
+  });
+}
     // Create Experience Chart
-    function createExperienceChart(jobs) {
-      const experienceLevels = {
-        'Entry Level (0-2 yrs)': 0,
-        'Mid Level (3-5 yrs)': 0,
-        'Senior (6-10 yrs)': 0,
-        'Expert (10+ yrs)': 0
-      };
+function createExperienceChart(jobs) {
+  const experienceLevels = {
+    'Entry Level (0-2 yrs)': 0,
+    'Mid Level (3-5 yrs)': 0,
+    'Senior (6-10 yrs)': 0,
+    'Expert (10+ yrs)': 0
+  };
 
-      jobs.forEach(job => {
-        const exp = parseFloat(job.experienceYears) || 0;
-        if (exp <= 2) experienceLevels['Entry Level (0-2 yrs)']++;
-        else if (exp <= 5) experienceLevels['Mid Level (3-5 yrs)']++;
-        else if (exp <= 10) experienceLevels['Senior (6-10 yrs)']++;
-        else experienceLevels['Expert (10+ yrs)']++;
-      });
+  jobs.forEach(job => {
+    const exp = parseFloat(job.experienceYears) || 0;
+    if (exp <= 2) experienceLevels['Entry Level (0-2 yrs)']++;
+    else if (exp <= 5) experienceLevels['Mid Level (3-5 yrs)']++;
+    else if (exp <= 10) experienceLevels['Senior (6-10 yrs)']++;
+    else experienceLevels['Expert (10+ yrs)']++;
+  });
 
-      const ctx = document.getElementById('experienceChart').getContext('2d');
-      experienceChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: Object.keys(experienceLevels),
-          datasets: [{
-            data: Object.values(experienceLevels),
-            backgroundColor: [
-              '#3b82f6',
-              '#667eea',
-              '#0ea5e9',
-              '#764ba2'
-            ],
-            borderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                padding: 15,
-                font: { size: 13 }
-              }
+  const ctx = document.getElementById('experienceChart').getContext('2d');
+  
+  // High-contrast color palette for better differentiation
+  const distinctColors = [
+    '#10b981', // Emerald (Entry)
+    '#f59e0b', // Amber (Mid)
+    '#6366f1', // Indigo (Senior)
+    '#f43f5e'  // Rose (Expert)
+  ];
+
+  experienceChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: Object.keys(experienceLevels),
+      datasets: [{
+        data: Object.values(experienceLevels),
+        backgroundColor: distinctColors,
+        hoverOffset: 10, // Adds a nice effect when hovering
+        borderWidth: 2,
+        borderColor: '#ffffff' // Adds a small white gap between slices
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 20,
+            usePointStyle: true, // Changes legend icons to circles
+            font: { 
+              size: 13,
+              weight: '600'
             }
           }
         }
-      });
+      }
     }
+  });
+}
 
     // Create Location Chart
     function createLocationChart(jobs) {

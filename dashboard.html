@@ -1559,14 +1559,98 @@ async function viewResumeDetail(resumeId) {
 }
 
     async function downloadResume(resumeId) {
-        try {
-            await fetch(`${API}/increment-download/${resumeId}`, { method: 'POST' });
-            alert('Resume download initiated!');
-            viewResumeDetail(resumeId); // Refresh to show updated count
-        } catch (error) {
-            console.error('Error downloading resume:', error);
+    try {
+        // First, increment the download count in database
+        const response = await fetch(`${API}/increment-download/${resumeId}`, { 
+            method: 'POST' 
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log(`✅ Download count updated to: ${data.download_count}`);
+            
+            // Then fetch the resume data to generate PDF
+            const resumeResponse = await fetch(`${API}/get-resume/${resumeId}`);
+            const resumeData = await resumeResponse.json();
+            
+            if (resumeData.success) {
+                const resume = resumeData.resume;
+                
+                // Create a simple text file download (you can enhance this to PDF later)
+                const resumeText = `
+==========================================
+RESUME - ${resume.name}
+==========================================
+
+PERSONAL INFORMATION:
+Name: ${resume.name}
+Email: ${resume.email}
+Phone: ${resume.phone}
+Location: ${resume.location || 'N/A'}
+Date of Birth: ${resume.dob || 'N/A'}
+
+OBJECTIVE:
+${resume.objective || 'N/A'}
+
+${resume.experience && resume.experience.length > 0 ? `
+WORK EXPERIENCE:
+${resume.experience.map(exp => `
+- ${exp.role} at ${exp.company}
+  ${exp.start} - ${exp.end}
+`).join('\n')}
+` : ''}
+
+${resume.education && resume.education.length > 0 ? `
+EDUCATION:
+${resume.education.map(edu => `
+- ${edu.course} from ${edu.college}
+  Year: ${edu.year}, CGPA: ${edu.cgpa}
+`).join('\n')}
+` : ''}
+
+${resume.skills && resume.skills.length > 0 ? `
+SKILLS:
+${resume.skills.map(skill => `- ${skill.name} (${skill.type})`).join('\n')}
+` : ''}
+
+${resume.projects && resume.projects.length > 0 ? `
+PROJECTS:
+${resume.projects.map(proj => `
+- ${proj.title}
+  Link: ${proj.link || 'N/A'}
+  Description: ${proj.desc || 'N/A'}
+`).join('\n')}
+` : ''}
+
+==========================================
+Downloaded from Resume Builder System
+==========================================
+                `;
+                
+                // Create and download the file
+                const blob = new Blob([resumeText], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${resume.name.replace(/\s+/g, '_')}_Resume.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                alert('✅ Resume downloaded successfully!');
+                
+                // Refresh the view to show updated download count
+                viewResumeDetail(resumeId);
+            }
+        } else {
+            alert('❌ Error downloading resume: ' + data.error);
         }
+    } catch (error) {
+        console.error('❌ Error downloading resume:', error);
+        alert('Error downloading resume. Please try again.');
     }
+}
 
     async function deleteResume(resumeId) {
         if (!confirm('Are you sure you want to delete this resume?')) return;
@@ -1670,11 +1754,16 @@ function filterUsers() {
     // ============================================
     
     async function loadReports() {
-        createTimelineChartFromDB();
-        createSkillsChartFromDB();
-        displayTopViewedFromDB();
-        displayTopDownloadedFromDB();
-    }
+    console.log('📊 Loading reports section...');
+    
+    // Load all charts
+    await createTimelineChartFromDB();
+    await createSkillsChartFromDB();  // This now uses the corrected function
+    displayTopViewedFromDB();
+    displayTopDownloadedFromDB();
+    
+    console.log('✅ Reports loaded successfully');
+}
 
     function createTimelineChartFromDB() {
         const ctx = document.getElementById('timelineChart');
@@ -1737,44 +1826,67 @@ function filterUsers() {
     }
 
     async function createSkillsChartFromDB() {
-        const ctx = document.getElementById('skillsChart');
-        if (!ctx) return;
+    const ctx = document.getElementById('skillsChart');
+    if (!ctx) return;
+    
+    if (charts.skills) {
+        charts.skills.destroy();
+    }
+    
+    try {
+        console.log('📊 Fetching skills data from database...');
         
-        if (charts.skills) {
-            charts.skills.destroy();
-        }
+        // Fetch skills directly from database via API
+        const response = await fetch(`${API}/analytics/overview`);
+        const data = await response.json();
         
-        try {
-            // Fetch skills from all resumes
-            const skillCounts = {};
+        if (data.success && data.analytics && data.analytics.skills) {
+            const skillsData = data.analytics.skills;
             
-            for (const resume of allResumes) {
-                const response = await fetch(`${API}/get-resume/${resume.id}`);
-                const data = await response.json();
-                
-                if (data.success && data.resume.skills) {
-                    data.resume.skills.forEach(skill => {
-                        const skillName = skill.name;
-                        skillCounts[skillName] = (skillCounts[skillName] || 0) + 1;
-                    });
-                }
+            console.log('✅ Skills data received:', skillsData);
+            
+            if (skillsData.length === 0) {
+                console.log('⚠️ No skills data available');
+                // Show "No Data" in chart
+                charts.skills = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['No Skills Data'],
+                        datasets: [{
+                            data: [1],
+                            backgroundColor: ['#e2e8f0'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 10,
+                                    font: {
+                                        size: 10,
+                                        weight: '600'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                return;
             }
             
             // Get top 5 skills
-            const topSkills = Object.entries(skillCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5);
-            
-            if (topSkills.length === 0) {
-                topSkills.push(['No Skills Data', 0]);
-            }
+            const topSkills = skillsData.slice(0, 5);
             
             charts.skills = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: topSkills.map(s => s[0]),
+                    labels: topSkills.map(s => s.skill),
                     datasets: [{
-                        data: topSkills.map(s => s[1]),
+                        data: topSkills.map(s => s.count),
                         backgroundColor: [
                             '#4361ee',
                             '#3b82f6',
@@ -1798,14 +1910,48 @@ function filterUsers() {
                                     weight: '600'
                                 }
                             }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + ' resumes';
+                                }
+                            }
                         }
                     }
                 }
             });
-        } catch (error) {
-            console.error('Error creating skills chart:', error);
+            
+            console.log('✅ Skills chart created successfully');
+        } else {
+            console.error('❌ Invalid data structure from API');
         }
+    } catch (error) {
+        console.error('❌ Error creating skills chart:', error);
+        
+        // Show error state in chart
+        charts.skills = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Error Loading Data'],
+                datasets: [{
+                    data: [1],
+                    backgroundColor: ['#fee2e2'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
     }
+}
 
     function displayTopViewedFromDB() {
         const topViewed = [...allResumes]

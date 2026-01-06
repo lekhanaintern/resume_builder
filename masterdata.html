@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Data - Resume Builder</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #4361ee;
+            --accent: #7209b7;
+            --text-dark: #1a1c2c;
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top right, #eef2ff, #f8f9ff);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        .app-header {
+            background: linear-gradient(135deg, #5b71f5 0%, #4c63e8 100%);
+            padding: 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1050;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            padding: 20px 0;
+        }
+
+        .brand-light {
+            opacity: 0.6;
+        }
+
+        /* Right Section */
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+        }
+
+        .avatar-section {
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .dropdown-user-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .dropdown-user-email {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: #475569;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .dropdown-item:last-of-type {
+            border-radius: 0 0 12px 12px;
+            color: #ef4444;
+        }
+
+        .dropdown-item:last-of-type:hover {
+            background: #fef2f2;
+        }
+
+        .dropdown-item i {
+            width: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .welcome-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .welcome-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .card-custom {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(91, 113, 245, 0.15);
+        }
+
+        .card-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .card-button:hover {
+            background: linear-gradient(135deg, #4c63e8 0%, #3b52d7 100%);
+        }
+
+        .card-button i {
+            font-size: 1.3rem;
+        }
+
+        /* Content Section */
+        .content-section {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            margin-top: 40px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-container {
+                padding: 20px;
+            }
+
+            .welcome-header {
+                padding: 30px 20px;
+            }
+
+            .welcome-header h1 {
+                font-size: 2rem;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="app-header">
+        <div class="navbar-container">
+            <div class="navbar-left">
+                <div class="brand">Master<span class="brand-light">Data</span></div>
+            </div>
+
+            <div class="navbar-right">
+                <a href="maindashboard.html" class="back-button">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Applications
+                </a>
+                
+                <div class="avatar-section">
+                    <div class="user-avatar" id="userAvatar">AD</div>
+                    
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-header">
+                            <div class="dropdown-user-name" id="dropdownUserName">Admin User</div>
+                            <div class="dropdown-user-email" id="dropdownUserEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2d4c494044436d5f485e5840485d5f42034e4240">[email&#160;protected]</a></div>
+                        </div>
+                        <button class="dropdown-item" onclick="goToSettings()">
+                            <i class="bi bi-gear-fill"></i>
+                            Settings
+                        </button>
+                        <button class="dropdown-item" onclick="goToProfile()">
+                            <i class="bi bi-person-fill"></i>
+                            My Profile
+                        </button>
+                        <button class="dropdown-item" onclick="logout()">
+                            <i class="bi bi-box-arrow-right"></i>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Card Grid -->
+        <div class="card-grid">
+            <!-- Card 1: Sector -->
+<div class="card-custom">
+    <button class="card-button" onclick="window.location.href='mastercontent.html?type=sectors'">
+        <i class="bi bi-building"></i>
+        Sector
+    </button>
+</div>
+
+<!-- Card 2: Courses -->
+<div class="card-custom">
+    <button class="card-button" onclick="window.location.href='mastercontent.html?type=courses'">
+        <i class="bi bi-book-fill"></i>
+        Courses
+    </button>
+</div>
+
+<!-- Card 3: Skills -->
+<div class="card-custom">
+    <button class="card-button" onclick="window.location.href='mastercontent.html?type=skills'">
+        <i class="bi bi-gear-fill"></i>
+        Skills
+    </button>
+</div>
+
+<!-- Card 4: Country -->
+<div class="card-custom">
+    <button class="card-button" onclick="window.location.href='mastercontent.html?type=countries'">
+        <i class="bi bi-globe-americas"></i>
+        Country
+    </button>
+</div>
+
+<!-- Card 5: State -->
+<div class="card-custom">
+    <button class="card-button" onclick="window.location.href='mastercontent.html?type=states'">
+        <i class="bi bi-map-fill"></i>
+        State
+    </button>
+</div>
+
+<!-- Card 6: City -->
+<div class="card-custom">
+    <button class="card-button" onclick="window.location.href='mastercontent.html?type=cities'">
+        <i class="bi bi-geo-alt-fill"></i>
+        City
+    </button>
+</div>
+        </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        const API = 'http://localhost:5000/api';
+
+        // ============================================
+        // USER AVATAR & DROPDOWN FUNCTIONS
+        // ============================================
+        
+        function getUserInitials(name) {
+            return name.substring(0, 1).toUpperCase();
+        }
+
+        async function initializeUserAvatar() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (user.userId) {
+                try {
+                    const response = await fetch(`${API}/get-user/${user.userId}`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const dbUser = data.user;
+                        const userName = dbUser.firstName || dbUser.username || 'User';
+                        const userEmail = dbUser.email || 'user@resumepro.com';
+                        
+                        document.getElementById('userAvatar').textContent = getUserInitials(userName);
+                        document.getElementById('dropdownUserName').textContent = userName;
+                        document.getElementById('dropdownUserEmail').textContent = userEmail;
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Error fetching user details:', error);
+                }
+            }
+            
+            const userName = user.firstName || user.username || 'User';
+            const userEmail = user.email || 'user@resumepro.com';
+            
+            document.getElementById('userAvatar').textContent = getUserInitials(userName);
+            document.getElementById('dropdownUserName').textContent = userName;
+            document.getElementById('dropdownUserEmail').textContent = userEmail;
+        }
+
+        // Toggle dropdown menu
+        document.getElementById('userAvatar').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('dropdownMenu').classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('dropdownMenu');
+            const avatar = document.getElementById('userAvatar');
+            if (!dropdown.contains(e.target) && !avatar.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        function goToSettings() {
+            alert('Settings page coming soon!');
+        }
+
+        function goToProfile() {
+            alert('Profile page coming soon!');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('user');
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            }
+        }
+
+        // ============================================
+        // CHECK ADMIN ACCESS
+        // ============================================
+        
+        function checkAdminAccess() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!user.userId) {
+                alert('Please login to access this page');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            if (user.userType !== 'admin') {
+                alert('Access Denied: Only administrators can access this page');
+                window.location.href = 'application.html';
+                return;
+            }
+        }
+

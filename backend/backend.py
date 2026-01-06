@@ -137,12 +137,18 @@ def check_email():
         print(f"❌ Check email error: {e}")
         return jsonify({'exists': False}), 500
 
+# ============================================================
+# UPDATED AUTHENTICATION ENDPOINTS (Replace in your Flask app)
+# ============================================================
+
 @app.route('/api/register', methods=['POST'])
 def register():
-    """Register new user"""
+    """Register new user WITH userType"""
     try:
         data = request.get_json()
         
+        # Get all fields including userType
+        user_type = data.get('userType', '').strip()  # NEW: Get userType
         username = data.get('username', '').strip()
         first_name = data.get('firstName', '').strip()
         last_name = data.get('lastName', '').strip()
@@ -150,11 +156,15 @@ def register():
         email_id = data.get('emailId', '').strip()
         phone_number = data.get('phoneNumber', '').strip()
         
-        print(f"\n📝 Registration attempt: {username}")
+        print(f"\n📝 Registration attempt: {username} as {user_type}")
         
-        # Validate all fields
-        if not all([username, first_name, last_name, password, email_id, phone_number]):
+        # Validate all fields INCLUDING userType
+        if not all([user_type, username, first_name, last_name, password, email_id, phone_number]):
             return jsonify({'success': False, 'message': 'All fields are required'}), 400
+        
+        # Validate userType
+        if user_type not in ['admin', 'recruiter', 'candidate']:
+            return jsonify({'success': False, 'message': 'Invalid user type'}), 400
         
         if not validate_username(username):
             return jsonify({'success': False, 'message': 'Invalid username format'}), 400
@@ -188,26 +198,27 @@ def register():
         # Hash password
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         
-        # Insert new user
+        # Insert new user WITH UserType
         cursor.execute("""
-            INSERT INTO Users (Username, FirstName, LastName, Password, EmailId, PhoneNumber)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (username, first_name, last_name, hashed_password.decode('utf-8'), email_id, phone_number))
+            INSERT INTO Users (Username, FirstName, LastName, Password, EmailId, PhoneNumber, UserType)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (username, first_name, last_name, hashed_password.decode('utf-8'), email_id, phone_number, user_type))
         
         conn.commit()
         cursor.close()
         conn.close()
         
-        print(f"✅ User registered successfully: {username}")
+        print(f"✅ User registered successfully: {username} as {user_type}")
         return jsonify({'success': True, 'message': 'Registration successful'}), 201
         
     except Exception as e:
         print(f"❌ Registration error: {e}")
         return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500
 
+
 @app.route('/api/login', methods=['POST'])
 def login():
-    """Login user"""
+    """Login user - returns userType for frontend routing"""
     try:
         data = request.get_json()
         username = data.get('username', '').strip()
@@ -221,9 +232,9 @@ def login():
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # Get user from database
+        # Get user from database INCLUDING UserType
         cursor.execute("""
-            SELECT UserId, Username, FirstName, LastName, Password, EmailId
+            SELECT UserId, Username, FirstName, LastName, Password, EmailId, UserType
             FROM Users 
             WHERE Username = ?
         """, (username,))
@@ -236,14 +247,16 @@ def login():
             print(f"❌ User not found: {username}")
             return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
         
-        user_id, db_username, first_name, last_name, hashed_password, email = user
+        user_id, db_username, first_name, last_name, hashed_password, email, user_type = user
         
         # Verify password
         if not bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8')):
             print(f"❌ Invalid password for: {username}")
             return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
         
-        print(f"✅ Login successful: {username}")
+        print(f"✅ Login successful: {username} ({user_type})")
+        
+        # Return user data WITH userType for frontend routing
         return jsonify({
             'success': True,
             'message': 'Login successful',
@@ -252,7 +265,8 @@ def login():
                 'username': db_username,
                 'firstName': first_name,
                 'lastName': last_name,
-                'email': email
+                'email': email,
+                'userType': user_type  # CRITICAL: Frontend needs this for redirect
             }
         }), 200
         
@@ -856,10 +870,9 @@ def get_resume_details(resume_id):
         cursor.execute("SELECT ProjectTitle, ProjectLink, Description FROM Projects WHERE ResumeID = ?", (resume_id,))
         resume["projects"] = [{"title": r[0], "link": r[1], "desc": r[2]} for r in cursor.fetchall()]
 
-        # Fetch Skills
-        cursor.execute("SELECT SkillName, SkillType FROM Skills WHERE ResumeID = ?", (resume_id,))
-        resume["skills"] = [{"name": r[0], "type": r[1]} for r in cursor.fetchall()]
-        
+        # Fetch Skills - WITH EXPLICIT SCHEMA
+        cursor.execute("SELECT SkillName, SkillType FROM dbo.Skills WHERE ResumeID = ?", (resume_id,))
+        resume["skills"] = [{"name": r[0], "type": r[1]} for r in cursor.fetchall()]    
         cursor.close()
         conn.close()
         
@@ -965,7 +978,7 @@ def delete_resume(resume_id):
 
 @app.route('/api/jobs', methods=['GET'])
 def get_jobs():
-    """Get all jobs with company and skills information"""
+    """Get all jobs with company, skills, and master data information"""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -975,9 +988,19 @@ def get_jobs():
                 j.JobID, j.JobTitle, j.JobDescription, j.EducationRequirement,
                 j.ExperienceYears, j.JobType, j.SalaryPackage, j.JobLocation,
                 j.ApplicationDeadline, j.Benefits, j.ContactEmail, j.JobStatus,
-                j.PostedDate, c.CompanyName, c.CompanyID
+                j.PostedDate, c.CompanyName, c.CompanyID,
+                s.SectorName, s.SectorID,
+                co.CourseName, co.CourseID,
+                ci.CityName, ci.CityID,
+                st.StateName, st.StateID,
+                cn.CountryName, cn.CountryID
             FROM Jobs j
             INNER JOIN Companies c ON j.CompanyID = c.CompanyID
+            LEFT JOIN Sectors s ON j.SectorID = s.SectorID
+            LEFT JOIN Courses co ON j.CourseID = co.CourseID
+            LEFT JOIN Cities ci ON j.CityID = ci.CityID
+            LEFT JOIN States st ON ci.StateID = st.StateID
+            LEFT JOIN Countries cn ON st.CountryID = cn.CountryID
             ORDER BY j.PostedDate DESC
         """)
         
@@ -985,15 +1008,15 @@ def get_jobs():
         for row in cursor.fetchall():
             job_id = row[0]
             
-            # Get skills for this job
+            # FIXED: Changed from Skills to JobSkillsMaster
             cursor.execute("""
-                SELECT js.jobskillName
-                FROM JobSkills jsk
-                INNER JOIN jobskill js ON jsk.SkillID = js.jobskillID
-                WHERE jsk.JobID = ?
+                SELECT sk.SkillName, sk.SkillID
+                FROM JobSkills js
+                INNER JOIN JobSkillsMaster sk ON js.SkillID = sk.SkillID
+                WHERE js.JobID = ?
             """, (job_id,))
             
-            skills = [skill_row[0] for skill_row in cursor.fetchall()]
+            skills = [{'skillId': skill_row[1], 'skillName': skill_row[0]} for skill_row in cursor.fetchall()]
             
             jobs.append({
                 'jobId': job_id,
@@ -1011,6 +1034,16 @@ def get_jobs():
                 'postedDate': row[12].isoformat() if row[12] else None,
                 'companyName': row[13],
                 'companyId': row[14],
+                'sectorName': row[15],
+                'sectorId': row[16],
+                'courseName': row[17],
+                'courseId': row[18],
+                'cityName': row[19],
+                'cityId': row[20],
+                'stateName': row[21],
+                'stateId': row[22],
+                'countryName': row[23],
+                'countryId': row[24],
                 'skills': skills
             })
         
@@ -1034,9 +1067,19 @@ def get_job(job_id):
                 j.JobID, j.JobTitle, j.JobDescription, j.EducationRequirement,
                 j.ExperienceYears, j.JobType, j.SalaryPackage, j.JobLocation,
                 j.ApplicationDeadline, j.Benefits, j.ContactEmail, j.JobStatus,
-                j.PostedDate, c.CompanyName, c.CompanyID
+                j.PostedDate, c.CompanyName, c.CompanyID,
+                s.SectorName, s.SectorID,
+                co.CourseName, co.CourseID,
+                ci.CityName, ci.CityID,
+                st.StateName, st.StateID,
+                cn.CountryName, cn.CountryID
             FROM Jobs j
             INNER JOIN Companies c ON j.CompanyID = c.CompanyID
+            LEFT JOIN Sectors s ON j.SectorID = s.SectorID
+            LEFT JOIN Courses co ON j.CourseID = co.CourseID
+            LEFT JOIN Cities ci ON j.CityID = ci.CityID
+            LEFT JOIN States st ON ci.StateID = st.StateID
+            LEFT JOIN Countries cn ON st.CountryID = cn.CountryID
             WHERE j.JobID = ?
         """, (job_id,))
         
@@ -1046,11 +1089,12 @@ def get_job(job_id):
             conn.close()
             return jsonify({'success': False, 'error': 'Job not found'}), 404
         
+        # FIXED: Changed from Skills to JobSkillsMaster
         cursor.execute("""
-            SELECT js.jobskillName, js.jobskillID
-            FROM JobSkills jsk
-            INNER JOIN jobskill js ON jsk.SkillID = js.jobskillID
-            WHERE jsk.JobID = ?
+            SELECT sk.SkillName, sk.SkillID
+            FROM JobSkills js
+            INNER JOIN JobSkillsMaster sk ON js.SkillID = sk.SkillID
+            WHERE js.JobID = ?
         """, (job_id,))
         
         skills = [{'skillId': skill_row[1], 'skillName': skill_row[0]} for skill_row in cursor.fetchall()]
@@ -1071,6 +1115,16 @@ def get_job(job_id):
             'postedDate': row[12].isoformat() if row[12] else None,
             'companyName': row[13],
             'companyId': row[14],
+            'sectorName': row[15],
+            'sectorId': row[16],
+            'courseName': row[17],
+            'courseId': row[18],
+            'cityName': row[19],
+            'cityId': row[20],
+            'stateName': row[21],
+            'stateId': row[22],
+            'countryName': row[23],
+            'countryId': row[24],
             'skills': skills
         }
         
@@ -1083,7 +1137,7 @@ def get_job(job_id):
 
 @app.route('/api/jobs', methods=['POST'])
 def create_job():
-    """Create a new job posting with safety checks for None values"""
+    """Create a new job posting with TEXT INPUTS (no master data)"""
     conn = None
     try:
         data = request.json
@@ -1092,26 +1146,45 @@ def create_job():
             
         print(f"📝 Received job data: {data}")
         
-        # --- THE FIX FOR 'NoneType' error ---
-        # We use (data.get('field') or "") to ensure we never call .strip() on None
+        # Extract all fields as TEXT
         title = (data.get('title') or "").strip()
         company_name = (data.get('company') or "").strip()
-        description = (data.get('description') or "").strip()
-        education = (data.get('education') or "").strip()
-        location = (data.get('location') or "").strip()
-        package = (data.get('package') or "").strip()
+        sector = (data.get('sector') or "").strip()  # TEXT INPUT
         job_type = (data.get('jobType') or "").strip()
-        benefits = (data.get('benefits') or "").strip() # This was crashing
-        contact_email = (data.get('email') or "").strip() # This was crashing
+        description = (data.get('description') or "").strip()
         
-        # Safe extraction for numeric/list data
-        experience = data.get('experience', '0')
-        skills = data.get('skills', [])
+        # Skills as comma-separated text
+        skills_input = data.get('skills', '')
+        if isinstance(skills_input, list):
+            skills_text = ', '.join(skills_input)
+        else:
+            skills_text = skills_input
+        
+        # Education/Course as TEXT
+        course = (data.get('course') or "").strip()  # TEXT INPUT
+        
+        # Location as TEXT INPUTS
+        country = (data.get('country') or "").strip()  # TEXT INPUT
+        state = (data.get('state') or "").strip()      # TEXT INPUT
+        city = (data.get('city') or "").strip()        # TEXT INPUT
+        
+        # Build location string
+        location_parts = [city, state, country]
+        job_location = ', '.join([part for part in location_parts if part])
+        
+        # Other fields
+        experience = data.get('experience', 0)
+        package = (data.get('package') or "").strip()
         deadline = data.get('deadline')
-
+        email = (data.get('email') or "").strip()
+        benefits = (data.get('benefits') or "").strip()
+        
         # Basic Validation
-        if not title or not company_name:
-            return jsonify({'success': False, 'error': 'Job Title and Company are required'}), 400
+        if not title or not company_name or not sector or not course:
+            return jsonify({
+                'success': False, 
+                'error': 'Title, Company, Sector, and Course are required'
+            }), 400
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -1122,148 +1195,152 @@ def create_job():
         if comp_row:
             company_id = comp_row[0]
         else:
-            cursor.execute("INSERT INTO Companies (CompanyName) OUTPUT INSERTED.CompanyID VALUES (?)", (company_name,))
+            cursor.execute(
+                "INSERT INTO Companies (CompanyName) OUTPUT INSERTED.CompanyID VALUES (?)", 
+                (company_name,)
+            )
             company_id = cursor.fetchone()[0]
+            print(f"✅ Created new company: {company_name} (ID: {company_id})")
 
-        # 2. Insert the Job
-        # We convert experience to float here to match SQL DECIMAL type
+        # 2. Get or create Sector ID
+        sector_id = None
+        if sector:
+            cursor.execute("SELECT SectorID FROM Sectors WHERE SectorName = ?", (sector,))
+            sector_row = cursor.fetchone()
+            if sector_row:
+                sector_id = sector_row[0]
+            else:
+                cursor.execute(
+                    "INSERT INTO Sectors (SectorName, IsActive) OUTPUT INSERTED.SectorID VALUES (?, 1)", 
+                    (sector,)
+                )
+                sector_id = cursor.fetchone()[0]
+                print(f"✅ Created new sector: {sector} (ID: {sector_id})")
+
+        # 3. Get or create Course ID
+        course_id = None
+        if course:
+            cursor.execute("SELECT CourseID FROM Courses WHERE CourseName = ?", (course,))
+            course_row = cursor.fetchone()
+            if course_row:
+                course_id = course_row[0]
+            else:
+                cursor.execute(
+                    "INSERT INTO Courses (CourseName, IsActive) OUTPUT INSERTED.CourseID VALUES (?, 1)", 
+                    (course,)
+                )
+                course_id = cursor.fetchone()[0]
+                print(f"✅ Created new course: {course} (ID: {course_id})")
+
+        # 4. Get or create City/State/Country IDs
+        city_id = None
+        if city and state and country:
+            # Get or create Country
+            cursor.execute("SELECT CountryID FROM Countries WHERE CountryName = ?", (country,))
+            country_row = cursor.fetchone()
+            if country_row:
+                country_id = country_row[0]
+            else:
+                cursor.execute(
+                    "INSERT INTO Countries (CountryName, IsActive) OUTPUT INSERTED.CountryID VALUES (?, 1)", 
+                    (country,)
+                )
+                country_id = cursor.fetchone()[0]
+            
+            # Get or create State
+            cursor.execute(
+                "SELECT StateID FROM States WHERE StateName = ? AND CountryID = ?", 
+                (state, country_id)
+            )
+            state_row = cursor.fetchone()
+            if state_row:
+                state_id = state_row[0]
+            else:
+                cursor.execute(
+                    "INSERT INTO States (StateName, CountryID, IsActive) OUTPUT INSERTED.StateID VALUES (?, ?, 1)", 
+                    (state, country_id)
+                )
+                state_id = cursor.fetchone()[0]
+            
+            # Get or create City
+            cursor.execute(
+                "SELECT CityID FROM Cities WHERE CityName = ? AND StateID = ?", 
+                (city, state_id)
+            )
+            city_row = cursor.fetchone()
+            if city_row:
+                city_id = city_row[0]
+            else:
+                cursor.execute(
+                    "INSERT INTO Cities (CityName, StateID, IsActive) OUTPUT INSERTED.CityID VALUES (?, ?, 1)", 
+                    (city, state_id)
+                )
+                city_id = cursor.fetchone()[0]
+
+        # 5. Insert the Job
         cursor.execute("""
             INSERT INTO Jobs (
                 CompanyID, JobTitle, JobDescription, EducationRequirement,
                 ExperienceYears, JobType, SalaryPackage, JobLocation,
-                ApplicationDeadline, Benefits, ContactEmail, JobStatus, PostedDate
+                ApplicationDeadline, Benefits, ContactEmail, JobStatus, PostedDate,
+                SectorID, CourseID, CityID
             )
             OUTPUT INSERTED.JobID
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Open', GETDATE())
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Open', GETDATE(), ?, ?, ?)
         """, (
-            company_id, title, description, education,
+            company_id, title, description, course,  # EducationRequirement = course
             float(experience) if experience else 0.0,
-            job_type, package, location, deadline, benefits, contact_email
+            job_type, package, job_location, deadline, benefits, email,
+            sector_id, course_id, city_id
         ))
         
         job_id = cursor.fetchone()[0]
+        print(f"✅ Job {job_id} created successfully!")
 
-        # 3. Handle Skills (The Many-to-Many link)
-        if isinstance(skills, list):
-            for s_name in skills:
-                s_name = s_name.strip()
-                if not s_name: 
-                    continue
+        # 6. Handle Skills - FIXED: Using JobSkillsMaster instead of Skills
+        if skills_text:
+            # Split by comma and clean up
+            skill_names = [s.strip() for s in skills_text.split(',') if s.strip()]
+            
+            for skill_name in skill_names:
+                # Get or create skill in JobSkillsMaster (NOT Skills table)
+                cursor.execute("SELECT SkillID FROM JobSkillsMaster WHERE SkillName = ?", (skill_name,))
+                skill_row = cursor.fetchone()
                 
-                # Check if skill exists in master table
-                cursor.execute("SELECT jobskillID FROM jobskill WHERE jobskillName = ?", (s_name,))
-                s_row = cursor.fetchone()
-                if s_row:
-                    s_id = s_row[0]
+                if skill_row:
+                    skill_id = skill_row[0]
+                    print(f"📌 Found existing skill: {skill_name} (ID: {skill_id})")
                 else:
-                    cursor.execute("INSERT INTO jobskill (jobskillName) OUTPUT INSERTED.jobskillID VALUES (?)", (s_name,))
-                    s_id = cursor.fetchone()[0]
+                    cursor.execute(
+                        "INSERT INTO JobSkillsMaster (SkillName, IsActive) OUTPUT INSERTED.SkillID VALUES (?, 1)", 
+                        (skill_name,)
+                    )
+                    skill_id = cursor.fetchone()[0]
+                    print(f"✅ Created new skill in JobSkillsMaster: {skill_name} (ID: {skill_id})")
                 
-                # Link Job to Skill in junction table
-                cursor.execute("INSERT INTO JobSkills (JobID, SkillID) VALUES (?, ?)", (job_id, s_id))
+                # Link job to skill
+                cursor.execute("INSERT INTO JobSkills (JobID, SkillID) VALUES (?, ?)", (job_id, skill_id))
+                print(f"✅ Linked skill {skill_name} to job {job_id}")
 
         conn.commit()
-        print(f"✅ Job {job_id} created successfully!")
-        return jsonify({'success': True, 'message': 'Job posted successfully', 'jobId': job_id}), 201
+        print(f"🎉 Job posting complete! Job ID: {job_id}")
+        
+        return jsonify({
+            'success': True, 
+            'message': 'Job posted successfully', 
+            'jobId': job_id
+        }), 201
 
     except Exception as e:
         if conn: 
             conn.rollback()
         print(f"❌ Error in create_job: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         if conn:
             conn.close()
-
-@app.route('/api/jobs/<int:job_id>', methods=['PUT'])
-def update_job(job_id):
-    """Update an existing job"""
-    try:
-        data = request.json
-        
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        cursor.execute("SELECT JobID FROM Jobs WHERE JobID = ?", (job_id,))
-        if not cursor.fetchone():
-            conn.close()
-            return jsonify({'success': False, 'error': 'Job not found'}), 404
-        
-        update_fields = []
-        params = []
-        
-        if 'title' in data:
-            update_fields.append("JobTitle = ?")
-            params.append(data['title'].strip())
-        
-        if 'description' in data:
-            update_fields.append("JobDescription = ?")
-            params.append(data['description'].strip())
-        
-        if 'education' in data:
-            update_fields.append("EducationRequirement = ?")
-            params.append(data['education'])
-        
-        if 'experience' in data:
-            update_fields.append("ExperienceYears = ?")
-            params.append(float(data['experience']))
-        
-        if 'jobType' in data:
-            update_fields.append("JobType = ?")
-            params.append(data['jobType'])
-        
-        if 'package' in data:
-            update_fields.append("SalaryPackage = ?")
-            params.append(data['package'].strip())
-        
-        if 'location' in data:
-            update_fields.append("JobLocation = ?")
-            params.append(data['location'].strip())
-        
-        if 'status' in data:
-            update_fields.append("JobStatus = ?")
-            params.append(data['status'])
-        
-        if update_fields:
-            params.append(job_id)
-            sql = f"UPDATE Jobs SET {', '.join(update_fields)} WHERE JobID = ?"
-            cursor.execute(sql, params)
-        
-        if 'skills' in data:
-            cursor.execute("DELETE FROM JobSkills WHERE JobID = ?", (job_id,))
-            
-            for skill_name in data['skills']:
-                skill_name = skill_name.strip()
-                if not skill_name:
-                    continue
-                
-                cursor.execute("SELECT jobskillID FROM jobskill WHERE jobskillName = ?", 
-                              (skill_name,))
-                skill_row = cursor.fetchone()
-                
-                if skill_row:
-                    skill_id = skill_row[0]
-                else:
-                    cursor.execute(
-                        "INSERT INTO jobskill (jobskillName) OUTPUT INSERTED.jobskillID VALUES (?)",
-                        (skill_name,)
-                    )
-                    skill_id = cursor.fetchone()[0]
-                
-                cursor.execute(
-                    "INSERT INTO JobSkills (JobID, SkillID) VALUES (?, ?)",
-                    (job_id, skill_id)
-                )
-        
-        conn.commit()
-        conn.close()
-        
-        print(f"✅ Job {job_id} updated successfully")
-        return jsonify({'success': True, 'message': 'Job updated successfully'}), 200
-        
-    except Exception as e:
-        print(f"❌ Error in update_job: {str(e)}")
-        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/jobs/<int:job_id>', methods=['DELETE'])
 def delete_job(job_id):
@@ -1298,6 +1375,8 @@ def search_jobs():
         job_type = request.args.get('jobType', '').strip()
         experience_min = request.args.get('experienceMin', type=float)
         experience_max = request.args.get('experienceMax', type=float)
+        sector_id = request.args.get('sectorId', type=int)
+        course_id = request.args.get('courseId', type=int)
         
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -1307,9 +1386,19 @@ def search_jobs():
                 j.JobID, j.JobTitle, j.JobDescription, j.EducationRequirement,
                 j.ExperienceYears, j.JobType, j.SalaryPackage, j.JobLocation,
                 j.ApplicationDeadline, j.Benefits, j.ContactEmail, j.JobStatus,
-                j.PostedDate, c.CompanyName, c.CompanyID
+                j.PostedDate, c.CompanyName, c.CompanyID,
+                s.SectorName, s.SectorID,
+                co.CourseName, co.CourseID,
+                ci.CityName, ci.CityID,
+                st.StateName, st.StateID,
+                cn.CountryName, cn.CountryID
             FROM Jobs j
             INNER JOIN Companies c ON j.CompanyID = c.CompanyID
+            LEFT JOIN Sectors s ON j.SectorID = s.SectorID
+            LEFT JOIN Courses co ON j.CourseID = co.CourseID
+            LEFT JOIN Cities ci ON j.CityID = ci.CityID
+            LEFT JOIN States st ON ci.StateID = st.StateID
+            LEFT JOIN Countries cn ON st.CountryID = cn.CountryID
             WHERE j.JobStatus = 'Open'
         """
         
@@ -1336,6 +1425,14 @@ def search_jobs():
             query += " AND j.ExperienceYears <= ?"
             params.append(experience_max)
         
+        if sector_id:
+            query += " AND j.SectorID = ?"
+            params.append(sector_id)
+        
+        if course_id:
+            query += " AND j.CourseID = ?"
+            params.append(course_id)
+        
         query += " ORDER BY j.PostedDate DESC"
         
         cursor.execute(query, params)
@@ -1344,17 +1441,18 @@ def search_jobs():
         for row in cursor.fetchall():
             job_id = row[0]
             
+            # FIXED: Changed from Skills to JobSkillsMaster
             cursor.execute("""
-                SELECT js.jobskillName
-                FROM JobSkills jsk
-                INNER JOIN jobskill js ON jsk.SkillID = js.jobskillID
-                WHERE jsk.JobID = ?
+                SELECT sk.SkillName, sk.SkillID
+                FROM JobSkills js
+                INNER JOIN JobSkillsMaster sk ON js.SkillID = sk.SkillID
+                WHERE js.JobID = ?
             """, (job_id,))
             
-            skills = [skill_row[0] for skill_row in cursor.fetchall()]
+            skills = [{'skillId': skill_row[1], 'skillName': skill_row[0]} for skill_row in cursor.fetchall()]
             
             jobs.append({
-                'jobId': job_id,
+                'jobId': row[0],
                 'jobTitle': row[1],
                 'jobDescription': row[2],
                 'educationRequirement': row[3],
@@ -1369,6 +1467,16 @@ def search_jobs():
                 'postedDate': row[12].isoformat() if row[12] else None,
                 'companyName': row[13],
                 'companyId': row[14],
+                'sectorName': row[15],
+                'sectorId': row[16],
+                'courseName': row[17],
+                'courseId': row[18],
+                'cityName': row[19],
+                'cityId': row[20],
+                'stateName': row[21],
+                'stateId': row[22],
+                'countryName': row[23],
+                'countryId': row[24],
                 'skills': skills
             })
         
@@ -1381,8 +1489,211 @@ def search_jobs():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # ============================================================
-# COMPANY & SKILL ENDPOINTS
+# MASTER DATA ENDPOINTS
 # ============================================================
+
+@app.route('/api/sectors', methods=['GET'])
+def get_sectors():
+    """Get all sectors"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT SectorID, SectorName, Description, IsActive 
+            FROM Sectors 
+            WHERE IsActive = 1 
+            ORDER BY SectorName
+        """)
+        
+        sectors = []
+        for row in cursor.fetchall():
+            sectors.append({
+                'id': row[0],
+                'name': row[1],
+                'description': row[2] if row[2] else '',  # Handle NULL
+                'isActive': row[3]
+            })
+        
+        conn.close()
+        return jsonify({'success': True, 'sectors': sectors}), 200
+        
+    except Exception as e:
+        print(f"❌ Error in get_sectors: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/courses', methods=['GET'])
+def get_courses():
+    """Get all courses"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT CourseID, CourseName, CourseType, Duration, IsActive 
+            FROM Courses 
+            WHERE IsActive = 1 
+            ORDER BY CourseName
+        """)
+        
+        courses = []
+        for row in cursor.fetchall():
+            courses.append({
+                'id': row[0],
+                'name': row[1],
+                'type': row[2] if row[2] else '',  # Handle NULL
+                'duration': row[3] if row[3] else '',  # Handle NULL
+                'isActive': row[4]
+            })
+        
+        conn.close()
+        return jsonify({'success': True, 'courses': courses}), 200
+        
+    except Exception as e:
+        print(f"❌ Error in get_courses: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/skills', methods=['GET'])
+def get_skills():
+    """Get all skills from JOBS master table"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # CHANGED: Now reads from JobSkillsMaster instead of Skills
+        cursor.execute("""
+            SELECT SkillID, SkillName, Category, IsActive 
+            FROM JobSkillsMaster 
+            WHERE IsActive = 1 
+            ORDER BY SkillName
+        """)
+        
+        skills = []
+        for row in cursor.fetchall():
+            skills.append({
+                'id': row[0],
+                'name': row[1],
+                'category': row[2] if row[2] else '',  # Handle NULL
+                'isActive': row[3]
+            })
+        
+        conn.close()
+        return jsonify({'success': True, 'skills': skills}), 200
+        
+    except Exception as e:
+        print(f"❌ Error in get_skills: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/countries', methods=['GET'])
+def get_countries():
+    """Get all countries"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT CountryID, CountryName, CountryCode, IsActive 
+            FROM Countries 
+            WHERE IsActive = 1 
+            ORDER BY CountryName
+        """)
+        
+        countries = []
+        for row in cursor.fetchall():
+            countries.append({
+                'id': row[0],
+                'name': row[1],
+                'code': row[2] if row[2] else '',  # Handle NULL
+                'isActive': row[3]
+            })
+        
+        conn.close()
+        return jsonify({'success': True, 'countries': countries}), 200
+        
+    except Exception as e:
+        print(f"❌ Error in get_countries: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/states', methods=['GET'])
+def get_states():
+    """Get all states (optionally filtered by country)"""
+    try:
+        country_id = request.args.get('countryId', type=int)
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        if country_id:
+            cursor.execute("""
+                SELECT StateID, StateName, StateCode, CountryID, IsActive 
+                FROM States 
+                WHERE IsActive = 1 AND CountryID = ?
+                ORDER BY StateName
+            """, (country_id,))
+        else:
+            cursor.execute("""
+                SELECT StateID, StateName, StateCode, CountryID, IsActive 
+                FROM States 
+                WHERE IsActive = 1 
+                ORDER BY StateName
+            """)
+        
+        states = []
+        for row in cursor.fetchall():
+            states.append({
+                'id': row[0],
+                'name': row[1],
+                'code': row[2] if row[2] else '',  # Handle NULL
+                'countryId': row[3],
+                'isActive': row[4]
+            })
+        
+        conn.close()
+        return jsonify({'success': True, 'states': states}), 200
+        
+    except Exception as e:
+        print(f"❌ Error in get_states: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/cities', methods=['GET'])
+def get_cities():
+    """Get all cities (optionally filtered by state)"""
+    try:
+        state_id = request.args.get('stateId', type=int)
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        if state_id:
+            cursor.execute("""
+                SELECT CityID, CityName, StateID, IsActive 
+                FROM Cities 
+                WHERE IsActive = 1 AND StateID = ?
+                ORDER BY CityName
+            """, (state_id,))
+        else:
+            cursor.execute("""
+                SELECT CityID, CityName, StateID, IsActive 
+                FROM Cities 
+                WHERE IsActive = 1 
+                ORDER BY CityName
+            """)
+        
+        cities = []
+        for row in cursor.fetchall():
+            cities.append({
+                'id': row[0],
+                'name': row[1],
+                'stateId': row[2],
+                'isActive': row[3]
+            })
+        
+        conn.close()
+        return jsonify({'success': True, 'cities': cities}), 200
+        
+    except Exception as e:
+        print(f"❌ Error in get_cities: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/companies', methods=['GET'])
 def get_companies():
@@ -1406,29 +1717,6 @@ def get_companies():
         
     except Exception as e:
         print(f"❌ Error in get_companies: {str(e)}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@app.route('/api/skills', methods=['GET'])
-def get_skills():
-    """Get all skills from master table"""
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        cursor.execute("SELECT jobskillID, jobskillName FROM jobskill ORDER BY jobskillName")
-        
-        skills = []
-        for row in cursor.fetchall():
-            skills.append({
-                'skillId': row[0],
-                'skillName': row[1]
-            })
-        
-        conn.close()
-        return jsonify({'success': True, 'skills': skills}), 200
-        
-    except Exception as e:
-        print(f"❌ Error in get_skills: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # ============================================================
@@ -1488,9 +1776,15 @@ if __name__ == '__main__':
     print("   PUT    /api/jobs/<id>")
     print("   DELETE /api/jobs/<id>")
     print("   GET    /api/jobs/search")
-    print("\n   UTILITIES:")
-    print("   GET    /api/companies")
+    print("\n   MASTER DATA:")
+    print("   GET    /api/sectors")
+    print("   GET    /api/courses")
     print("   GET    /api/skills")
+    print("   GET    /api/countries")
+    print("   GET    /api/states")
+    print("   GET    /api/cities")
+    print("   GET    /api/companies")
+    print("\n   UTILITIES:")
     print("   GET    /api/health")
     print("\n" + "="*70)
     print("✅ Server ready: http://localhost:5000")

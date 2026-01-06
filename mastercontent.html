@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Data Management</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        .app-header {
+            background: linear-gradient(135deg, #5b71f5 0%, #4c63e8 100%);
+            padding: 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1050;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            padding: 20px 0;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        /* Table Card */
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Search and Add Section */
+        .table-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 45px 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 18px;
+        }
+
+        .add-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .add-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Table Container */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        thead th {
+            padding: 16px;
+            text-align: left;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        tbody td {
+            padding: 16px;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-edit {
+            background: #f0f9ff;
+            color: #0284c7;
+        }
+
+        .btn-edit:hover {
+            background: #0284c7;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        .btn-delete:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-button:hover {
+            color: #475569;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .btn-cancel, .btn-save {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Loading Spinner */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #64748b;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar-container {
+                padding: 20px;
+            }
+
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            .add-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .table-container {
+                font-size: 13px;
+            }
+
+            thead th, tbody td {
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="app-header">
+        <div class="navbar-container">
+            <div class="navbar-left">
+                <div class="brand" id="pageTitle">Master Data</div>
+            </div>
+            <div class="navbar-right">
+                <a href="masterdata.html" class="back-button">
+                    ← Back
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 id="headerTitle">Loading...</h1>
+            <p id="headerDescription">Manage your master data records</p>
+        </div>
+
+        <!-- Table Card -->
+        <div class="table-card">
+            <!-- Search and Add -->
+            <div class="table-controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search...">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <button class="add-button" id="addButton">
+                    ✚ Add New
+                </button>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead id="tableHead">
+                        <!-- Dynamic headers -->
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Add/Edit -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Record</h2>
+                <button class="close-button" id="closeModal">×</button>
+            </div>
+            <form id="dataForm">
+                <div id="formFields">
+                    <!-- Dynamic form fields -->
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelButton">Cancel</button>
+                    <button type="submit" class="btn-save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api';
+        
+        // Get entity type from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const entityType = urlParams.get('type') || 'sectors';
+        
+        let allData = [];
+        let editingId = null;
+
+        // Entity configurations
+        const entityConfigs = {
+            sectors: {
+                title: 'Sectors',
+                description: 'Manage industry sectors',
+                apiEndpoint: '/sectors',
+                columns: [
+                    { key: 'id', label: 'ID', width: '80px' },
+                    { key: 'name', label: 'Sector Name', width: 'auto' },
+                    { key: 'description', label: 'Description', width: 'auto' },
+                    { key: 'isActive', label: 'Status', width: '120px', type: 'status' }
+                ],
+                formFields: [
+                    { key: 'name', label: 'Sector Name', type: 'text', required: true },
+                    { key: 'description', label: 'Description', type: 'textarea', required: false }
+                ]
+            },
+            courses: {
+                title: 'Courses',
+                description: 'Manage educational courses',
+                apiEndpoint: '/courses',
+                columns: [
+                    { key: 'id', label: 'ID', width: '80px' },
+                    { key: 'name', label: 'Course Name', width: 'auto' },
+                    { key: 'type', label: 'Type', width: '150px' },
+                    { key: 'duration', label: 'Duration', width: '150px' },
+                    { key: 'isActive', label: 'Status', width: '120px', type: 'status' }
+                ],
+                formFields: [
+                    { key: 'name', label: 'Course Name', type: 'text', required: true },
+                    { key: 'type', label: 'Type', type: 'text', required: false },
+                    { key: 'duration', label: 'Duration', type: 'text', required: false }
+                ]
+            },
+            skills: {
+                title: 'Skills',
+                description: 'Manage job skills',
+                apiEndpoint: '/skills',
+                columns: [
+                    { key: 'id', label: 'ID', width: '80px' },
+                    { key: 'name', label: 'Skill Name', width: 'auto' },
+                    { key: 'category', label: 'Category', width: '200px' },
+                    { key: 'isActive', label: 'Status', width: '120px', type: 'status' }
+                ],
+                formFields: [
+                    { key: 'name', label: 'Skill Name', type: 'text', required: true },
+                    { key: 'category', label: 'Category', type: 'text', required: false }
+                ]
+            },
+            countries: {
+                title: 'Countries',
+                description: 'Manage countries',
+                apiEndpoint: '/countries',
+                columns: [
+                    { key: 'id', label: 'ID', width: '80px' },
+                    { key: 'name', label: 'Country Name', width: 'auto' },
+                    { key: 'code', label: 'Code', width: '120px' },
+                    { key: 'isActive', label: 'Status', width: '120px', type: 'status' }
+                ],
+                formFields: [
+                    { key: 'name', label: 'Country Name', type: 'text', required: true },
+                    { key: 'code', label: 'Country Code', type: 'text', required: false }
+                ]
+            },
+            states: {
+                title: 'States',
+                description: 'Manage states/provinces',
+                apiEndpoint: '/states',
+                columns: [
+                    { key: 'id', label: 'ID', width: '80px' },
+                    { key: 'name', label: 'State Name', width: 'auto' },
+                    { key: 'code', label: 'Code', width: '120px' },
+                    { key: 'countryId', label: 'Country ID', width: '120px' },
+                    { key: 'isActive', label: 'Status', width: '120px', type: 'status' }
+                ],
+                formFields: [
+                    { key: 'name', label: 'State Name', type: 'text', required: true },
+                    { key: 'code', label: 'State Code', type: 'text', required: false },
+                    { key: 'countryId', label: 'Country ID', type: 'number', required: true }
+                ]
+            },
+            cities: {
+                title: 'Cities',
+                description: 'Manage cities',
+                apiEndpoint: '/cities',
+                columns: [
+                    { key: 'id', label: 'ID', width: '80px' },
+                    { key: 'name', label: 'City Name', width: 'auto' },
+                    { key: 'stateId', label: 'State ID', width: '120px' },
+                    { key: 'isActive', label: 'Status', width: '120px', type: 'status' }
+                ],
+                formFields: [
+                    { key: 'name', label: 'City Name', type: 'text', required: true },
+                    { key: 'stateId', label: 'State ID', type: 'number', required: true }
+                ]
+            }
+        };
+
+        const config = entityConfigs[entityType];
+
+        // Initialize page
+        function initializePage() {
+            document.getElementById('pageTitle').textContent = config.title;
+            document.getElementById('headerTitle').textContent = config.title;
+            document.getElementById('headerDescription').textContent = config.description;
+            
+            // Build table headers
+            buildTableHeaders();
+            
+            // Load data
+            loadData();
+            
+            // Setup event listeners
+            setupEventListeners();
+        }
+
+        // Build table headers
+        function buildTableHeaders() {
+            const thead = document.getElementById('tableHead');
+            const tr = document.createElement('tr');
+            
+            config.columns.forEach(col => {
+                const th = document.createElement('th');
+                th.textContent = col.label;
+                if (col.width) th.style.width = col.width;
+                tr.appendChild(th);
+            });
+            
+            // Actions column
+            const thActions = document.createElement('th');
+            thActions.textContent = 'Actions';
+            thActions.style.width = '150px';
+            tr.appendChild(thActions);
+            
+            thead.appendChild(tr);
+        }
+
+        // Load data from API
+        async function loadData() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '<tr><td colspan="100" class="loading"><div class="spinner"></div>Loading data...</td></tr>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}${config.apiEndpoint}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allData = data[entityType] || data.data || [];
+                    renderTable(allData);
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="100" class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Error loading data</h3></td></tr>`;
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+                tbody.innerHTML = `<tr><td colspan="100" class="empty-state"><div class="empty-state-icon">❌</div><h3>Failed to load data</h3><p>Please check your connection</p></td></tr>`;
+            }
+        }
+
+        // Render table
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="100" class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <h3>No records found</h3>
+                            <p>Click "Add New" to create your first record</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                
+                config.columns.forEach(col => {
+                    const td = document.createElement('td');
+                    
+                    if (col.type === 'status') {
+                        const isActive = item[col.key];
+                        td.innerHTML = `<span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">${isActive ? 'Active' : 'Inactive'}</span>`;
+                    } else {
+                        td.textContent = item[col.key] || '-';
+                    }
+                    
+                    tr.appendChild(td);
+                });
+                
+                // Actions column
+                const tdActions = document.createElement('td');
+                tdActions.innerHTML = `
+                    <div class="action-buttons">
+                        <button class="btn-edit" onclick="editRecord(${item.id})">✏️ Edit</button>
+                        <button class="btn-delete" onclick="deleteRecord(${item.id})">🗑️ Delete</button>
+                    </div>
+                `;
+                tr.appendChild(tdActions);
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Search functionality
+        function handleSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filtered = allData.filter(item => {
+                return config.columns.some(col => {
+                    const value = item[col.key];
+                    return value && value.toString().toLowerCase().includes(searchTerm);
+                });
+            });
+            
+            renderTable(filtered);
+        }
+
+        // Open modal for add/edit
+        function openModal(isEdit = false, data = null) {
+            editingId = isEdit ? data.id : null;
+            
+            document.getElementById('modalTitle').textContent = isEdit ? 'Edit Record' : 'Add New Record';
+            
+            // Build form fields
+            const formFields = document.getElementById('formFields');
+            formFields.innerHTML = '';
+            
+            config.formFields.forEach(field => {
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                
+                const label = document.createElement('label');
+                label.textContent = field.label + (field.required ? ' *' : '');
+                div.appendChild(label);
+                
+                let input;
+                if (field.type === 'textarea') {
+                    input = document.createElement('textarea');
+                } else if (field.type === 'select') {
+                    input = document.createElement('select');
+                } else {
+                    input = document.createElement('input');
+                    input.type = field.type || 'text';
+                }
+                
+                input.id = `field_${field.key}`;
+                input.name = field.key;
+                input.required = field.required;
+                
+                if (isEdit && data) {
+                    input.value = data[field.key] || '';
+                }
+                
+                div.appendChild(input);
+                formFields.appendChild(div);
+            });
+            
+            document.getElementById('modal').classList.add('show');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+            document.getElementById('dataForm').reset();
+            editingId = null;
+        }
+
+        // Edit record
+        window.editRecord = function(id) {
+            const record = allData.find(item => item.id === id);
+            if (record) {
+                openModal(true, record);
+            }
+        };
+
+        // Delete record
+        window.deleteRecord = async function(id) {
+            if (!confirm('Are you sure you want to delete this record?')) return;
+            
+            alert('Delete functionality will be implemented with backend API');
+            // TODO: Implement delete API call
+        };
+
+        // Handle form submission
+        async function handleSubmit(e) {
+            e.preventDefault();
+            
+            const formData = {};
+            config.formFields.forEach(field => {
+                const value = document.getElementById(`field_${field.key}`).value;
+                formData[field.key] = value;
+            });
+            
+            formData.isActive = true;
+            
+            console.log('Submitting:', formData);
+            alert(`${editingId ? 'Update' : 'Create'} functionality will be implemented with backend API`);
+            
+            // TODO: Implement create/update API call
+            
+            closeModal();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+            document.getElementById('addButton').addEventListener('click', () => openModal(false));
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('cancelButton').addEventListener('click', closeModal);
+            document.getElementById('dataForm').addEventListener('submit', handleSubmit);
+            
+            // Close modal on outside click
+            document.getElementById('modal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        }
+
+        // Initialize on page load
+        initializePage();
+    </script>
+
+</body>
+</html>
